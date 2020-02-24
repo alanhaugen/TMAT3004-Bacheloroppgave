@@ -1,6 +1,9 @@
 # App
 app/build/*
 
+# Vim
+*.swp
+
 # LaTeX
 report/*.aux
 report/*.glo
