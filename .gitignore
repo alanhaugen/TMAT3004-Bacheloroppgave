@@ -1,5 +1,7 @@
 # App
 app/build/*
+app/CMakeLists.txt.user
+build*
 
 # Vim
 *.swp

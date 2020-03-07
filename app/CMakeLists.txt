@@ -1,18 +1,22 @@
 cmake_minimum_required(VERSION 2.8.12)
 
-PROJECT(project1)
+PROJECT(app)
 SET(CMAKE_CXX_STANDARD 14)
 
-if( UNIX )
-include_directories(~/anaconda2/include/python2.7 ~/anaconda2/lib/python2.7/site-packages/numpy/core/include/ ~/anaconda2/include)
-endif()
+SET(Python2_ROOT_DIR ${PYTHONHOME})
 
-#SET(OpenCV_DIR /home/hp/workfolder/OpenCV-Installation/installation/OpenCV-master/lib/cmake/opencv4)
+find_package(Python2 COMPONENTS Development NumPy)
+
+if( UNIX )
+    include_directories(~/anaconda2/include/python2.7 ~/anaconda2/lib/python2.7/site-packages/numpy/core/include/ ~/anaconda2/include)
+else()
+    include_directories(${PYTHON_INCLUDE_DIRS} C:/Users/alanh/Anaconda2/Lib/site-packages/numpy/core/include)
+endif()
 
 
 ######################## EDIT IF REQUIRED ####################
 # ###Uncomment the line below and specify the path to OpenCV directory i.e. the path to the OpenCVConfig.cmake file. Check the examples given below.
-#SET(OpenCV_DIR Enter-the-path-of-OpenCV-installation-on-your-system)
+#SET(OpenCV_DIR /c/opencv-4.1.0)
 
 
 ################### OpenCV_DIR Examples  #####################
@@ -41,7 +45,8 @@ include_directories( ${OpenCV_INCLUDE_DIRS})
 
 MACRO(add_app name)
   ADD_EXECUTABLE(${name} ${name}.cpp)
-  TARGET_LINK_LIBRARIES(${name} ${OpenCV_LIBS} )
+  target_include_directories(${name} PRIVATE ${PYTHON2_INCLUDE_DIRS} ${PYTHON2_NUMPY_INCLUDE_DIRS})
+  TARGET_LINK_LIBRARIES(${name} ${OpenCV_LIBS} Python2::Python )
 ENDMACRO()
 
-add_app(instagramFilters)
+add_app(main)
