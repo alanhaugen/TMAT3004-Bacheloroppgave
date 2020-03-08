@@ -7,30 +7,30 @@ build*
 *.swp
 
 # LaTeX
-report/*.pdf
-report/*.aux
-report/*.glo
-report/*.idx
-report/*.log
-report/*.toc
-report/*.ist
-report/*.acn
-report/*.acr
-report/*.alg
-report/*.bbl
-report/*.blg
-report/*.dvi
-report/*.glg
-report/*.gls
-report/*.ilg
-report/*.ind
-report/*.lof
-report/*.lot
-report/*.maf
-report/*.mtc
-report/*.mtc1
-report/*.out
-report/*.synctex.gz
+*.pdf
+*.aux
+*.glo
+*.idx
+*.log
+*.toc
+*.ist
+*.acn
+*.acr
+*.alg
+*.bbl
+*.blg
+*.dvi
+*.glg
+*.gls
+*.ilg
+*.ind
+*.lof
+*.lot
+*.maf
+*.mtc
+*.mtc1
+*.out
+*.synctex.gz
 
 # Prerequisites
 *.d
