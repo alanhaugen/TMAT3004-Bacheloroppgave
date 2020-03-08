@@ -7,10 +7,34 @@ using namespace cv;
 
 int main()
 {
-    string imagePath = "data/images/opencv-1-cpp";
-    Mat image = imread(imagePath);
+    string videoPath = "data/video/soccer-ball.mp4";
 
-    imshow("Image", image);
+    VideoCapture video(videoPath);
 
-    waitKey(0);
+    if (video.isOpened() == false)
+    {
+        cout << "Failed to open video stream" << endl;
+        return -1;
+    }
+
+    namedWindow("TMAT3004", WINDOW_AUTOSIZE);
+
+    Mat frame;
+
+    while(char c = waitKey(25) != 27)
+    {
+        video >> frame;
+
+        if (frame.empty())
+        {
+            video.set(CAP_PROP_POS_FRAMES, 1);
+            video >> frame;
+        }
+
+        imshow("TMAT3004", frame);
+    }
+
+    video.release();
+
+    destroyAllWindows();
 }
