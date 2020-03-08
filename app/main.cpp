@@ -7,7 +7,7 @@ using namespace cv;
 
 int main()
 {
-    string imagePath = "images/opencv-1-cpp";
+    string imagePath = "data/images/opencv-1-cpp";
     Mat image = imread(imagePath);
 
     imshow("Image", image);
