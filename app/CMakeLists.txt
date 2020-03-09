@@ -13,9 +13,8 @@ else()
     include_directories(${PYTHON_INCLUDE_DIRS} C:/Users/alanh/Anaconda2/Lib/site-packages/numpy/core/include)
 endif()
 
-#SET(OpenCV_DIR /c/opencv-4.1.0)
+#SET(OpenCV_DIR c:/opencv-4.1.0)
 
-#############  Common Instructions for all Users  ############
 if(MSVC)
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 endif()
@@ -24,10 +23,17 @@ find_package( OpenCV REQUIRED )
 
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-MACRO(add_app name)
-  ADD_EXECUTABLE(${name} ${name}.cpp)
-  target_include_directories(${name} PRIVATE ${PYTHON2_INCLUDE_DIRS} ${PYTHON2_NUMPY_INCLUDE_DIRS})
-  TARGET_LINK_LIBRARIES(${name} ${OpenCV_LIBS} Python2::Python )
-ENDMACRO()
+# If the package has been found, several variables will
+# be set, you can find the full list with descriptions
+# in the OpenCVConfig.cmake file.
+# Print some message showing some of them
+message(STATUS "OpenCV library status:")
+message(STATUS "    config: ${OpenCV_DIR}")
+message(STATUS "    version: ${OpenCV_VERSION}")
+message(STATUS "    libraries: ${OpenCV_LIBS}")
+message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 
-add_app(main)
+add_executable(TMAT3004 main.cpp)
+
+target_include_directories(TMAT3004 PRIVATE ${PYTHON2_INCLUDE_DIRS} ${PYTHON2_NUMPY_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(TMAT3004 PRIVATE ${OpenCV_LIBS} Python2::Python ) # libs
