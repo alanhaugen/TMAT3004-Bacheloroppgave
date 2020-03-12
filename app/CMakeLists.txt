@@ -20,6 +20,7 @@ SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 endif()
 
 find_package( OpenCV REQUIRED )
+#find_package(Torch REQUIRED)
 
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
@@ -36,4 +37,4 @@ message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 add_executable(TMAT3004 main.cpp)
 
 target_include_directories(TMAT3004 PRIVATE ${PYTHON2_INCLUDE_DIRS} ${PYTHON2_NUMPY_INCLUDE_DIRS})
-TARGET_LINK_LIBRARIES(TMAT3004 PRIVATE ${OpenCV_LIBS} Python2::Python ) # libs
+target_link_libraries(TMAT3004 PRIVATE ${OpenCV_LIBS} Python2::Python ) # libs # "${TORCH_LIBRARIES}"

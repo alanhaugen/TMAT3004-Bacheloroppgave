@@ -21,6 +21,8 @@ const int trackingFailureFramesQuantity = 10;
 
 Rect2d bbox;
 
+string objectLabel;
+
 enum
 {
     DETECTION,
@@ -75,6 +77,8 @@ void drawPred(int classId, float conf, int left, int top, int right, int bottom,
     top = max(top, labelSize.height);
     rectangle(frame, Point(left, top - round(1.5*labelSize.height)), Point(left + round(1.5*labelSize.width), top + baseLine), Scalar(255, 255, 255), FILLED);
     putText(frame, label, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,0),1);
+
+    objectLabel = label;
 }
 
 // Remove the bounding boxes with low confidence using non-maxima suppression
@@ -98,11 +102,7 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
             // Get the value and location of the maximum score
             minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
 
-            if (classes[classIdPoint.x] != "sports ball")
-            {
-                continue;
-            }
-            else if (confidence > confThreshold)
+            if (confidence > confThreshold)
             {
                 int centerX = (int)(data[0] * frame.cols);
                 int centerY = (int)(data[1] * frame.rows);
@@ -137,10 +137,16 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
 int main()
 {
 //    string videoPath = "data/video/soccer-ball.mp4";
-    string videoPath = "data/video/syntetisk_torsk.mkv";
+    //string videoPath = "data/video/syntetisk_torsk.mkv";
+    string videoPath = "C:/lagringsmerd bernt o.MP4";
 
     VideoCapture video(videoPath);
     //VideoCapture video(0);
+
+    float width  = video.get(CAP_PROP_FRAME_WIDTH);
+    float height = video.get(CAP_PROP_FRAME_HEIGHT);
+
+    VideoWriter videoWrite("out.avi", VideoWriter::fourcc('M','J','P','G'), 10, Size(width, height));
 
     if (video.isOpened() == false)
     {
@@ -203,19 +209,26 @@ int main()
     // Load the network
     Net net = readNetFromDarknet(modelConfiguration, modelWeights);
 
-    while(char c = waitKey(25) != 27)
+    bool isAlive = true;
+
+    while(isAlive)
     {
+        if (waitKey(25) == 27)
+        {
+            isAlive = false;
+        }
+
         double timer = (double)getTickCount();
 
         video >> frame;
 
         if (frame.empty())
         {
-            video.set(CAP_PROP_POS_FRAMES, 1);
-            video >> frame;
+            //video.set(CAP_PROP_POS_FRAMES, 1);
+            //video >> frame;
+            isAlive = false;
         }
-
-        if (state == DETECTION)
+        else if (state == DETECTION)
         {
             putText(frame, "DETECTION", Point(100,70), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
             putText(frame, "Tracking failure detected", Point(100,90), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
@@ -257,6 +270,17 @@ int main()
             {
                 // Tracking success, draw green rectangle around object
                 rectangle(frame, bbox, Scalar(0, 255, 0), 2, 1 );
+
+                // Display the label at the top of the bounding box
+                int baseLine;
+                Size labelSize = getTextSize(objectLabel, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
+                int top = bbox.y;
+                int left = bbox.x;
+                top = max(top, labelSize.height);
+                rectangle(frame, Point(left, top - round(1.5*labelSize.height)), Point(left + round(1.5*labelSize.width), top + baseLine), Scalar(255, 255, 255), FILLED);
+                putText(frame, objectLabel, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,0),1);
+
+                // Not sure why I do this
                 isDetectionRecent = false;
             }
             else
@@ -277,10 +301,13 @@ int main()
         putText(frame, "FPS : " + SSTR(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
         putText(frame, trackerType + " Tracker", Point(100,150), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50),2);
 
+        videoWrite.write(frame);
+
         imshow(WINDOW_TITLE, frame);
     }
 
     video.release();
+    videoWrite.release();
 
     destroyAllWindows();
 }
