@@ -1,6 +1,108 @@
 \subsection{Innledning -- bakgrunn for oppgaven}
 \subsection{Teori}
 \subsubsection{Introduksjon til kunstig intelligens}
+
+\subsubsection{Maskinlæring}
+
+Machine Learning: Learning from data
+
+Data is king.
+
+Data collection, annotation, preporation etc.
+
+Data > Algorithm > Training > Evaluation > Deployment > Predictions
+
+	Gather data from every legal source possible (public data sets, purchase data, collect data, synthesize data (super poweful))
+
+	Manually check data
+	Look for biases
+	Look for insights
+	Clean up
+
+	Iterative: Partition data 60 (training)/20 (testing accuracy training)/20 (test)
+
+Model / Algorithm
+
+	Image classification
+	Object detection 
+	Segmentation
+
+	Constraints
+
+	Experimentation (test multiple viable models)
+
+Training
+
+	Data augmentation
+	Training parameter (optimizer, rate etc.)
+	Visualizsation (check if it is going correctly)
+
+Evaluation
+	
+	Test. Check model size, speed and ACCURACY
+
+Deployment
+
+	Optimizations, deploy, feedback (know when it went badly, check failed images)	
+
+\subsubsection{Neural networks}
+
+Classification (Supervised learning)
+
+	Seperating data into groups
+
+	Binary classification (two groups) (Sigmoid activation is used)
+
+	Multiclass classification (Activation: Softmax) (Loss function: Cross entropy loss)
+
+	Regression (Activation: Linear) (Loss function: MSE loss)
+
+	Decision boundary seperates the groups by the decision function
+
+	Training is learning the decision function
+
+	Deciding decision function is called training
+
+	Data is on a plane (2D) or a hyperplane (higher dimensions)
+
+	Input layer > Hidden layer (can be many layers) > output
+
+	Each layer (node) in a nn is a neuron or perceptron
+
+	Perceptron: Calculate weighted sum of inputs and add bias. Then apply activation function (non-linear)
+
+	Every layer looks for a pattern found in the previous layer. If it is found, it "fires up"
+
+	An example of an activation function is ReLU (Rectified Linear Unit)
+
+	Another example is the sigmoid function, and tanh
+
+	An activation function creates non-linearity
+
+	The number of hidden layers is called the networks depth (depth = 2 is typical for simple problems)
+
+Loss functions
+
+	Classification outputs a category (class)
+
+	Regression outputs numerical values (or a vector of numerical values)
+
+	Many problems are optimizatino problems in ML, either to minimize or maximaze a value of a function
+
+	These functions are called the objective function
+
+	When finding the minimum, it is called a loss, or cost, function
+
+	e = y - ^y (error is ground thruth minus model output)
+
+	An error, L, can be considered either a square (MSE, most common) or an absolute number (MAE, when data has many outliers)
+
+Single layer perceptron kan løse lineære problemer
+
+Ved å gjøre "feature engineering" så kan ikke-lineære problemer løses
+
+Deep learning gjør at en kan løse lineære problemer om en bruker ikke-lineær aktivering. ReLU konvergerer raskt.
+
 \subsubsection{Maskinsyn med OpenCV}
 \subsubsection{Video med undervannskamera fra merdene}
 \subsubsection{Analysere video}
