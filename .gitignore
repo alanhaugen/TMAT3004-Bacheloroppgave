@@ -4,6 +4,9 @@ app/CMakeLists.txt.user
 build*
 app/out.avi
 
+# macOS
+.DS_Store
+
 # Vim
 *.swp
 

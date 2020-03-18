@@ -286,7 +286,7 @@ int main()
             putText(frame, "TRACKING", Point(100,70), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
         }
 
-        putText(frame, "FPS : " + SSTR(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
+        //putText(frame, "FPS : " + SSTR(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
         putText(frame, trackerType + " Tracker", Point(100,150), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50),2);
 
         videoWrite.write(frame);
