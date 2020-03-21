@@ -1,21 +1,25 @@
-\documentclass{article}
-\usepackage[norsk]{babel}
-\usepackage[utf8]{inputenc}
-\usepackage{graphicx}
-\usepackage{pdfpages}
-\usepackage{hyperref}
-\usepackage{parskip}
+\documentclass[11ot]{article}
+
+\input{structure}
+\makeindex
 
 \title{Gruppe 15\\Bruk av maskinsyn for deteksjon av ulike fiskearter}
-
 \author{Hans Alan Whitburn Haugen\\Veileder: Eirin Bar}
 
 \begin{document}
+
+\input{titlepage.tex}
+\newpage
 \include{thanks}
-\includepdf[fitpaper=true, pages=-]{forsidemal.pdf}
+\newpage
+
+\pagenumbering{gobble}
 \tableofcontents
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{0}
+
 \include{introduction}
 \include{sections/theory}
-\clearpage
 
 \end{document}
