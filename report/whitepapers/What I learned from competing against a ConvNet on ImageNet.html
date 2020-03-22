@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<!-- saved from url=(0097)http://karpathy.github.io/2014/09/02/what-i-learned-from-competing-against-a-convnet-on-imagenet/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>What I learned from competing against a ConvNet on ImageNet</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Musings of a Computer Scientist.">
+    <link rel="canonical" href="http://karpathy.github.io/2014/09/02/what-i-learned-from-competing-against-a-convnet-on-imagenet/">
+    <link href="http://karpathy.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Andrej Karpathy blog posts">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./What I learned from competing against a ConvNet on ImageNet_files/main.css">
+
+    <!-- Google Analytics -->
+    <script async="" src="./What I learned from competing against a ConvNet on ImageNet_files/analytics.js.download"></script><script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-3698471-23', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+<script type="text/javascript" async="" src="./What I learned from competing against a ConvNet on ImageNet_files/embed.js.download"></script><link rel="prefetch" as="style" href="https://c.disquscdn.com/next/embed/styles/lounge.91790a929b2fba6bf8967d2204d948d5.css"><link rel="prefetch" as="script" href="https://c.disquscdn.com/next/embed/common.bundle.b9167d06dc7bd01b59d6d6332d6aafa1.js"><link rel="prefetch" as="script" href="https://c.disquscdn.com/next/embed/lounge.bundle.b9f55e00ac59a682cfbac91eadf883d4.js"><link rel="prefetch" as="script" href="https://disqus.com/next/config.js"><script src="./What I learned from competing against a ConvNet on ImageNet_files/alfie.f51946af45e0b561c60f768335c9eb79.js.download" async="" charset="UTF-8"></script></head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap">
+
+    <div style="float:left; margin-top:10px; margin-right:10px;">
+    <a href="http://karpathy.github.io/feed.xml">
+      <img src="./What I learned from competing against a ConvNet on ImageNet_files/rssicon.svg" width="40">
+    </a>
+    </div>
+
+    <a class="site-title" href="http://karpathy.github.io/">Andrej Karpathy blog</a>
+    
+    <nav class="site-nav">
+      <a href="http://karpathy.github.io/2014/09/02/what-i-learned-from-competing-against-a-convnet-on-imagenet/#" class="menu-icon">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 18 15" enable-background="new 0 0 18 15" xml:space="preserve">
+          <path fill="#505050" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0
+            h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"></path>
+          <path fill="#505050" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484
+            h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"></path>
+          <path fill="#505050" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0
+            c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"></path>
+        </svg>
+      </a>
+      <div class="trigger">
+        
+          <a class="page-link" href="http://karpathy.github.io/about/">About</a>
+        
+          
+        
+          
+        
+          <a class="page-link" href="http://karpathy.github.io/neuralnets/">Hacker's guide to Neural Networks</a>
+        
+          
+        
+      </div>
+    </nav>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>What I learned from competing against a ConvNet on ImageNet</h1>
+    <p class="meta">Sep 2, 2014</p>
+  </header>
+
+  <article class="post-content">
+  <p>The results of the 2014 <a href="http://www.image-net.org/challenges/LSVRC/2014/">ImageNet Large Scale Visual Recognition Challenge</a> (ILSVRC) were <a href="http://www.image-net.org/challenges/LSVRC/2014/results">published</a> a few days ago. The New York Times <a href="http://bits.blogs.nytimes.com/2014/08/18/computer-eyesight-gets-a-lot-more-accurate/">wrote about it</a> too. ILSVRC is one of the largest challenges in Computer Vision and every year teams compete to claim the state-of-the-art performance on the dataset. The challenge is based on a subset of the ImageNet dataset that was first collected by <a href="http://www.image-net.org/papers/imagenet_cvpr09.pdf">Deng et al. 2009</a>, and has been organized by our lab here at Stanford since 2010. This year, the challenge saw record participation with 50% more participants than last year, and records were shattered with staggering improvements in both classification and detection tasks.</p>
+
+<blockquote>
+  <p>(My personal) <strong>ILSVRC 2014 TLDR</strong>: 50% more teams. 50% improved classification and detection. ConvNet ensembles all over the place. Google team wins.</p>
+</blockquote>
+
+<p>Of course there’s much more to it, and all details and takeaways will be discussed at length in Zurich, at the upcoming <a href="http://image-net.org/challenges/LSVRC/2014/eccv2014">ECCV 2014 workshop</a> happening on September 12.</p>
+
+<p>Additionally, we just (September 2nd) published an arXiv preprint describing the entire history of ILSVRC and a large amount of associated analysis, <a href="http://arxiv.org/abs/1409.0575">check it out on arXiv</a>. This post will zoom in on a portion of the paper that I contributed to (Section 6.4 Human accuracy on large-scale image classification) and describe some of its context.</p>
+
+<h4 id="ilsvrc-classification-task">ILSVRC Classification Task</h4>
+
+<p>For the purposes of this post, I would like to focus, in particular, on image classification because this task is the common denominator for many other Computer Vision tasks. The classification task is made up of 1.2 million images in the training set, each labeled with one of 1000 categories that cover a wide variety of objects, animals, scenes, and even some abstract geometric concepts such as <em>“hook”</em>, or <em>“spiral”</em>. The 100,000 test set images are released with the dataset, but the labels are withheld to prevent teams from overfitting on the test set. The teams have to predict 5 (out of 1000) classes and an image is considered to be correct if at least one of the predictions is the ground truth. The test set evaluation is carried out on our end by comparing the predictions to our own set of ground truth labels.</p>
+
+<div class="imgcap">
+<img src="./What I learned from competing against a ConvNet on ImageNet_files/cnntsne.jpeg">
+<div class="thecap">Example images from the classification task. Find full-scale images <a href="http://cs.stanford.edu/people/karpathy/cnnembed/">here</a>.</div>
+</div>
+
+<h4 id="googlenets-impressive-performance">GoogLeNet’s Impressive Performance</h4>
+
+<p>I was looking at the results about a week ago and became particularly intrigued by GoogleLeNet’s winning submission for the classification task, which achieved a Hit@5 error rate of only 6.7% on the ILSVRC test set. I was relatively familiar with the scope and difficulty of the classification task: these are unconstrained internet images. They are a jungle of viewpoints, lighting conditions, and variations of all imaginable types. This begged the question: <em>How do humans compare?</em></p>
+
+<p>There are now several tasks in Computer Vision where the performance of our models is close to human, or even <em>superhuman</em>. Examples of these tasks include face verification, various medical imaging tasks, Chinese character recognition, etc. However, many of these tasks are fairly constrained in that they assume input images from a very particular distribution. For example, face verification models might assume as input only aligned, centered, and normalized images. In many ways, ImageNet is harder since the images come directly from the “jungle of the interwebs”. Is it possible that our models are reaching human performance on such an unconstrained task?</p>
+
+<h4 id="computing-human-accuracy">Computing Human Accuracy</h4>
+
+<p>In short, I thought that the impressive performance by the winning team would only make sense if it was put in perspective with human accuracy. I was also in the unique position of being able to evaluate it (given that I share office space with ILSVRC organizers), so I set out to quantify the human accuracy and characterize the differences between human predictions with those of the winning model.</p>
+
+<p><em>Wait, isn’t human accuracy 100%?</em> Thank you, good question. It’s not, because the ILSVRC dataset was not labeled in the same way we are classifying it here. For example, to collect the images for the class “Border Terrier” the organizers searched the query on internet and retrieved a large collection of images. These were then filtered a bit with humans by asking them a binary “Is this a Border Terrier or not?”. Whatever made it through became the “Border Terrier” class, and similar for all the other 1000 images. Therefore, the data was not collected in a discriminative but a binary manner, and is also subject to mistakes and inaccuracies. Some images can sometimes also contain multiple of the ILSVRC classes, etc.</p>
+
+<p><em>CIFAR-10 digression.</em> It’s fun to note that about 4 years ago I performed a similar (but much quicker and less detailed) human classification accuracy analysis on CIFAR-10. This was back when the state of the art was at 77% by Adam Coates, and my own accuracy turned out to be 94%. I think the best ConvNets now get about 92%. The post about that can be found <a href="http://karpathy.github.io/2011/04/27/manually-classifying-cifar10/">here</a>. I never imagined I’d be doing the same for ImageNet a few years down the road :)</p>
+
+<p>There’s one issue to clarify on. You may ask: <em>But wait, the ImageNet test set labels were obtained from humans in the first place. Why go about re-labeling it all over again? Isn’t human performance 0% by definition?</em> Kind of, but not really. It is important to keep in mind that ImageNet was annotated as a binary ask. For example, to collect images of the dog class “Kelpie”, the query was submitted to search engines and then humans on Amazon Mechanical Turk were used for the binary task of filtering out the noise. The ILSVRC classification task, on the other hand, is 1000-way classification. It’s not a binary task such as the one used to collect the data.</p>
+
+<h4 id="labeling-interface">Labeling Interface</h4>
+
+<p>I developed a labeling interface that would help us evaluate the human performance. It looked similar to, but not identical, to the screenshot below:</p>
+
+<div class="imgcap">
+<img src="./What I learned from competing against a ConvNet on ImageNet_files/ilsvrc1.png">
+<div class="thecap">A crop of a screenshot of the <a href="http://cs.stanford.edu/people/karpathy/ilsvrc/">labeling interface</a> for the ILSVRC validation data. Try it out for yourself.</div>
+</div>
+
+<p>The interface consisted of the test image on the left, and 1000 classes listed on the right. Each class was followed by 13 example images from the training set so that the categories were easier for a human to scan visually. The categories were also sorted in the topological order of the ImageNet hierarchy, which places semantically similar concepts nearby in the list. For example, all motor vehicle-related classes are arranged contiguously in the list. Finally, the interface is web-based so it is easy to naturally scroll through the classes, or search for them by text.</p>
+
+<p><strong>Try it out!</strong> I’m making the <a href="http://cs.stanford.edu/people/karpathy/ilsvrc/">the labeling interface</a> available to everyone so that you can also try labeling ILSVRC yourselves and draw your own conclusions. There are a few modifications in this version from the one we used to collect the data. I added two buttons (Show answer, and Show google prediction), and of course, the images shown in this version are the <em>validation</em> images, not the test set images. The GoogLeNet validation set predictions were graciously provided by the Google team.</p>
+
+<h4 id="roadblocks-along-the-way">Roadblocks along the way</h4>
+
+<p><strong>It was hard.</strong> As I beta-tested the interface, the task of labeling images with 5 out of 1000 categories quickly turned out to be extremely challenging, even for some friends in the lab who have been working on ILSVRC and its classes for a while. First we thought we would put it up on AMT. Then we thought we could recruit paid undergrads. Then I organized a labeling party of intense labeling effort only among the (expert labelers) in our lab. Then I developed a modified interface that used GoogLeNet predictions to prune the number of categories from 1000 to only about 100. It was still too hard - people kept missing categories and getting up to ranges of 13-15% error rates. In the end I realized that to get anywhere competitively close to GoogLeNet, it was most efficient if I sat down and went through the painfully long training process and the subsequent careful annotation process myself.</p>
+
+<p><strong>It took a while.</strong> I ended up training on 500 validation images and then switched to the test set of 1500 images. The labeling happened at a rate of about 1 per minute, but this decreased over time. I only enjoyed the first ~200, and the rest I only did <em>#forscience</em>. (In the end we convinced one more expert labeler to spend a few hours on the annotations, but they only got up to 280 images, with less training, and only got to about 12%). The labeling time distribution was strongly bimodal: Some images are easily recognized, while some images (such as those of fine-grained breeds of dogs, birds, or monkeys) can require multiple minutes of concentrated effort. I became very good at identifying breeds of dogs.</p>
+
+<p><strong>It was worth it.</strong> Based on the sample of images I worked on, the GoogLeNet classification error turned out to be 6.8% (the error on the full test set of 100,000 images is 6.7%). My own error in the end turned out to be <strong>5.1%</strong>, approximately 1.7% better. If you crunch through the statistical significance calculations (i.e. comparing the two proportions with a Z-test) under the null hypothesis of them being equal, you get a one-sided p-value of 0.022. In other words, the result is statistically significant based on a relatively commonly used threshold of 0.05. Lastly, I found the experience to be quite educational: After seeing so many images, issues, and ConvNet predictions you start to develop a really good model of the failure modes.</p>
+
+<blockquote>
+  <p>My error turned out to be 5.1%, compared to GoogLeNet error of 6.8%. Still a bit of a gap to close (and more).</p>
+</blockquote>
+
+<div class="imgcap">
+<img src="./What I learned from competing against a ConvNet on ImageNet_files/ilsvrc3.png">
+<div class="thecap">Representative example of practical frustrations of labeling ILSVRC classes. Aww, a cute dog! Would you like to spend 5 minutes scrolling through 120 breeds of dog to guess what species it is?</div>
+</div>
+
+<h4 id="analysis-of-errors">Analysis of errors</h4>
+
+<p>We inspected both human and GoogLeNet errors to gain an understanding of common error types and how they compare. The analysis and insights below were derived specifically from GoogLeNet predictions, but I suspect that many of the same errors may be present in other methods. Let me copy paste the analysis from our <a href="http://arxiv.org/abs/1409.0575">ILSVRC paper</a>:</p>
+
+<p><strong>Types of error that both GoogLeNet human are susceptible to:</strong></p>
+
+<ol>
+  <li>
+    <p><strong>Multiple objects.</strong> Both GoogLeNet and humans struggle with images that contain multiple ILSVRC classes (usually many more than five), with little indication of which object is the focus of the image. This error is only present in the Classification setting, since every image is constrained to have exactly one correct label. In total, we attribute 24 (24%) of GoogLeNet errors and 12 (16%) of human errors to this category. It is worth noting that humans can have a slight advantage in this error type, since it can sometimes be easy to identify the most salient object in the image.</p>
+  </li>
+  <li>
+    <p><strong>Incorrect annotations.</strong> We found that approximately 5 out of 1500 images (0.3%) were incorrectly annotated in the ground truth. This introduces an approximately equal number of errors for both humans and GoogLeNet.</p>
+  </li>
+</ol>
+
+<p><strong>Types of error that GoogLeNet is more susceptible to than human:</strong></p>
+
+<ol>
+  <li>
+    <p><strong>Object small or thin.</strong> GoogLeNet struggles with recognizing objects that are very small or thin in the image, even if that object is the only object present. Examples of this include an image of a standing person wearing sunglasses, a person holding a quill in their hand, or a small ant on a stem of a flower. We estimate that approximately 22 (21%) of GoogLeNet errors fall into this category, while none of the human errors do. In other words, in our sample of images, no image was mislabeled by a human because they were unable to identify a very small or thin object. This discrepancy can be attributed to the fact that a human can very effectively leverage context and affordances to accurately infer the identity of small objects (for example, a few barely visible feathers near person’s hand as very likely belonging to a mostly occluded quill).</p>
+  </li>
+  <li>
+    <p><strong>Image filters.</strong> Many people enhance their photos with filters that distort the contrast and color distributions of the image. We found that 13 (13%) of the images that GoogLeNet incorrectly classified contained a filter. Thus, we posit that GoogLeNet is not very robust to these distortions. In comparison, only one image among the human errors contained a filter, but we do not attribute the source of the error to the filter.</p>
+  </li>
+  <li>
+    <p><strong>Abstract representations.</strong> We found that GoogLeNet struggles with images that depict objects of interest in an abstract form, such as 3D-rendered images, paintings, sketches, plush toys, or statues. An example is the abstract shape of a bow drawn with a light source in night photography, a 3D-rendered robotic scorpion, or a shadow on the ground, of a child on a swing. We attribute approximately 6 (6%) of GoogLeNet errors to this type of error and believe that humans are significantly more robust, with no such errors seen in our sample.</p>
+  </li>
+  <li>
+    <p><strong>Miscellaneous sources.</strong> Additional sources of error that occur relatively infrequently include extreme closeups of parts of an object, unconventional viewpoints such as a rotated image, images that can significantly benefit from the ability to read text (e.g. a featureless container identifying itself as “<em>face powder</em>”), objects with heavy occlusions, and images that depict a collage of multiple images. In general, we found that humans are more robust to all of these types of error.</p>
+  </li>
+</ol>
+
+<div class="imgcap">
+<img src="./What I learned from competing against a ConvNet on ImageNet_files/ilsvrc2.png">
+<div class="thecap">Representative validation images that highlight common sources of error. For each image, we display the ground truth in blue, and top 5 predictions from GoogLeNet follow (red = wrong, green = right). GoogLeNet predictions on the validation
+set images were graciously provided by members of the GoogLeNet team. From left to right: Images that contain multiple objects, images of extreme closeups and uncharacteristic views, images with filters, images that significantly benefit from the ability to read text, images that contain very small and thin objects, images with abstract representations, and example of a fine-grained image that GoogLeNet correctly identifies but a human would have significant difficulty with.</div>
+</div>
+
+<p><strong>Types of error that human is more susceptible to than GoogLeNet:</strong></p>
+
+<ol>
+  <li>
+    <p><strong>Fine-grained recognition.</strong> We found that humans are noticeably worse at fine-grained recognition (e.g. dogs, monkeys, snakes, birds), even when they are in clear view. To understand the difficulty, consider that there are more than 120 species of dogs in the dataset. We estimate that 28 (37%) of the human errors fall into this category, while only 7 (7%) of GoogLeNet erros do.</p>
+  </li>
+  <li>
+    <p><strong>Class unawareness.</strong> The annotator may sometimes be unaware of the ground truth class present as a label option. When pointed out as an ILSVRC class, it is usually clear that the label applies to the image. These errors get progressively less frequent as the annotator becomes more familiar with ILSVRC classes. Approximately 18 (24%) of the human errors fall into this category.</p>
+  </li>
+  <li>
+    <p><strong>Insufficient training data.</strong> Recall that the annotator is only presented with 13 examples of a class under every category name. However, 13 images are not always enough to adequately convey the allowed class variations. For example, a brown dog can be incorrectly dismissed as a “<em>Kelpie</em>” if all examples of a “<em>Kelpie</em>” feature a dog with black coat. However, if more than 13 images were listed it would have become clear that a “<em>Kelpie</em>” may have a brown coat. Approximately 4 (5%) of human errors fall into this category.</p>
+  </li>
+</ol>
+
+<h4 id="conclusions">Conclusions</h4>
+
+<p>We investigated the performance of trained human annotators on a sample of up to 1500 ILSVRC test set images. Our results indicate that a trained human annotator is capable of outperforming the best model (GoogLeNet) by approximately 1.7% (p = 0.022).</p>
+
+<p>We expect that some sources of error may be relatively easily eliminated (e.g. robustness to filters, rotations, collages, effectively reasoning over multiple scales), while others may prove more elusive (e.g. identifying
+abstract representations of objects). On the hand, a large majority of human errors come from fine-grained categories and class unawareness. We expect that the former can be significantly reduced with fine-grained expert annotators, while the latter could be reduced with more practice and greater familiarity with ILSVRC classes.</p>
+
+<p>It is clear that humans will soon only be able to outperform state of the art image classification models by use of significant effort, expertise, and time. One interesting follow-up question for future investigation is how computer-level accuracy compares with human-level accuracy on more complex image understanding tasks.</p>
+
+<blockquote>
+  <p>“It is clear that humans will soon only be able to outperform state of the art image classification models by use of significant effort, expertise, and time.”</p>
+</blockquote>
+
+<p>As for my personal take-away from this week-long exercise, I have to say that, qualitatively, I was very impressed with the ConvNet performance. Unless the image exhibits some irregularity or tricky parts, the ConvNet confidently and robustly predicts the correct label. If you’re feeling adventurous, try out <a href="http://cs.stanford.edu/people/karpathy/ilsvrc/">the labeling interface</a> for yourself and draw your own conclusions. I can promise that you’ll gain interesting qualitative insights into where state-of-the-art Computer Vision works, where it fails, and how.</p>
+
+<p>EDIT: additional discussions:</p>
+
+<ul>
+  <li><a href="https://plus.google.com/u/0/+PierreSermanet/posts/6wZYMuXo8PU">Pierre’s Google+</a></li>
+  <li><a href="http://www.reddit.com/r/MachineLearning/comments/2fg0va/what_i_learned_from_competing_against_a_convnet/">Reddit /r/MachineLearning</a></li>
+</ul>
+
+<p>UPDATE:</p>
+
+<ul>
+  <li><a href="http://image-net.org/challenges/LSVRC/2014/eccv2014">ImageNet workshop page</a> now has links to many of the teams’ slides and videos.</li>
+  <li><a href="http://arxiv.org/abs/1409.4842">GoogLeNet paper</a> on arXiv describes the details of their architecutre.</li>
+</ul>
+
+<p>UPDATE2 (14 Feb 2015):</p>
+
+<p>There have now been several reported results that surpass my 5.1% error on ImageNet. I’m astonished to see such rapid progress. At the same time, I think we should keep in mind the following:</p>
+
+<blockquote>
+  <p>Human accuracy is not a point. It lives on a tradeoff curve.</p>
+</blockquote>
+
+<p>We trade off human effort and expertise with the error rate: I am one point on that curve with 5.1%. My labmates with almost no training and less patience are another point, with even up to 15% error. And based on some calculations that consider my exact error types and hypothesizing which ones may be easier to fix than others, it’s not unreasonable to suggest that an ensemble of very dedicated expert human labelers might push this down to 3%, with about 2% being an optimistic error rate lower bound. I know it’s not as exciting as having a single number, but it’s the right way of thinking about it. See more details in my recent <a href="https://plus.google.com/+AndrejKarpathy/posts/dwDNcBuWTWf">Google+ post</a>.</p>
+
+  </article>
+
+  <!-- mathjax -->
+  
+  
+  <!-- disqus comments -->
+ 
+ <div id="disqus_thread"><iframe id="dsq-app7473" name="dsq-app7473" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" sandbox="allow-forms allow-popups allow-same-origin allow-scripts" width="100%" src="./What I learned from competing against a ConvNet on ImageNet_files/saved_resource.html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 0px !important;"></iframe><iframe id="dsq-app7470" name="dsq-app7470" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./What I learned from competing against a ConvNet on ImageNet_files/saved_resource(1).html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 7435px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe></div>
+  <script type="text/javascript">
+      /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+      var disqus_shortname = 'karpathyblog'; // required: replace example with your forum shortname
+
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  
+  
+  
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <!-- <h2 class="footer-heading">Andrej Karpathy blog</h2> -->
+
+    <div class="footer-col-1 column">
+      <ul>
+        <li>Andrej Karpathy blog</li>
+        <!-- <li><a href="mailto:"></a></li> -->
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+      <ul>
+        <li>
+          <a href="https://github.com/karpathy">
+            <span class="icon github">
+              <svg version="1.1" class="github-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#C2C2C2" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761
+                c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32
+                c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472
+                c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037
+                C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65
+                c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261
+                c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082
+                c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129
+                c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"></path>
+              </svg>
+            </span>
+            <span class="username">karpathy</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://twitter.com/karpathy">
+            <span class="icon twitter">
+              <svg version="1.1" class="twitter-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill="#C2C2C2" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27
+                c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767
+                c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206
+                C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271
+                c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469
+                c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"></path>
+              </svg>
+            </span>
+            <span class="username">karpathy</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-3 column">
+      <p class="text">Musings of a Computer Scientist.</p>
+    </div>
+
+  </div>
+
+</footer>
+
+
+    
+<iframe style="display: none;" src="./What I learned from competing against a ConvNet on ImageNet_files/saved_resource(2).html"></iframe><iframe id="dsq-app7477" name="dsq-app7477" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./What I learned from competing against a ConvNet on ImageNet_files/saved_resource(3).html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 100% !important; position: fixed !important; top: 0px !important; right: 0px !important; left: auto !important; bottom: auto !important; z-index: 2147483647 !important; display: none !important;"></iframe></body></html>
