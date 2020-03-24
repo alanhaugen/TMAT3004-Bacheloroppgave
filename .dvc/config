@@ -1,4 +1,4 @@
 [core]
-    remote = s3remote
-['remote "s3remote"']
-    url = s3://buckets/tmat3004
+    remote = gcremote
+['remote "gcremote"']
+    url = gs://tmat3004
