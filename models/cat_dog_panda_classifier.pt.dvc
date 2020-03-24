@@ -1,0 +1,7 @@
+md5: 190afa498deec06bd3881b9ea725ca19
+outs:
+- md5: 6b239e34f4d65c1f0e46c969193a6f27
+  path: cat_dog_panda_classifier.pt
+  cache: true
+  metric: false
+  persist: false
