@@ -2,8 +2,10 @@ import matplotlib.pyplot as plt
 
 from torchvision import datasets
 
-training_data_path = "../cat-dog-panda/training"
-validation_data_path = "../cat-dog-panda/validation"
+training_data_path = "./data/training"
+validation_data_path = "./data/validation"
+
+classifier_name = "torsk_sei_classifier.pt"
 
 train_data = datasets.ImageFolder(training_data_path)
 validation_data = datasets.ImageFolder(validation_data_path)
@@ -11,7 +13,7 @@ validation_data = datasets.ImageFolder(validation_data_path)
 import torch
 import numpy as np
 
-subset_size = .05
+subset_size = 1.
 
 train_subset = torch.utils.data.Subset(train_data,np.arange(0,len(train_data),1./subset_size))
 validation_subset = torch.utils.data.Subset(validation_data,np.arange(0,len(validation_data),1./subset_size))
@@ -168,7 +170,7 @@ class TrainingConfiguration:
     init_learning_rate: float = 0.0001  # initial learning rate for lr scheduler
     log_interval: int = 5  
     test_interval: int = 1  
-    data_root: str = "../cat-dog-panda" 
+    data_root: str = "./data" 
     num_workers: int = 2  
     device: str = 'cuda'  
     
@@ -278,7 +280,7 @@ def validate(
     
     return test_loss, accuracy/100.0
 
-def save_model(model, device, model_dir='models', model_file_name='cat_dog_panda_classifier.pt'):
+def save_model(model, device, model_dir='models', model_file_name=classifier_name):
     
 
     if not os.path.exists(model_dir):
@@ -298,7 +300,7 @@ def save_model(model, device, model_dir='models', model_file_name='cat_dog_panda
     
     return
 
-def load_model(model, model_dir='models', model_file_name='cat_dog_panda_classifier.pt'):
+def load_model(model, model_dir='models', model_file_name=classifier_name):
     model_path = os.path.join(model_dir, model_file_name)
 
     # loading the model and getting model parameters by using load_state_dict
@@ -701,6 +703,6 @@ if __name__ == '__main__':
     
     get_sample_prediction(m, test_data_path, mean, std)
 
-    print("Errors below")
+    print("Errors follow")
 
     get_sample_prediction_errors(m, test_data_path, mean, std)

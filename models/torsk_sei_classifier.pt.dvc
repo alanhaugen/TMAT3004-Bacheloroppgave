@@ -1,0 +1,7 @@
+md5: 4d3b7f61f117bdaa4df8ea15e5556710
+outs:
+- md5: e6d34a2e7de4c9314ba9eb05591fc874
+  path: torsk_sei_classifier.pt
+  cache: true
+  metric: false
+  persist: false

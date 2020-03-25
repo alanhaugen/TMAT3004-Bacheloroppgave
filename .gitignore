@@ -68,3 +68,4 @@ app/out.avi
 *.exe
 *.out
 *.app
+/data

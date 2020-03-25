@@ -1,5 +1,70 @@
-\subsection{Innledning -- bakgrunn for oppgaven}
+\section{Innledning -- bakgrunn for oppgaven}
+
+Sjømatdivisjonen og Akvadivisjonen ved Nofima har en strategisk internsatsing\footnote{\url{https://nofima.no/prosjekt/sameksistens/}} som går ut på å samle kunnskap om sameksistens mellom ulike marine næringer og interesser, deriblant om hvordan man kan unngå konflikter mellom ulike interesser. 
+
+En av problemstillingene er sameksistens mellom fiskeri- og oppdrettsnæringene, og hvordan oppdrettsanlegg påvirker de nærliggende fiskeplassene. I den forbindelse er det interessant å kartlegge omfanget av hvitfisk som beiter på fôr fra oppdrettsanlegg. Dette er en problemstilling som har vært i fokus hos media\footnote{For eksempel \url{https://fiskeribladet.no/nyheter/?artikkel=69867} (hentet 12.02.2020)} etter at flere fiskere har fanget fôrsprengt torsk og sei i fjorder hvor det finnes oppdrettsanlegg. Det hevdes at denne fisken er av betydelig dårligere kvalitet og den kan ha fått i seg medisiner gjennom fôret som gjør at den kan være farlig å spise. 
+
+Det behøves kunnskap om hvor mange villfisk som trekker til oppdrettsanlegg, og under hvilke forhold, slik at man kan komme nærmere en løsning som kan dempe konflikten mellom disse to næringene. 
+
+\subsection{Mål}
+
+Målet med dette prosjektet er å utvikle et system som kan telle antall villfisk av ulike arter basert på en videostrøm fra et undervannskamera. Det er ønskelig å kunne vise resultatet som en fordeling av observasjoner over tid for hver art. 
+Til dette prosjektet er det anskaffet et undervannskamera av typen Steinsvik Orbit-3300 som styres via et MB-3000 kontrollpanel. Dette systemet er utviklet for inspeksjon av fisk i merd og tar opp data i form av en analog videostrøm. Denne kan sendes gjennom en analog-digital-omformer til en datamaskin hvor dataene til slutt vil kunne prosesseres i sanntid. 
+
+\subsection{Delmål}
+
+\subsubsection{Programvare skrevet i C++}
+
+Prosjektet består i hovedsak av å utvikle en programvare som kan gjøre følgende ved hjelp av maskinlæring: 
+
+\begin{enumerate}
+\item Segmentere fisk fra bakgrunn
+\item Klassifisere hver fisk etter art
+\item Spore hver fisk gjennom hvert bilde i videostrømmen inntil fisken forlater kameraets synsfelt
+\end{enumerate}
+
+Programvaren implementeres i C++ ved hjelp av OpenCV-biblioteket\footnote{https://opencv.org/}. Det kan også være aktuelt å lage et grafisk grensesnitt hvor tellingene fra hver art kan vises i sanntid, men dette er avhengig av om prosjektets omfang tillater det. 
+
+%\subsubsection{Praktisk del ved Havbruksstasjonen i Tromsø}
+
+%Det er planlagt en praktisk del hvor kameraet skal plasseres ut på oppdrettsanlegg og samle data som kan prosesseres i ettertid for å teste programvaren. Dette blir mest sannsynlig på Havbruksstasjonen i Tromsø. Å finne beste plasseringen av kameraet i forhold til merdene er en viktig del av dette arbeidet med tanke på synsfelt og lysforhold. 
+
+\subsubsection{Maskinsyn i matindustrien}
+
+Nofima is a research organisation in the food industry
+
+What about the salads and bama
+
+The mathematics course had both calculus and optimization
+
+You can explain about the tedious counting the salad leaves etc
+
+Your data camera may do this
+
+I can justify how computer vision is important in the food industry, and might revolutionize many industries
+
+I can say this is a problem Nofima has, and wanted it solved with computer vision, as it is not only done before it is also cheaper than getting someone to manually count fish.
+
+Say how you came to realise the importance doing practice at Bama, how you tried then to rig up a camera
+
+There are already several players
+
+You have marine robotics
+
+And you have StingRay
+
+The same with marine robotics
+
+They use OpenCV and Qt
+
+Mention that too lakselus very severe problem
+
+I could also mention solving problems in an interesting way is the difference between drudgery and fun
+
+And most problems are solved since they are interesting to someone
+
 \section{Teori}
+
 \subsubsection{Introduksjon til kunstig intelligens}
 
 \subsubsection{Maskinlæring}

@@ -1,6 +1,5 @@
-required_training = True
-
-import matplotlib.pyplot as plt  # one of the best graphics library for python
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 
 import os
 import time
@@ -15,123 +14,112 @@ import torch.optim as optim
 import torch.nn.functional as F
 
 from torchvision import datasets, transforms
-import torchvision
 
-classes = 10
-out_nodes = 1024
+from torch.optim import lr_scheduler
+from torch.optim.lr_scheduler import StepLR
 
+training_data_path = "./data/training"
+validation_data_path = "./data/validation"
 
-class MyModel(nn.Module):
-    def __init__(self):
-        super().__init__()
+classifier_name = "torsk_sei_classifier.pt"
 
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(3, 6, kernel_size=3, padding=3),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2)
-        )
+def image_preprocess_transforms():
 
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(6, 16, kernel_size=3, padding=3),
-            nn.BatchNorm2d(16),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2)
-        )
+    preprocess = transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor()
+        ])
 
-        self.layer3 = nn.Sequential(
-            nn.Conv2d(16, 128, kernel_size=3, padding=3),
-            nn.BatchNorm2d(128),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2)
-        )
+    return preprocess
 
-        self.layer4 = nn.Sequential(
-            nn.Conv2d(128, out_nodes, kernel_size=3, padding=3),
-            nn.BatchNorm2d(out_nodes),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2)
-        )
+def image_common_transforms(mean=(0.4611, 0.4359, 0.3905), std=(0.2193, 0.2150, 0.2109)):
+    preprocess = image_preprocess_transforms()
 
-        self.decoder = nn.Sequential(
-            nn.Linear(out_nodes * 5 * 5, 120),
-            nn.ReLU(),
-            nn.Linear(120, 84),
-            nn.ReLU(),
-            nn.Linear(84, classes)
-            #nn.Sigmoid(),
-            #nn.Linear(1024, n_classes)
-        )
-
-    def forward(self, x):
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
-
-        x = x.view(-1, out_nodes * 5 * 5)
-
-        x = self.decoder(x)
-
-        return x
-
-my_model = MyModel()
-print(my_model)
-
-def get_mean_std_train_data(data_root):
-
-    train_transform = transforms.Compose([transforms.ToTensor()])
-    train_set = datasets.CIFAR10(root=data_root, train=True, download=True, transform=train_transform)
-
-    # return mean (numpy.ndarray) and std (numpy.ndarray)
-    mean = np.array([0.5, 0.5, 0.5])
-    std = np.array([0.5, 0.5, 0.5])
-
-    mean = train_set.data.float().mean()/255
-    std  = train_set.data.float().std()/255
-
-    return mean, std
-
-def get_data(batch_size, data_root, num_workers=1):
-
-
-    try:
-        mean, std = get_mean_std_train_data(data_root)
-        assert len(mean) == len(std) == 3
-    except:
-        mean = np.array([0.5, 0.5, 0.5])
-        std = np.array([0.5, 0.5, 0.5])
-
-
-    train_test_transforms = transforms.Compose([
-        # this re-scale image tensor values between 0-1. image_tensor /= 255
-        transforms.ToTensor(),
-        # subtract mean and divide by variance.
+    common_transforms = transforms.Compose([
+        preprocess,
         transforms.Normalize(mean, std)
     ])
 
+    return common_transforms
+
+def get_mean_std(data_root, num_workers=4):
+
+    transform = image_preprocess_transforms()
+
+    loader = data_loader(data_root, transform)
+
+    mean = 0.
+    std = 0.
+
+    for images, _ in loader:
+        batch_samples = images.size(0) # batch size (the last batch can have smaller size!)
+        images = images.view(batch_samples, images.size(1), -1)
+        mean += images.mean(2).sum(0)
+        std += images.std(2).sum(0)
+
+    mean /= len(loader.dataset)
+    std /= len(loader.dataset)
+
+    print('mean: {}, std: {}'.format(mean, std))
+
+    return mean, std
+
+def data_loader(data_root, transform, batch_size=16, shuffle=False, num_workers=2):
+    dataset = datasets.ImageFolder(root=data_root, transform=transform)
+
+    loader = torch.utils.data.DataLoader(dataset,
+                                         batch_size=batch_size,
+                                         num_workers=num_workers,
+                                         shuffle=shuffle)
+
+    return loader
+
+def get_data(batch_size, data_root, num_workers=4, data_augmentation=False):
+
+    train_data_path = os.path.join(data_root, 'training')
+
+    mean, std = get_mean_std(data_root=train_data_path, num_workers=num_workers)
+
+    common_transforms = image_common_transforms(mean, std)
+
+
+    # if data_augmentation is true
+    # data augmentation implementation
+    if data_augmentation:
+        train_transforms = data_augmentation_preprocess(mean, std)
+    # else do common transforms
+    else:
+        train_transforms = common_transforms
+
+
     # train dataloader
-    train_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR10(root=data_root, train=True, download=True, transform=train_test_transforms),
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=num_workers
-    )
+
+    train_loader = data_loader(train_data_path,
+                               train_transforms,
+                               batch_size=batch_size,
+                               shuffle=True,
+                               num_workers=num_workers)
 
     # test dataloader
-    test_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR10(root=data_root, train=False, download=True, transform=train_test_transforms),
-        batch_size=batch_size,
-        shuffle=False,
-        num_workers=num_workers
-    )
+
+    test_data_path = os.path.join(data_root, 'validation')
+
+    test_loader = data_loader(test_data_path,
+                              train_transforms,
+                              batch_size=batch_size,
+                              shuffle=True,
+                              num_workers=num_workers)
+
     return train_loader, test_loader
+#     YOUR CODE HERE
 
 @dataclass
 class SystemConfiguration:
     '''
     Describes the common system setting needed for reproducible training
     '''
-    seed: int = 42  # seed number to set the state of all random number generators
+    seed: int = 21  # seed number to set the state of all random number generators
     cudnn_benchmark_enabled: bool = True  # enable CuDNN benchmark for the sake of performance
     cudnn_deterministic: bool = True  # make cudnn deterministic (reproducible training)
 
@@ -140,20 +128,14 @@ class TrainingConfiguration:
     '''
     Describes configuration of the training process
     '''
-    batch_size: int = 16  # amount of data to pass through the network at each forward-backward iteration
-    epochs_count: int = 2  # number of times the whole dataset will be passed through the network
-    learning_rate: float = 0.1  # determines the speed of network's weights update
-
-    log_interval: int = 100  # how many batches to wait between logging training status
-    test_interval: int = 1  # how many epochs to wait before another test. Set to 1 to get val loss at each epoch
-    data_root: str = "../resource/lib/publicdata/images"  # folder to save data
-    num_workers: int = 10  # number of concurrent processes using to prepare data
-    device: str = 'cuda'  # device to use for training.
-    # update changed parameters in blow coding block.
-    # Please do not change "data_root"
-
-    learning_rate: float = 0.01
-    epochs_count: int = 30
+    batch_size: int = 10
+    epochs_count: int = 100
+    init_learning_rate: float = 0.1
+    log_interval: int = 5
+    test_interval: int = 1
+    data_root: str = "./data"
+    num_workers: int = 2
+    device: str = 'cuda'
 
 def setup_system(system_config: SystemConfiguration) -> None:
     torch.manual_seed(system_config.seed)
@@ -214,15 +196,13 @@ def train(
 
         batch_acc = np.append(batch_acc, [acc])
 
-        if batch_idx % train_config.log_interval == 0 and batch_idx > 0:
-            print(
-                'Train Epoch: {} [{}/{}] Loss: {:.6f} Acc: {:.4f}'.format(
-                    epoch_idx, batch_idx * len(data), len(train_loader.dataset), loss.item(), acc
-                )
-            )
+    # Decay learning rate
+    scheduler.step()
+    print('Stepping scheduler this epoch. ', 'LR:', scheduler.get_lr())
 
     epoch_loss = batch_loss.mean()
     epoch_acc = batch_acc.mean()
+    print('Epoch: {} \nTrain Loss: {:.6f} Acc: {:.4f}'.format(epoch_idx, epoch_loss, epoch_acc))
     return epoch_loss, epoch_acc
 
 def validate(
@@ -230,6 +210,7 @@ def validate(
     model: nn.Module,
     test_loader: torch.utils.data.DataLoader,
 ) -> float:
+    #
     model.eval()
     test_loss = 0
     count_corect_predictions = 0
@@ -263,9 +244,10 @@ def validate(
             test_loss, count_corect_predictions, len(test_loader.dataset), accuracy
         )
     )
+
     return test_loss, accuracy/100.0
 
-def save_model(model, device, model_dir='models', model_file_name='cifar10_cnn_model.pt'):
+def save_model(model, device, model_dir='models', model_file_name=classifier_name):
 
 
     if not os.path.exists(model_dir):
@@ -285,7 +267,16 @@ def save_model(model, device, model_dir='models', model_file_name='cifar10_cnn_m
 
     return
 
-def main(system_configuration=SystemConfiguration(), training_configuration=TrainingConfiguration()):
+def load_model(model, model_dir='models', model_file_name=classifier_name):
+    model_path = os.path.join(model_dir, model_file_name)
+
+    # loading the model and getting model parameters by using load_state_dict
+    model.load_state_dict(torch.load(model_path))
+
+    return model
+
+def main(model, optimizer, scheduler=None, system_configuration=SystemConfiguration(),
+         training_configuration=TrainingConfiguration(), data_augmentation=True):
 
     # system configuration
     setup_system(system_configuration)
@@ -303,32 +294,26 @@ def main(system_configuration=SystemConfiguration(), training_configuration=Trai
         device = "cuda"
     else:
         device = "cpu"
-        num_workers_to_set = 2
+        batch_size_to_set = 16
+        num_workers_to_set = 4
 
     # data loader
     train_loader, test_loader = get_data(
-        batch_size=training_configuration.batch_size,
+        batch_size=batch_size_to_set,
         data_root=training_configuration.data_root,
-        num_workers=num_workers_to_set
+        num_workers=num_workers_to_set,
+        data_augmentation=data_augmentation
     )
 
     # Update training configuration
     training_configuration = TrainingConfiguration(
         device=device,
+        batch_size=batch_size_to_set,
         num_workers=num_workers_to_set
     )
 
-    # initiate model
-    model = MyModel()
-
     # send model to device (GPU/CPU)
     model.to(training_configuration.device)
-
-    # optimizer
-    optimizer = optim.SGD(
-        model.parameters(),
-        lr=training_configuration.learning_rate
-    )
 
     best_loss = torch.tensor(np.inf)
 
@@ -344,6 +329,11 @@ def main(system_configuration=SystemConfiguration(), training_configuration=Trai
     t_begin = time.time()
     for epoch in range(training_configuration.epochs_count):
 
+#         Calculate Initial Test Loss
+        init_val_loss, init_val_accuracy = validate(training_configuration, model, test_loader)
+        print("Initial Test Loss : {:.6f}, \nInitial Test Accuracy : {:.3f}%\n".format(init_val_loss, init_val_accuracy*100))
+
+        # Train
         train_loss, train_acc = train(training_configuration, model, optimizer, train_loader, epoch)
 
         epoch_train_loss = np.append(epoch_train_loss, [train_loss])
@@ -361,6 +351,7 @@ def main(system_configuration=SystemConfiguration(), training_configuration=Trai
             )
         )
 
+        # Validate
         if epoch % training_configuration.test_interval == 0:
             current_loss, current_accuracy = validate(training_configuration, model, test_loader)
 
@@ -370,65 +361,114 @@ def main(system_configuration=SystemConfiguration(), training_configuration=Trai
 
             if current_loss < best_loss:
                 best_loss = current_loss
-                print('Loss decreases, saving the model.\n')
-                save_model(model, device)
+                print('Model Improved. Saving the Model...\n')
+                save_model(model, device=training_configuration.device)
+
 
     print("Total time: {:.2f}, Best Loss: {:.3f}".format(time.time() - t_begin, best_loss))
 
     return model, epoch_train_loss, epoch_train_acc, epoch_test_loss, epoch_test_acc
 
-if required_training:
-    model, epoch_train_loss, epoch_train_acc, epoch_test_loss, epoch_test_acc = main()
+def plot_loss_accuracy(train_loss, val_loss, train_acc, val_acc, colors,
+                       loss_legend_loc='upper center', acc_legend_loc='upper left',
+                       fig_size=(20, 10), sub_plot1=(1, 2, 1), sub_plot2=(1, 2, 2)):
 
-# Plot loss
-plt.rcParams["figure.figsize"] = (10, 6)
-x = range(len(epoch_train_loss))
+    plt.rcParams["figure.figsize"] = fig_size
+    fig = plt.figure()
+
+    plt.subplot(sub_plot1[0], sub_plot1[1], sub_plot1[2])
+
+    for i in range(len(train_loss)):
+        x_train = range(len(train_loss[i]))
+        x_val = range(len(val_loss[i]))
+
+        min_train_loss = train_loss[i].min()
+
+        min_val_loss = val_loss[i].min()
+
+        plt.plot(x_train, train_loss[i], linestyle='-', color='tab:{}'.format(colors[i]),
+                 label="TRAIN LOSS ({0:.4})".format(min_train_loss))
+        plt.plot(x_val, val_loss[i], linestyle='--' , color='tab:{}'.format(colors[i]),
+                 label="VALID LOSS ({0:.4})".format(min_val_loss))
+
+    plt.xlabel('epoch no.')
+    plt.ylabel('loss')
+    plt.legend(loc=loss_legend_loc)
+    plt.title('Training and Validation Loss')
+
+    plt.subplot(sub_plot2[0], sub_plot2[1], sub_plot2[2])
+
+    for i in range(len(train_acc)):
+        x_train = range(len(train_acc[i]))
+        x_val = range(len(val_acc[i]))
+
+        max_train_acc = train_acc[i].max()
+
+        max_val_acc = val_acc[i].max()
+
+        plt.plot(x_train, train_acc[i], linestyle='-', color='tab:{}'.format(colors[i]),
+                 label="TRAIN ACC ({0:.4})".format(max_train_acc))
+        plt.plot(x_val, val_acc[i], linestyle='--' , color='tab:{}'.format(colors[i]),
+                 label="VALID ACC ({0:.4})".format(max_val_acc))
+
+    plt.xlabel('epoch no.')
+    plt.ylabel('accuracy')
+    plt.legend(loc=acc_legend_loc)
+    plt.title('Training and Validation Accuracy')
+
+    fig.savefig('sample_loss_acc_plot.png')
+    plt.show()
+
+    return
+
+class MyModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        # convolution layers
+        self._body = nn.Sequential(
+            nn.Conv2d(in_channels=3, out_channels=32, kernel_size=7),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2),
+
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=5),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2)
+        )
 
 
-plt.figure
-plt.plot(x, epoch_train_loss, color='r', label="train loss")
-plt.plot(x, epoch_test_loss, color='b', label="validation loss")
-plt.xlabel('epoch no.')
-plt.ylabel('loss')
-plt.legend(loc='upper right')
-plt.title('Training and Validation Loss')
-plt.show()
+        # Fully connected layers
+        self._head = nn.Sequential(
+            nn.Linear(in_features=64*52*52, out_features=1024),
+            nn.ReLU(inplace=True),
 
-# Plot loss
-plt.rcParams["figure.figsize"] = (10, 6)
-x = range(len(epoch_train_loss))
+            nn.Linear(in_features=1024, out_features=3)
+
+        )
+
+    def forward(self, x):
+
+        # apply feature extractor
+        x = self._body(x)
+        # flatten the output of conv layers
+        # dimension should be batch_size * number_of weight_in_last conv_layer
+        x = x.view(x.size()[0], -1)
+        # apply classification head
+        x = self._head(x)
 
 
-plt.figure
-plt.plot(x, epoch_train_acc, color='r', label="train accuracy")
-plt.plot(x, epoch_test_acc, color='b', label="validation accuracy")
-plt.xlabel('epoch no.')
-plt.ylabel('accuracy')
-plt.legend(loc='center right')
-plt.title('Training and Validation Accuracy')
-plt.show()
+        return x
+#     YOUR CODE HERE
 
-# initialize the model
-cnn_model = MyModel()
-
-models = 'models'
-
-model_file_name = 'cifar10_cnn_model.pt'
-
-model_path = os.path.join(models, model_file_name)
-
-# loading the model and getting model parameters by using load_state_dict
-cnn_model.load_state_dict(torch.load(model_path))
-
-def prediction(model, train_config, batch_input):
+def prediction(model, device, batch_input):
 
     # send model to cpu/cuda according to your system configuration
-    model.to(train_config.device)
+    model.to(device)
 
     # it is important to do model.eval() before prediction
     model.eval()
 
-    data = batch_input.to(train_config.device)
+    data = batch_input.to(device)
 
     output = model(data)
 
@@ -443,58 +483,106 @@ def prediction(model, train_config, batch_input):
 
     return pred_index.cpu().numpy(), pred_prob.cpu().numpy()
 
-classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+def get_sample_prediction(model, data_root, mean, std):
+    batch_size = 15
 
-batch_size = 5
-train_config = TrainingConfiguration()
-
-if torch.cuda.is_available():
-    train_config.device = "cuda"
-else:
-    train_config.device = "cpu"
-
-
-
-# load test data without image transformation
-test = torch.utils.data.DataLoader(
-    datasets.CIFAR10(root=train_config.data_root, train=False, download=True,
-                   transform=transforms.functional.to_tensor),
-    batch_size=batch_size,
-    shuffle=False,
-    num_workers=1
-    )
-
-try:
-    mean, std = get_mean_std_train_data(data_root)
-    assert len(mean) == len(std) == 3
-except:
-    mean = (0.5, 0.5, 0.5)
-    std = (0.5, 0.5, 0.5)
-
-# load testdata with image transformation
-image_transforms = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize(mean, std)
-    ])
-
-test_trans = torch.utils.data.DataLoader(
-    datasets.CIFAR10(root=train_config.data_root, train=False, download=True, transform=image_transforms),
-    batch_size=batch_size,
-    shuffle=False,
-    num_workers=1
-    )
-
-for data, _ in test_trans:
-    # pass the loaded model
-    pred, prob = prediction(cnn_model, train_config, data)
-    break
+    if torch.cuda.is_available():
+        device = "cuda"
+        num_workers = 8
+    else:
+        device = "cpu"
+        num_workers = 2
 
 
-plt.rcParams["figure.figsize"] = (3, 3)
-for images, label in test:
-    for i, img in enumerate(images):
-        img = transforms.functional.to_pil_image(img)
+
+    # transformed data
+    test_dataset_trans = datasets.ImageFolder(root=data_root, transform=image_common_transforms(mean, std))
+
+    # original image dataset
+    test_dataset = datasets.ImageFolder(root=data_root, transform=image_preprocess_transforms())
+
+    data_len = test_dataset.__len__()
+
+    interval = int(data_len/batch_size)
+
+    imgs = []
+    inputs = []
+    targets = []
+    for i in range(batch_size):
+        index = i * interval
+        trans_input, target = test_dataset_trans.__getitem__(index)
+        img, _ = test_dataset.__getitem__(index)
+
+        imgs.append(img)
+        inputs.append(trans_input)
+        targets.append(target)
+
+    inputs = torch.stack(inputs)
+
+    cls, prob = prediction(model, device, batch_input=inputs)
+
+    plt.style.use('default')
+    plt.rcParams["figure.figsize"] = (15, 9)
+    fig = plt.figure()
+
+
+    for i, target in enumerate(targets):
+        plt.subplot(3, 5, i+1)
+        img = transforms.functional.to_pil_image(imgs[i])
         plt.imshow(img)
-        plt.gca().set_title('Pred: {0}({1:0.2}), Label: {2}'.format(classes[pred[i]], prob[i], classes[label[i]]))
-        plt.show()
-    break
+        plt.gca().set_title('P:{0}({1:.2}), T:{2}'.format(test_dataset.classes[cls[i]],
+                                                     prob[i],
+                                                     test_dataset.classes[targets[i]]))
+    fig.savefig('sample_prediction.png')
+    plt.show()
+
+    return
+
+
+if __name__ == '__main__':
+    model = MyModel()
+    print(model)
+
+    # get optimizer
+    train_config = TrainingConfiguration()
+
+    ### CHANGE HERE ###
+
+    # optimizer
+    optimizer = optim.Adam(
+        model.parameters(),
+        lr = train_config.init_learning_rate
+    )
+
+    scheduler = StepLR(optimizer, step_size=1, gamma=0.1)
+
+    '''optimizer = optim.SGD(
+        model.parameters(),
+        lr=train_config.init_learning_rate
+    )'''
+
+    plot_loss_accuracy(train_loss=[train_loss],
+                       val_loss=[val_loss],
+                       train_acc=[train_acc],
+                       val_acc=[val_acc],
+                       colors=['blue'],
+                       loss_legend_loc='upper center',
+                       acc_legend_loc='upper left')
+
+
+    m = MyModel()
+
+    m = load_model(m)
+
+    train_config = TrainingConfiguration()
+
+    test_data_path = os.path.join(train_config.data_root, 'validation')
+
+    train_data_path = os.path.join(train_config.data_root, 'training')
+
+    mean, std = get_mean_std(train_data_path)
+
+
+    get_sample_prediction(m, test_data_path, mean, std)
+
+
