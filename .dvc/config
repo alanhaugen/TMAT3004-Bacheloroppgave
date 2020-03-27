@@ -1,4 +1,4 @@
 [core]
-    remote = gcremote
-['remote "gcremote"']
-    url = gs://tmat3004
+    remote = hdd
+['remote "hdd"']
+    url = e:/

@@ -421,33 +421,38 @@ def plot_loss_accuracy(train_loss, val_loss, train_acc, val_acc, colors,
 
     return
 
+classes = 3
+nodes = 128
+
 class MyModel(nn.Module):
     def __init__(self):
         super().__init__()
 
         # convolution layers
         self._body = nn.Sequential(
-            nn.Conv2d(in_channels=3, out_channels=32, kernel_size=7),
+            nn.Conv2d(in_channels=3, out_channels=64, kernel_size=7),
+            nn.BatchNorm2d(64),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2),
-
-            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=5),
+            
+            nn.Conv2d(in_channels=64, out_channels=nodes, kernel_size=5),
+            nn.BatchNorm2d(nodes),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2)
         )
 
-
+        
         # Fully connected layers
         self._head = nn.Sequential(
-            nn.Linear(in_features=64*52*52, out_features=1024),
+            nn.Linear(in_features=nodes*52*52, out_features=1024), 
             nn.ReLU(inplace=True),
-
-            nn.Linear(in_features=1024, out_features=3)
-
+            
+            nn.Linear(in_features=1024, out_features=classes)
+            
         )
-
+    
     def forward(self, x):
-
+        self.drop_out = nn.Dropout()
         # apply feature extractor
         x = self._body(x)
         # flatten the output of conv layers
@@ -455,10 +460,8 @@ class MyModel(nn.Module):
         x = x.view(x.size()[0], -1)
         # apply classification head
         x = self._head(x)
-
-
+        
         return x
-#     YOUR CODE HERE
 
 def prediction(model, device, batch_input):
 
@@ -541,25 +544,30 @@ def get_sample_prediction(model, data_root, mean, std):
 
 if __name__ == '__main__':
     model = MyModel()
+    #model = torchvision.models.resnet50()
+
     print(model)
 
     # get optimizer
     train_config = TrainingConfiguration()
 
-    ### CHANGE HERE ###
+    optimizer = torch.optim.Adam(params=model.parameters(), lr=train_config.init_learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=False)
 
     # optimizer
-    optimizer = optim.Adam(
-        model.parameters(),
-        lr = train_config.init_learning_rate
-    )
+    #optimizer = optim.Adam(
+    #    model.parameters(),
+    #    lr = train_config.init_learning_rate
+    #)
 
-    scheduler = StepLR(optimizer, step_size=1, gamma=0.1)
+    #scheduler = StepLR(optimizer, step_size=1, gamma=0.1)
 
-    '''optimizer = optim.SGD(
-        model.parameters(),
-        lr=train_config.init_learning_rate
-    )'''
+    decayRate = 0.96
+    scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=decayRate)
+
+    #optimizer = optim.SGD(
+    #    model.parameters(),
+    #    lr=train_config.init_learning_rate
+    #)
 
     plot_loss_accuracy(train_loss=[train_loss],
                        val_loss=[val_loss],
