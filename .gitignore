@@ -4,6 +4,9 @@ app/CMakeLists.txt.user
 build*
 app/out.avi
 
+# Trainer
+*.png
+
 # macOS
 .DS_Store
 
