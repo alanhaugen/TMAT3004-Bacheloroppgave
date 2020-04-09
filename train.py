@@ -192,3 +192,35 @@ if __name__ == "__main__":
 
     # start training
     trainer.train()
+
+    # inference on our fine-tuned model
+
+    # By default detectron2 save the model with name model_final.pth
+    # update the model path in configuration that will be used to load the model
+    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
+
+
+    # update RetinaNet score threshold
+    cfg.MODEL.RETINANET.SCORE_THRESH_TEST = 0.5 #0.5
+
+    cfg.DATASETS.TEST = (test_data_name,)
+
+    # create a predictor instance with the configuration (it has our fine-tuned model)
+    # this predictor does prdiction on a single image
+    predictor = DefaultPredictor(cfg)
+
+    # create directory for evaluation
+    eval_dir = os.path.join(cfg.OUTPUT_DIR, 'coco_eval')
+    os.makedirs(eval_dir, exist_ok=True)
+
+    # create evaluator instance with coco evaluator
+    evaluator = COCOEvaluator(dataset_name=test_data_name,
+                              cfg=cfg,
+                              distributed=False,
+                              output_dir=eval_dir)
+
+    # create validation data loader
+    val_loader = build_detection_test_loader(cfg, test_data_name)
+
+    # start validation
+    inference_on_dataset(trainer.model, val_loader, evaluator)

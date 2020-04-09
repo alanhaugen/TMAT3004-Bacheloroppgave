@@ -6,6 +6,7 @@ app/out.avi
 
 # Trainer
 *.png
+outputs
 
 # macOS
 .DS_Store
