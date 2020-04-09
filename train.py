@@ -182,11 +182,6 @@ if __name__ == "__main__":
     cfg.OUTPUT_DIR = output_dir
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
-    # Look at training curves in tensorboard:
-    %load_ext tensorboard
-    # %reload_ext tensorboard
-    %tensorboard --logdir outputs
-
     # training
 
     # Create a trainer instance with the configuration.
