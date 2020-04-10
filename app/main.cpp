@@ -9,7 +9,7 @@ using namespace std;
 using namespace cv::dnn;
 using namespace cv;
 
-// YOLOv3 globals
+// globals
 float objectnessThreshold; // Objectness threshold
 float confThreshold; // Confidence threshold
 float nmsThreshold;  // Non-maximum suppression threshold
@@ -141,7 +141,8 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
 
 int main()
 {
-    string videoPath = "data/video/soccer-ball.mp4";
+    string videoPath = "in.mp4";
+    //string videoPath = "data/video/soccer-ball.mp4";
     //string videoPath = "data/video/syntetisk_torsk.mkv";
     //string videoPath = "C:/lagringsmerd bernt o.MP4";
 
@@ -200,11 +201,15 @@ int main()
     while (getline(ifs, line)) classes.push_back(line);
 
     // Give the configuration and weight files for the model
-    String modelConfiguration = "data/models/yolov3.cfg";
-    String modelWeights = "data/models/yolov3.weights";
+//    String modelConfiguration = "";//"data/models/yolov3.cfg";
+//    String modelWeights = "";//"data/models/yolov3.weights";
 
     // Load the network
-    Net net = readNetFromDarknet(modelConfiguration, modelWeights);
+    //Net net = readNetFromDarknet(modelConfiguration, modelWeights);
+    //Net net = readNetFromTorch("outputs/model_final.pth");
+    Net net = readNetFromONNX("outputs/model.onnx");
+
+    // TODO: Check model?
 
     bool isAlive = true;
 

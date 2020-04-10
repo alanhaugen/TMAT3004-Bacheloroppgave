@@ -3,7 +3,7 @@ app/build/*
 app/CMakeLists.txt.user
 build*
 out.avi
-input.MP4
+in.mp4
 
 # Trainer
 *.png

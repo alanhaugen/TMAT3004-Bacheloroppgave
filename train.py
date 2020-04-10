@@ -224,3 +224,12 @@ if __name__ == "__main__":
 
     # start validation
     inference_on_dataset(trainer.model, val_loader, evaluator)
+
+    # Input to the model
+    x = torch.randn(batch_size, 1, 224, 224, requires_grad=True)
+
+    # Export the model
+    torch_out = torch.onnx._export(trainer.model,             # model being run
+                                   x,                       # model input (or a tuple for multiple inputs)
+                                   "model.onnx", # where to save the model (can be a file or file-like object)
+                                   export_params=True)      # store the trained parameter weights inside the model file
