@@ -10,7 +10,7 @@ const char *WINDOW_TITLE = "Press ESC to quit";
 int rectX, rectY;
 Mat frame, backbuffer;
 
-int imageQuantity;
+int imageQuantity, imageSkip;
 
 std::ofstream fishTrainFile, labelFile;
 
@@ -36,7 +36,7 @@ static void onMouse(int event, int x, int y, int flags, void* param)
             labelFile << data << endl;
 
             Rect rect(rectX, rectY, (x-rectX), (y-rectY));
-            rectangle(frame, rect, Scalar(0,255,0), 5);
+            rectangle(frame, rect, Scalar(0,255,0), 1);
 
             break;
     }
@@ -57,12 +57,13 @@ void saveImage()
 
     imwrite(filepath, backbuffer);
 
-    imageQuantity++;
+    imageQuantity += imageSkip;
 }
 
 int main()
 {
     imageQuantity = 590;
+    imageSkip = 10;
 
     string videoPath = "in.mp4";
 
@@ -99,6 +100,7 @@ int main()
         }
         else if (key == 32)
         {
+            video.set(CAP_PROP_POS_FRAMES, imageQuantity + imageSkip);
             video >> frame;
             backbuffer = frame.clone();
 
