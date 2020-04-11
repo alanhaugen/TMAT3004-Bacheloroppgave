@@ -1,4 +1,6 @@
+import torch
 import detectron2
+import onnx
 from detectron2.utils.logger import setup_logger
 setup_logger()
 
@@ -11,6 +13,8 @@ import matplotlib.pyplot as plt
 
 # model_zoo has a lots of pre-trained model
 from detectron2 import model_zoo
+
+from detectron2 import export
 
 # DefaultTrainer is a class for training object detector
 from detectron2.engine import DefaultTrainer
@@ -201,7 +205,7 @@ if __name__ == "__main__":
 
 
     # update RetinaNet score threshold
-    cfg.MODEL.RETINANET.SCORE_THRESH_TEST = 0.5 #0.5
+    cfg.MODEL.RETINANET.SCORE_THRESH_TEST = 0.5
 
     cfg.DATASETS.TEST = (test_data_name,)
 
@@ -225,11 +229,18 @@ if __name__ == "__main__":
     # start validation
     inference_on_dataset(trainer.model, val_loader, evaluator)
 
-    # Input to the model
-    x = torch.randn(batch_size, 1, 224, 224, requires_grad=True)
+    # Store ONNX model
+    inputs = next(iter(val_loader))
 
-    # Export the model
-    torch_out = torch.onnx._export(trainer.model,             # model being run
-                                   x,                       # model input (or a tuple for multiple inputs)
-                                   "model.onnx", # where to save the model (can be a file or file-like object)
-                                   export_params=True)      # store the trained parameter weights inside the model file
+    onnx_model = export.export_onnx_model(cfg, trainer.model, inputs)
+
+    onnx.save(onnx_model, 'outputs/model.onnx')
+
+    # Load the ONNX model
+    model = onnx.load("outputs/model.onnx")
+
+    # Check that the IR is well formed
+    onnx.checker.check_model(model)
+
+    # Print a human readable representation of the graph
+    onnx.helper.printable_graph(model.graph)
