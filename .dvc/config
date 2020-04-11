@@ -1,4 +1,4 @@
 [core]
-    remote = hdd
-['remote "hdd"']
-    url = e:/
+    remote = usb
+['remote "usb"']
+    url = e:/dvc

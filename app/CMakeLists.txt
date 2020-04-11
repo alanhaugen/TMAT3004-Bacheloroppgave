@@ -7,13 +7,13 @@ SET(Python2_ROOT_DIR ${PYTHONHOME})
 
 find_package(Python2 COMPONENTS Development NumPy)
 
+SET(OpenCV_DIR C:eopencv-4.3.0/opencv/build)
+
 if( UNIX )
     include_directories(~/anaconda2/include/python2.7 ~/anaconda2/lib/python2.7/site-packages/numpy/core/include/ ~/anaconda2/include)
 else()
-    include_directories(${PYTHON_INCLUDE_DIRS} C:/Users/alanh/Anaconda2/Lib/site-packages/numpy/core/include)
+    include_directories(${PYTHON_INCLUDE_DIRS} ~/Anaconda2/Lib/site-packages/numpy/core/include)
 endif()
-
-#SET(OpenCV_DIR c:/opencv-4.1.0)
 
 if(MSVC)
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
