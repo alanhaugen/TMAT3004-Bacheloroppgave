@@ -22,6 +22,8 @@ endif()
 find_package( OpenCV REQUIRED )
 #find_package(Torch REQUIRED)
 
+set(OpenCV_STATIC ON) # Easier to share binaries
+
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 # If the package has been found, several variables will
