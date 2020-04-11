@@ -112,7 +112,6 @@ def get_data(batch_size, data_root, num_workers=4, data_augmentation=False):
                               num_workers=num_workers)
 
     return train_loader, test_loader
-#     YOUR CODE HERE
 
 @dataclass
 class SystemConfiguration:
