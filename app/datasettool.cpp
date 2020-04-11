@@ -62,7 +62,7 @@ void saveImage()
 
 int main()
 {
-    imageQuantity = 0;
+    imageQuantity = 590;
 
     string videoPath = "in.mp4";
 
@@ -77,6 +77,8 @@ int main()
     namedWindow(WINDOW_TITLE, WINDOW_AUTOSIZE);
 
     setMouseCallback(WINDOW_TITLE, onMouse);
+
+    video.set(CAP_PROP_POS_FRAMES, imageQuantity);
 
     video >> frame;
     backbuffer = frame.clone();
