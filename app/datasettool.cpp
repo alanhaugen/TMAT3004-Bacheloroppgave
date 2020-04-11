@@ -35,7 +35,7 @@ static void onMouse(int event, int x, int y, int flags, void* param)
 
             labelFile << data << endl;
 
-            Rect rect(rectX, rectY, x, y);
+            Rect rect(rectX, rectY, (x-rectX), (y-rectY));
             rectangle(frame, rect, Scalar(0,255,0), 5);
 
             break;
