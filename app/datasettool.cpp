@@ -39,6 +39,20 @@ static void onMouse(int event, int x, int y, int flags, void* param)
 
             break;
         case EVENT_LBUTTONUP:
+            if (rectX > x)
+            {
+               int old = rectX;
+               rectX = x;
+               x = old;
+            }
+
+            if (rectY > y)
+            {
+                int old = rectY;
+                rectY = y;
+                y = old;
+            }
+
             if (saveData) labelFile << data << endl;
             saveData = true;
 
