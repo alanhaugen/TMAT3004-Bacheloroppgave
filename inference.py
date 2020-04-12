@@ -70,6 +70,7 @@ def video_read_write(video_path):
             )
             v = v.draw_instance_predictions(outputs["instances"].to("cpu"))
             plt.imsave('outputs/frame_{}.png'.format(str(i).zfill(3)), v.get_image())
+            print ('saved outputs/frame_{}.png'.format(str(i).zfill(3)))
             #output_file.write(v.get_image())
             i += 1
         else:
@@ -282,23 +283,7 @@ if __name__ == "__main__":
     val_loader = build_detection_test_loader(cfg, test_data_name)
 
     # start validation
-    inference_on_dataset(trainer.model, val_loader, evaluator)
+    #inference_on_dataset(trainer.model, val_loader, evaluator)
 
     # Run inference on video
     video_read_write('in.mp4')
-
-    # Store ONNX model
-    inputs = next(iter(val_loader))
-
-    onnx_model = export.export_onnx_model(cfg, trainer.model, inputs)
-
-    onnx.save(onnx_model, 'outputs/model.onnx')
-
-    # Load the ONNX model
-    model = onnx.load("outputs/model.onnx")
-
-    # Check that the IR is well formed
-    onnx.checker.check_model(model)
-
-    # Print a human readable representation of the graph
-    onnx.helper.printable_graph(model.graph)
