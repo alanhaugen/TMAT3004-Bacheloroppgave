@@ -54,6 +54,48 @@ static void onMouse(int event, int x, int y, int flags, void* param)
     }
 }
 
+void plotTruth()
+{
+    ifstream fin;
+    string line;
+    string labelPath = "data/labels/fish_" + to_string(imageQuantity - imageSkip) + ".txt";
+    // Open an existing file
+    fin.open(labelPath);
+
+    for (int i = 0; !fin.eof(); i++)
+    {
+        fin >> line;
+
+        int x1, y1, x2, y2;
+
+        switch(i)
+        {
+            case 0:
+                // Class (atlantic cod or saithe)
+                break;
+            case 1:
+                x1 = std::stoi(line);
+                break;
+            case 2:
+                y1 = std::stoi(line);
+                break;
+            case 3:
+                x2 = std::stoi(line);
+                break;
+            case 4:
+                y2 = std::stoi(line);
+                break;
+            default:
+                // Draw rect
+                Rect rect(x1, y1, (x2-x1), (y2-y1));
+                rectangle(frame, rect, Scalar(0,255,0), 1);
+
+                // Loop back and start on next line
+                i = 0;
+        }
+    }
+}
+
 void saveImage()
 {
     if (labelFile.is_open())
@@ -102,6 +144,7 @@ int main()
     fishTrainFile.open("data/fish_train.txt", std::ios_base::app);
 
     saveImage();
+    plotTruth();
 
     bool isAlive = true;
 
@@ -123,6 +166,7 @@ int main()
             saveData = false;
 
             saveImage();
+            plotTruth();
         }
 
         putText(frame, "Press SPACE to continue to next frame", Point(100,90), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
