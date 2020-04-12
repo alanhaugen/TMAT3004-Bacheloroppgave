@@ -80,12 +80,13 @@ void plotTruth()
     {
         fin >> line;
 
-        int x1, y1, x2, y2;
+        int classId, x1, y1, x2, y2;
 
         switch(i)
         {
             case 0:
                 // Class (atlantic cod or saithe)
+                classId = std::stoi(line);
                 break;
             case 1:
                 x1 = std::stoi(line);
@@ -102,7 +103,7 @@ void plotTruth()
             default:
                 // Draw rect
                 Rect rect(x1, y1, (x2-x1), (y2-y1));
-                rectangle(frame, rect, Scalar(0,255,0), 1);
+                rectangle(frame, rect, Scalar(0,255,classId * 255), 1);
 
                 // Loop back and start on next line
                 i = 0;

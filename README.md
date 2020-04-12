@@ -7,3 +7,5 @@ App is written in C++. I recommend QtCreator open-source, and msvc++ from Micros
 QtCreator can open the cmake file CMakeLists.txt
 
 You need OpenCV, see https://medium.com/beesightsoft/build-opencv-opencv-contrib-on-windows-2e3b1ca96955 
+
+Download data used for training here: https://www.dropbox.com/sh/8cn52ckygshjva2/AADnWooJG84xdXvUqXK0J1nba?dl=0
