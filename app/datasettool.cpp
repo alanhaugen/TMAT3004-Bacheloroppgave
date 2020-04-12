@@ -28,14 +28,14 @@ static void onMouse(int event, int x, int y, int flags, void* param)
 {
     switch(event)
     {
-        case EVENT_RBUTTONDOWN:
-            frame = prevFrame;
-            saveData = false;
-
-            break;
         case EVENT_LBUTTONDOWN:
             rectX = x;
             rectY = y;
+
+            break;
+        case EVENT_RBUTTONDOWN:
+            frame = prevFrame;
+            saveData = false;
 
             break;
         case EVENT_LBUTTONUP:
