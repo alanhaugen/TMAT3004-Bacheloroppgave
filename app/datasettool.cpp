@@ -126,7 +126,7 @@ void saveImage()
     labelFile.open(labelPath, std::ios_base::app);
 
     string filepath = "data/train/atlantic_cod/fish_" + to_string(imageQuantity) + ".png";
-    fishTrainFile << filepath << endl;
+    fishTrainFile << "train/atlantic_cod/fish_" + to_string(imageQuantity) + ".png" << endl;
 
     imwrite(filepath, backbuffer);
 
