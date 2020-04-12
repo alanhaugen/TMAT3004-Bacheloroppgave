@@ -12,7 +12,7 @@ Mat frame, backbuffer, prevFrame;
 
 int imageQuantity, imageSkip;
 
-string data;
+string labelData;
 
 std::ofstream fishTrainFile, labelFile;
 
@@ -53,11 +53,11 @@ static void onMouse(int event, int x, int y, int flags, void* param)
                 y = old;
             }
 
-            if (saveData) labelFile << data << endl;
+            if (saveData) labelFile << labelData << endl;
             saveData = true;
 
             int className = classes::ATLANTIC_COD;
-            data = to_string(className) + " " + to_string(rectX) + " " + to_string(rectY) + " " + to_string(x) + " " + to_string(y);
+            labelData = to_string(className) + " " + to_string(rectX) + " " + to_string(rectY) + " " + to_string(x) + " " + to_string(y);
 
             prevFrame = frame.clone();
 
@@ -76,6 +76,8 @@ void plotTruth()
     // Open an existing file
     fin.open(labelPath);
 
+    std::string::size_type sz;
+
     for (int i = 0; !fin.eof(); i++)
     {
         fin >> line;
@@ -86,19 +88,19 @@ void plotTruth()
         {
             case 0:
                 // Class (atlantic cod or saithe)
-                classId = std::stoi(line);
+                classId = atoi(line.c_str());
                 break;
             case 1:
-                x1 = std::stoi(line);
+                x1 = atoi(line.c_str());
                 break;
             case 2:
-                y1 = std::stoi(line);
+                y1 = atoi(line.c_str());
                 break;
             case 3:
-                x2 = std::stoi(line);
+                x2 = atoi(line.c_str());
                 break;
             case 4:
-                y2 = std::stoi(line);
+                y2 = atoi(line.c_str());
                 break;
             default:
                 // Draw rect
@@ -109,6 +111,8 @@ void plotTruth()
                 i = 0;
         }
     }
+
+    fin.close();
 }
 
 void saveImage()
@@ -177,7 +181,7 @@ int main()
             video >> frame;
             backbuffer = frame.clone();
             prevFrame = frame.clone();
-            if (saveData) labelFile << data << endl;
+            if (saveData) labelFile << labelData << endl;
             saveData = false;
 
             saveImage();
@@ -192,7 +196,7 @@ int main()
     video.release();
     destroyAllWindows();
 
-    if (saveData) labelFile << data << endl;
+    if (saveData) labelFile << labelData << endl;
 
     labelFile.close();
     fishTrainFile.close();
