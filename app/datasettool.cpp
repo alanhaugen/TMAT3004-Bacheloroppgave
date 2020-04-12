@@ -133,6 +133,8 @@ int main()
     video.release();
     destroyAllWindows();
 
+    if (saveData) labelFile << data << endl;
+
     labelFile.close();
     fishTrainFile.close();
 }
