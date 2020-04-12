@@ -8,11 +8,15 @@ using namespace cv;
 const char *WINDOW_TITLE = "Press ESC to quit";
 
 int rectX, rectY;
-Mat frame, backbuffer;
+Mat frame, backbuffer, prevFrame;
 
 int imageQuantity, imageSkip;
 
+string data;
+
 std::ofstream fishTrainFile, labelFile;
+
+bool saveData;
 
 enum classes
 {
@@ -24,16 +28,24 @@ static void onMouse(int event, int x, int y, int flags, void* param)
 {
     switch(event)
     {
+        case EVENT_RBUTTONDOWN:
+            frame = prevFrame;
+            saveData = false;
+
+            break;
         case EVENT_LBUTTONDOWN:
             rectX = x;
             rectY = y;
 
             break;
         case EVENT_LBUTTONUP:
-            int className = classes::ATLANTIC_COD;
-            string data = to_string(className) + " " + to_string(rectX) + " " + to_string(rectY) + " " + to_string(x) + " " + to_string(y);
+            if (saveData) labelFile << data << endl;
+            saveData = true;
 
-            labelFile << data << endl;
+            int className = classes::ATLANTIC_COD;
+            data = to_string(className) + " " + to_string(rectX) + " " + to_string(rectY) + " " + to_string(x) + " " + to_string(y);
+
+            prevFrame = frame.clone();
 
             Rect rect(rectX, rectY, (x-rectX), (y-rectY));
             rectangle(frame, rect, Scalar(0,255,0), 1);
@@ -63,7 +75,9 @@ void saveImage()
 int main()
 {
     imageQuantity = 590;
-    imageSkip = 10;
+    imageSkip = 50;
+
+    saveData = false;
 
     string videoPath = "in.mp4";
 
@@ -83,6 +97,7 @@ int main()
 
     video >> frame;
     backbuffer = frame.clone();
+    prevFrame = frame.clone();
 
     fishTrainFile.open("data/fish_train.txt", std::ios_base::app);
 
@@ -103,12 +118,15 @@ int main()
             video.set(CAP_PROP_POS_FRAMES, imageQuantity + imageSkip);
             video >> frame;
             backbuffer = frame.clone();
+            prevFrame = frame.clone();
+            if (saveData) labelFile << data << endl;
+            saveData = false;
 
             saveImage();
         }
 
         putText(frame, "Press SPACE to continue to next frame", Point(100,90), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
-        putText(frame, to_string(imageQuantity) + " frame", Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
+        putText(frame, to_string(imageQuantity - imageSkip) + " frame", Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
         imshow(WINDOW_TITLE, frame);
     }
 
