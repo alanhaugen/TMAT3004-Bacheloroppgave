@@ -38,6 +38,61 @@ from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 # build_detection_test_loader, used to create test loader for evaluation
 from detectron2.data import build_detection_test_loader
 
+def video_read_write(video_path):
+    """
+    Read video frames one-by-one, flip it, and write in the other video.
+    video_path (str): path/to/video
+    """
+    video = cv2.VideoCapture(video_path)
+    
+    # Check if camera opened successfully
+    if not video.isOpened(): 
+        print("Error opening video file")
+        return
+    
+    # create video writer
+    width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    frames_per_second = video.get(cv2.CAP_PROP_FPS)
+    num_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+    
+    i = 0
+    while video.isOpened():
+        ret, frame = video.read()
+        
+        if ret:
+            outputs = predictor(frame)
+
+            #print(outputs)
+            v = Visualizer(frame[:, :, ::-1],
+                           metadata=test_metadata, 
+                           scale=0.8
+            )
+            v = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+            plt.imsave('outputs/frame_{}.png'.format(str(i).zfill(3)), v.get_image())
+            #output_file.write(v.get_image())
+            i += 1
+        else:
+            break
+    
+    img_array = []
+    for iterator in range(0, i):
+        img = cv2.imread('outputs/frame_{}.png'.format(str(iterator).zfill(3)))
+        height, width, layers = img.shape
+        size = (width,height)
+        img_array.append(img)
+
+    out = cv2.VideoWriter('out.avi',cv2.VideoWriter_fourcc(*'DIVX'), frames_per_second, size)
+    
+    for i in range(len(img_array)):
+        out.write(img_array[i])
+    out.release()
+    
+    video.release()
+    #output_file.release()
+    
+    return
+
 # write a function that loads the dataset into detectron2's standard format
 def get_fish_dicts(data_root, txt_file):
     dataset_dicts = []
@@ -228,6 +283,9 @@ if __name__ == "__main__":
 
     # start validation
     inference_on_dataset(trainer.model, val_loader, evaluator)
+
+    # Run inference on video
+    video_read_write('in.mp4')
 
     # Store ONNX model
     inputs = next(iter(val_loader))
