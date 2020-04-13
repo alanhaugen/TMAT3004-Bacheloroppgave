@@ -1,6 +1,6 @@
 import torch
 import detectron2
-import onnx
+#import onnx
 from detectron2.utils.logger import setup_logger
 setup_logger()
 
@@ -288,17 +288,17 @@ if __name__ == "__main__":
     video_read_write('in.mp4')
 
     # Store ONNX model
-    inputs = next(iter(val_loader))
+    #inputs = next(iter(val_loader))
 
-    onnx_model = export.export_onnx_model(cfg, trainer.model, inputs)
+    #onnx_model = export.export_onnx_model(cfg, trainer.model, inputs)
 
-    onnx.save(onnx_model, 'outputs/model.onnx')
+    #onnx.save(onnx_model, 'outputs/model.onnx')
 
     # Load the ONNX model
-    model = onnx.load("outputs/model.onnx")
+    #model = onnx.load("outputs/model.onnx")
 
     # Check that the IR is well formed
-    onnx.checker.check_model(model)
+    #onnx.checker.check_model(model)
 
     # Print a human readable representation of the graph
-    onnx.helper.printable_graph(model.graph)
+    #onnx.helper.printable_graph(model.graph)
