@@ -1,6 +1,5 @@
 import torch
 import detectron2
-import onnx
 from detectron2.utils.logger import setup_logger
 setup_logger()
 
