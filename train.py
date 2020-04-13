@@ -1,6 +1,7 @@
 import torch
 import detectron2
 #import onnx
+#from detectron2 import export
 from detectron2.utils.logger import setup_logger
 setup_logger()
 
@@ -14,7 +15,6 @@ import matplotlib.pyplot as plt
 # model_zoo has a lots of pre-trained model
 from detectron2 import model_zoo
 
-from detectron2 import export
 
 # DefaultTrainer is a class for training object detector
 from detectron2.engine import DefaultTrainer
