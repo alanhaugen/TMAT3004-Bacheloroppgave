@@ -83,17 +83,16 @@ def video_read_write(video_path):
         else:
             break
     
-    img_array = []
-    for iterator in range(0, i):
-        img = cv2.imread('outputs/frame_{}.png'.format(str(iterator).zfill(3)))
-        height, width, layers = img.shape
-        size = (width,height)
-        img_array.append(img)
+    img = cv2.imread('outputs/frame_{}.png'.format(str(0).zfill(3)))
+    height, width, layers = img.shape
+    size = (width,height)
 
     out = cv2.VideoWriter('out.avi',cv2.VideoWriter_fourcc(*'DIVX'), frames_per_second, size)
+
+    for iterator in range(0, i):
+        img = cv2.imread('outputs/frame_{}.png'.format(str(iterator).zfill(3)))
+        out.write(img)
     
-    for i in range(len(img_array)):
-        out.write(img_array[i])
     out.release()
     
     video.release()
