@@ -13,8 +13,6 @@ import matplotlib.pyplot as plt
 # model_zoo has a lots of pre-trained model
 from detectron2 import model_zoo
 
-from detectron2 import export
-
 # DefaultTrainer is a class for training object detector
 from detectron2.engine import DefaultTrainer
 # DefaultPredictor is class for inference
@@ -67,10 +65,20 @@ def video_read_write(video_path):
                            metadata=test_metadata, 
                            scale=0.8
             )
-            v = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+
+            instances = outputs["instances"].to("cpu")
+
+            v = v.draw_instance_predictions(instances)
+
             plt.imsave('outputs/frame_{}.png'.format(str(i).zfill(3)), v.get_image())
+
+            img = cv2.imread('outputs/frame_{}.png'.format(str(i).zfill(3)))
+            cv2.putText(img, 'num instances: ' + str(len(instances)), (5,100), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.imwrite('outputs/frame_{}.png'.format(str(i).zfill(3)), img)
+
+            print ('num instances: ' + str(len(instances)))
             print ('saved outputs/frame_{}.png'.format(str(i).zfill(3)))
-            #output_file.write(v.get_image())
+
             i += 1
         else:
             break
@@ -199,6 +207,9 @@ if __name__ == "__main__":
 
     # default confugration
     cfg = get_cfg()
+
+    # Do inference on CPU, so I can do it on my laptop...
+    cfg.MODEL.DEVICE='cpu'
 
     # update configuration with RetinaNet configuration
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/retinanet_R_50_FPN_3x.yaml"))
