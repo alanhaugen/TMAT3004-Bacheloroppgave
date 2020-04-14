@@ -1,4 +1,0 @@
-[core]
-    remote = usb
-['remote "usb"']
-    url = e:/dvc
