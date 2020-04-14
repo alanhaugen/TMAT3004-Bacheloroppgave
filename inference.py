@@ -211,7 +211,9 @@ if __name__ == "__main__":
     cfg.MODEL.DEVICE='cpu'
 
     # update configuration with RetinaNet configuration
-    cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/retinanet_R_50_FPN_3x.yaml"))
+    #cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/retinanet_R_50_FPN_3x.yaml"))
+    cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
 
     # We have registered the train and test data set with name traffic_sign_train and traffic_sign_test.
     # Let's replace the detectron2 default train dataset with our train dataset.
@@ -224,7 +226,8 @@ if __name__ == "__main__":
     cfg.DATALOADER.NUM_WORKERS = 4
 
     # Update model URL in detectron2 config file
-    cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/retinanet_R_50_FPN_3x.yaml")
+    #cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/retinanet_R_50_FPN_3x.yaml")
+    cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
 
     # slover configuration
 
