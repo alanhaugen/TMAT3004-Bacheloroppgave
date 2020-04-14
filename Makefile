@@ -3,11 +3,11 @@
 out.avi: outputs/model_final.pth in.mp4
 	python inference.py
 
-outputs/models_final.pth: data
+outputs/model_final.pth: data
 	python train.py
 
 data:
-	wget https://www.dropbox.com/s/38ry8ny1lwi1kip/data.zip
+	curl -L https://www.dropbox.com/s/38ry8ny1lwi1kip/data.zip --output data.zip
 	unzip data.zip
 	rm data.zip
 
