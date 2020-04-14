@@ -227,7 +227,7 @@ if __name__ == "__main__":
     # We need to specify the number of iteration for training in detectron2, not the number of epochs.
     # lets convert number of epoch to number or iteration (max iteration)
 
-    epoch = 20
+    epoch = 50
     max_iter = int(epoch * train_img_count / cfg.SOLVER.IMS_PER_BATCH)
     max_iter = 500
 
@@ -285,7 +285,7 @@ if __name__ == "__main__":
     inference_on_dataset(trainer.model, val_loader, evaluator)
 
     # Run inference on video
-    video_read_write('in.mp4')
+    #video_read_write('in.mp4')
 
     # Store ONNX model
     #inputs = next(iter(val_loader))
