@@ -200,8 +200,8 @@ if __name__ == "__main__":
     # default confugration
     cfg = get_cfg()
 
-    # Do inference on CPU, so I can do it on my laptop...
-    cfg.MODEL.DEVICE='cpu'
+    # Do inference on CPU
+    #cfg.MODEL.DEVICE='cpu'
 
     # update configuration with RetinaNet configuration
     #cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/retinanet_R_50_FPN_3x.yaml"))
