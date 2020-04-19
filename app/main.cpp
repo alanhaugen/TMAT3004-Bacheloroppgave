@@ -151,45 +151,51 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
     }
 }
 
-int main()
+int main(int argumentQuantity, char *arguments[])
 {
-    string videoPath = "in.mp4";
-    //string videoPath = "data/video/soccer-ball.mp4";
-    //string videoPath = "data/video/syntetisk_torsk.mkv";
-    //string videoPath = "C:/lagringsmerd bernt o.MP4";
-
     string filename = "log.csv";
     bool newFile = true;
 
-    // Check if file exists
+    // Check if log file exists
     ifstream ifile(filename);
     if (ifile)
     {
         newFile = false;
     }
 
-    // Open file
+    // Open log file
     logFile.open(filename, std::ios_base::app);
 
-    // Write what you find in the csv file on the first line of the csv file
+    // Write what you will find in the log file on the first line, it is a csv file
     if (newFile)
     {
-        logFile << "atlantic_cod_quantity,saithe_quantity,datetime" << std::endl;
+        logFile << "atlantic_cod_quantity,saithe_quantity,datetime" << endl;
     }
 
-    VideoCapture video(videoPath);
-    //VideoCapture video(0);
+    // Open video file
+    VideoCapture video;
+
+    // Use webcam or filepath from command line
+    if (argumentQuantity > 1)
+    {
+        string videoPath = arguments[1];
+        video = VideoCapture(videoPath);
+    }
+    else
+    {
+        video = VideoCapture(0);
+    }
 
     float width  = video.get(CAP_PROP_FRAME_WIDTH);
     float height = video.get(CAP_PROP_FRAME_HEIGHT);
-
-    VideoWriter videoWrite("out.avi", VideoWriter::fourcc('M','J','P','G'), 10, Size(width, height));
 
     if (video.isOpened() == false)
     {
         cout << "Failed to open video stream" << endl;
         return -1;
     }
+
+    VideoWriter videoWrite("out.avi", VideoWriter::fourcc('M','J','P','G'), 10, Size(width, height));
 
     namedWindow(WINDOW_TITLE, WINDOW_AUTOSIZE);
 
@@ -237,8 +243,6 @@ int main()
 
     // Load the network
     Net net = readNetFromDarknet(modelConfiguration, modelWeights);
-    //Net net = readNetFromTorch("outputs/model_final.pth");
-    //Net net = readNetFromONNX("outputs/model.onnx");
 
     // TODO: Check model?
 
@@ -325,21 +329,22 @@ int main()
         putText(frame, "Atlantic cod quantity: " + std::to_string(codQuantity), Point(100,100), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
         putText(frame, "Saithe quantity: " + std::to_string(saitheQuantity), Point(100,130), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
 
-        //putText(frame, "FPS : " + SSTR(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
+        putText(frame, "FPS : " + std::to_string(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
         //putText(frame, trackerType + " Tracker", Point(100,150), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50),2);
 
         videoWrite.write(frame);
 
         imshow(WINDOW_TITLE, frame);
 
-        //auto start = std::chrono::system_clock::now();
-        // Some computation here
+        // Get the time
         auto end = std::chrono::system_clock::now();
-        //std::chrono::duration<double> elapsed_seconds = end-start;
         std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+        // Remove the newline after time which is typically included from the C library call
         char *time = ctime(&end_time);
         if (time[strlen(time)-1] == '\n') time[strlen(time)-1] = '\0';
 
+        // Log cod and saith quantities to csv file
         if (codQuantity > 0 || saitheQuantity > 0)
         {
             logFile << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
