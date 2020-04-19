@@ -174,7 +174,7 @@ int main()
     // Write what you find in the csv file on the first line of the csv file
     if (newFile)
     {
-        logFile << "atlantic_cod_quantity saithe_quantity weekday month date time year" << std::endl;
+        logFile << "atlantic_cod_quantity,saithe_quantity,datetime" << std::endl;
     }
 
     VideoCapture video(videoPath);
@@ -337,10 +337,12 @@ int main()
         auto end = std::chrono::system_clock::now();
         //std::chrono::duration<double> elapsed_seconds = end-start;
         std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+        char *time = ctime(&end_time);
+        if (time[strlen(time)-1] == '\n') time[strlen(time)-1] = '\0';
 
         if (codQuantity > 0 || saitheQuantity > 0)
         {
-            logFile << codQuantity << " " << saitheQuantity << " " << std::ctime(&end_time);
+            logFile << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
         }
     }
 
