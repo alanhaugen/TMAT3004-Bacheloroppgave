@@ -3,6 +3,8 @@
 #include <opencv2/tracking.hpp>
 #include <fstream>
 //#include "matplotlibcpp.h"
+#include <chrono>
+#include <ctime>
 
 using namespace std;
 //using namespace matplotlibcpp;
@@ -19,10 +21,13 @@ vector<string> classes;
 
 const int trackingFailureFramesQuantity = 10;
 
-Ptr<Tracker> tracker;
+//Ptr<Tracker> tracker;
 Rect2d bbox;
+int codQuantity, saitheQuantity;
 
 string objectLabel;
+
+std::ofstream logFile;
 
 enum
 {
@@ -88,6 +93,9 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
     vector<float> confidences;
     vector<Rect> boxes;
 
+    codQuantity = 0;
+    saitheQuantity = 0;
+
     for (size_t i = 0; i < outs.size(); ++i)
     {
         // Scan through all the bounding boxes output from the network and keep only the
@@ -102,12 +110,16 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
             // Get the value and location of the maximum score
             minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
 
-            if (classes[classIdPoint.x] != "sports ball")
-            {
-                continue;
-            }
             if (confidence > confThreshold)
             {
+                if (classes[classIdPoint.x] == "atlantic cod") {
+                    codQuantity++;
+                }
+                else if (classes[classIdPoint.x] == "saithe")
+                {
+                    saitheQuantity++;
+                }
+
                 int centerX = (int)(data[0] * frame.cols);
                 int centerY = (int)(data[1] * frame.rows);
                 int width = (int)(data[2] * frame.cols);
@@ -119,9 +131,9 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
                 confidences.push_back((float)confidence);
                 boxes.push_back(Rect(left, top, width, height));
 
-                state = TRACKING;
+                //state = TRACKING;
                 bbox = Rect2d(centerX - (width / 2), centerY - (height / 2), width, height); // KFC works best with a tight crop
-                tracker->init(frame, bbox);
+                //tracker->init(frame, bbox);
             }
         }
     }
@@ -146,6 +158,25 @@ int main()
     //string videoPath = "data/video/syntetisk_torsk.mkv";
     //string videoPath = "C:/lagringsmerd bernt o.MP4";
 
+    string filename = "log.csv";
+    bool newFile = true;
+
+    // Check if file exists
+    ifstream ifile(filename);
+    if (ifile)
+    {
+        newFile = false;
+    }
+
+    // Open file
+    logFile.open(filename, std::ios_base::app);
+
+    // Write what you find in the csv file on the first line of the csv file
+    if (newFile)
+    {
+        logFile << "atlantic_cod_quantity saithe_quantity weekday month date time year" << std::endl;
+    }
+
     VideoCapture video(videoPath);
     //VideoCapture video(0);
 
@@ -164,7 +195,7 @@ int main()
 
     Mat frame;
 
-    string trackerTypes[8] = {"BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "GOTURN", "CSRT", "MOSSE"};
+    /*string trackerTypes[8] = {"BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "GOTURN", "CSRT", "MOSSE"};
 
     string trackerType = trackerTypes[2];
 
@@ -183,7 +214,7 @@ int main()
     else if (trackerType == "CSRT")
         tracker = TrackerCSRT::create();
     else if (trackerType == "MOSSE")
-        tracker = TrackerMOSSE::create();
+        tracker = TrackerMOSSE::create();*/
 
     state = DETECTION;
 
@@ -195,19 +226,19 @@ int main()
     int inpHeight = 416; // Height of network's input image
 
     // Load names of classes
-    string classesFile = "data/models/coco.names";
+    string classesFile = "data/models/obj.names";
     ifstream ifs(classesFile.c_str());
     string line;
     while (getline(ifs, line)) classes.push_back(line);
 
     // Give the configuration and weight files for the model
-//    String modelConfiguration = "";//"data/models/yolov3.cfg";
-//    String modelWeights = "";//"data/models/yolov3.weights";
+    String modelConfiguration = "data/models/yolov3.cfg";
+    String modelWeights = "data/models/yolov3.weights";
 
     // Load the network
-    //Net net = readNetFromDarknet(modelConfiguration, modelWeights);
+    Net net = readNetFromDarknet(modelConfiguration, modelWeights);
     //Net net = readNetFromTorch("outputs/model_final.pth");
-    Net net = readNetFromONNX("outputs/model.onnx");
+    //Net net = readNetFromONNX("outputs/model.onnx");
 
     // TODO: Check model?
 
@@ -230,9 +261,9 @@ int main()
             break;
         }
 
-        if (state == TRACKING)
+        /*if (state == TRACKING)
         {
-            bool ok = tracker->update(frame, bbox);
+            //bool ok = tracker->update(frame, bbox);
 
             if (ok)
             {
@@ -252,10 +283,10 @@ int main()
             {
                 state = DETECTION;
             }
-        }
+        }*/
         if (state == DETECTION)
         {
-            putText(frame, "Tracking failure detected", Point(100,90), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
+            //putText(frame, "Tracking failure detected", Point(100,90), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
 
             // Create a 4D blob from a frame.
             Mat blob;
@@ -291,13 +322,29 @@ int main()
             putText(frame, "TRACKING", Point(100,70), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
         }
 
+        putText(frame, "Atlantic cod quantity: " + std::to_string(codQuantity), Point(100,100), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
+        putText(frame, "Saithe quantity: " + std::to_string(saitheQuantity), Point(100,130), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
+
         //putText(frame, "FPS : " + SSTR(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
-        putText(frame, trackerType + " Tracker", Point(100,150), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50),2);
+        //putText(frame, trackerType + " Tracker", Point(100,150), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50),2);
 
         videoWrite.write(frame);
 
         imshow(WINDOW_TITLE, frame);
+
+        //auto start = std::chrono::system_clock::now();
+        // Some computation here
+        auto end = std::chrono::system_clock::now();
+        //std::chrono::duration<double> elapsed_seconds = end-start;
+        std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+        if (codQuantity > 0 || saitheQuantity > 0)
+        {
+            logFile << codQuantity << " " << saitheQuantity << " " << std::ctime(&end_time);
+        }
     }
+
+    logFile.close();
 
     video.release();
     videoWrite.release();
