@@ -35,8 +35,6 @@ enum
     TRACKING
 };
 
-bool state;
-
 const char *WINDOW_TITLE = "Press ESC to quit";
 
 #define SSTR( x ) static_cast< std::ostringstream & >( \
@@ -69,11 +67,11 @@ void drawPred(int classId, float conf, int left, int top, int right, int bottom,
     rectangle(frame, Point(left, top), Point(right, bottom), Scalar(255, 178, 50), 3);
 
     // Get the label for the class name and its confidence
-    string label = format("%.2f", conf);
+    string label = format("%.1f", conf * 100);
     if (!classes.empty())
     {
         CV_Assert(classId < (int)classes.size());
-        label = classes[classId] + ":" + label;
+        label = classes[classId] + " " + label + "\%";
     }
 
     // Display the label at the top of the bounding box
@@ -131,7 +129,6 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
                 confidences.push_back((float)confidence);
                 boxes.push_back(Rect(left, top, width, height));
 
-                //state = TRACKING;
                 bbox = Rect2d(centerX - (width / 2), centerY - (height / 2), width, height); // KFC works best with a tight crop
                 //tracker->init(frame, bbox);
             }
@@ -183,6 +180,7 @@ int main(int argumentQuantity, char *arguments[])
     }
     else
     {
+        clog << "Usage: ./OBJECT_DETECTOR <videoPath>\nNo video path given. Using camera 0" << endl;
         video = VideoCapture(0);
     }
 
@@ -220,9 +218,17 @@ int main(int argumentQuantity, char *arguments[])
     else if (trackerType == "CSRT")
         tracker = TrackerCSRT::create();
     else if (trackerType == "MOSSE")
-        tracker = TrackerMOSSE::create();*/
+        tracker = TrackerMOSSE::create();
 
-    state = DETECTION;
+    // Create multitracker
+    Ptr<MultiTracker> multiTracker = cv::MultiTracker::create();
+
+    // Initialize multitracker
+    for(int i=0; i < bboxes.size(); i++)
+    {
+        multiTracker->add(createTrackerByName(trackerType), frame, Rect2d(bboxes[i]));
+    }
+    */
 
     // Initialize the parameters
     float objectnessThreshold = 0.5; // Objectness threshold
@@ -265,7 +271,18 @@ int main(int argumentQuantity, char *arguments[])
             break;
         }
 
-        /*if (state == TRACKING)
+        /*
+        // Update the tracking result with new frame
+        multiTracker->update(frame);
+
+        // Draw tracked objects
+        for(unsigned i=0; i<multiTracker->getObjects().size(); i++)
+        {
+          rectangle(frame, multiTracker->getObjects()[i], colors[i], 2, 1);
+        }
+
+        // REMOVE
+        if (state == TRACKING)
         {
             //bool ok = tracker->update(frame, bbox);
 
@@ -288,43 +305,30 @@ int main(int argumentQuantity, char *arguments[])
                 state = DETECTION;
             }
         }*/
-        if (state == DETECTION)
-        {
-            //putText(frame, "Tracking failure detected", Point(100,90), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
+        //putText(frame, "Tracking failure detected", Point(100,90), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
 
-            // Create a 4D blob from a frame.
-            Mat blob;
-            blobFromImage(frame, blob, 1/255.0, Size(inpWidth, inpHeight), Scalar(0,0,0), true, false);
+        // Create a 4D blob from a frame.
+        Mat blob;
+        blobFromImage(frame, blob, 1/255.0, Size(inpWidth, inpHeight), Scalar(0,0,0), true, false);
 
-            //Sets the input to the network
-            net.setInput(blob);
+        //Sets the input to the network
+        net.setInput(blob);
 
-            // Runs the forward pass to get output of the output layers
-            vector<Mat> outs;
-            net.forward(outs, getOutputsNames(net));
+        // Runs the forward pass to get output of the output layers
+        vector<Mat> outs;
+        net.forward(outs, getOutputsNames(net));
 
-            // Remove the bounding boxes with low confidence
-            postprocess(frame, outs);
+        // Remove the bounding boxes with low confidence
+        postprocess(frame, outs);
 
-            // Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
-            vector<double> layersTimes;
-            double freq = getTickFrequency() / 1000;
-            double t = net.getPerfProfile(layersTimes) / freq;
-            string label = format("Inference time for a frame : %.2f ms", t);
-            putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
-        }
+        // Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
+        vector<double> layersTimes;
+        double freq = getTickFrequency() / 1000;
+        double t = net.getPerfProfile(layersTimes) / freq;
+        string label = format("Inference time for a frame : %.2f ms", t);
+        putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
 
         float fps = getTickFrequency() / ((double)getTickCount() - timer);
-
-        // Print state output
-        if (state == DETECTION)
-        {
-            putText(frame, "DETECTION", Point(100,70), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
-        }
-        else if (state == TRACKING)
-        {
-            putText(frame, "TRACKING", Point(100,70), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
-        }
 
         putText(frame, "Atlantic cod quantity: " + std::to_string(codQuantity), Point(100,100), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
         putText(frame, "Saithe quantity: " + std::to_string(saitheQuantity), Point(100,130), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
@@ -348,6 +352,7 @@ int main(int argumentQuantity, char *arguments[])
         if (codQuantity > 0 || saitheQuantity > 0)
         {
             logFile << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
+            cout << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
         }
     }
 
