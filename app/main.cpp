@@ -3,6 +3,8 @@
 #include <opencv2/tracking.hpp>
 #include <fstream>
 //#include "matplotlibcpp.h"
+#include <chrono>
+#include <ctime>
 
 using namespace std;
 //using namespace matplotlibcpp;
@@ -19,18 +21,19 @@ vector<string> classes;
 
 const int trackingFailureFramesQuantity = 10;
 
-Ptr<Tracker> tracker;
+//Ptr<Tracker> tracker;
 Rect2d bbox;
+int codQuantity, saitheQuantity;
 
 string objectLabel;
+
+std::ofstream logFile;
 
 enum
 {
     DETECTION,
     TRACKING
 };
-
-bool state;
 
 const char *WINDOW_TITLE = "Press ESC to quit";
 
@@ -64,11 +67,11 @@ void drawPred(int classId, float conf, int left, int top, int right, int bottom,
     rectangle(frame, Point(left, top), Point(right, bottom), Scalar(255, 178, 50), 3);
 
     // Get the label for the class name and its confidence
-    string label = format("%.2f", conf);
+    string label = format("%.1f", conf * 100);
     if (!classes.empty())
     {
         CV_Assert(classId < (int)classes.size());
-        label = classes[classId] + ":" + label;
+        label = classes[classId] + " " + label + "\%";
     }
 
     // Display the label at the top of the bounding box
@@ -88,6 +91,9 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
     vector<float> confidences;
     vector<Rect> boxes;
 
+    codQuantity = 0;
+    saitheQuantity = 0;
+
     for (size_t i = 0; i < outs.size(); ++i)
     {
         // Scan through all the bounding boxes output from the network and keep only the
@@ -102,12 +108,16 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
             // Get the value and location of the maximum score
             minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
 
-            if (classes[classIdPoint.x] != "sports ball")
-            {
-                continue;
-            }
             if (confidence > confThreshold)
             {
+                if (classes[classIdPoint.x] == "atlantic cod") {
+                    codQuantity++;
+                }
+                else if (classes[classIdPoint.x] == "saithe")
+                {
+                    saitheQuantity++;
+                }
+
                 int centerX = (int)(data[0] * frame.cols);
                 int centerY = (int)(data[1] * frame.rows);
                 int width = (int)(data[2] * frame.cols);
@@ -119,9 +129,8 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
                 confidences.push_back((float)confidence);
                 boxes.push_back(Rect(left, top, width, height));
 
-                state = TRACKING;
                 bbox = Rect2d(centerX - (width / 2), centerY - (height / 2), width, height); // KFC works best with a tight crop
-                tracker->init(frame, bbox);
+                //tracker->init(frame, bbox);
             }
         }
     }
@@ -139,20 +148,44 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
     }
 }
 
-int main()
+int main(int argumentQuantity, char *arguments[])
 {
-    string videoPath = "in.mp4";
-    //string videoPath = "data/video/soccer-ball.mp4";
-    //string videoPath = "data/video/syntetisk_torsk.mkv";
-    //string videoPath = "C:/lagringsmerd bernt o.MP4";
+    string filename = "log.csv";
+    bool newFile = true;
 
-    VideoCapture video(videoPath);
-    //VideoCapture video(0);
+    // Check if log file exists
+    ifstream ifile(filename);
+    if (ifile)
+    {
+        newFile = false;
+    }
+
+    // Open log file
+    logFile.open(filename, std::ios_base::app);
+
+    // Write what you will find in the log file on the first line, it is a csv file
+    if (newFile)
+    {
+        logFile << "atlantic_cod_quantity,saithe_quantity,datetime" << endl;
+    }
+
+    // Open video file
+    VideoCapture video;
+
+    // Use webcam or filepath from command line
+    if (argumentQuantity > 1)
+    {
+        string videoPath = arguments[1];
+        video = VideoCapture(videoPath);
+    }
+    else
+    {
+        clog << "Usage: ./OBJECT_DETECTOR <videoPath>\nNo video path given. Using camera 0" << endl;
+        video = VideoCapture(0);
+    }
 
     float width  = video.get(CAP_PROP_FRAME_WIDTH);
     float height = video.get(CAP_PROP_FRAME_HEIGHT);
-
-    VideoWriter videoWrite("out.avi", VideoWriter::fourcc('M','J','P','G'), 10, Size(width, height));
 
     if (video.isOpened() == false)
     {
@@ -160,11 +193,13 @@ int main()
         return -1;
     }
 
+    VideoWriter videoWrite("out.avi", VideoWriter::fourcc('M','J','P','G'), 10, Size(width, height));
+
     namedWindow(WINDOW_TITLE, WINDOW_AUTOSIZE);
 
     Mat frame;
 
-    string trackerTypes[8] = {"BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "GOTURN", "CSRT", "MOSSE"};
+    /*string trackerTypes[8] = {"BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "GOTURN", "CSRT", "MOSSE"};
 
     string trackerType = trackerTypes[2];
 
@@ -185,7 +220,15 @@ int main()
     else if (trackerType == "MOSSE")
         tracker = TrackerMOSSE::create();
 
-    state = DETECTION;
+    // Create multitracker
+    Ptr<MultiTracker> multiTracker = cv::MultiTracker::create();
+
+    // Initialize multitracker
+    for(int i=0; i < bboxes.size(); i++)
+    {
+        multiTracker->add(createTrackerByName(trackerType), frame, Rect2d(bboxes[i]));
+    }
+    */
 
     // Initialize the parameters
     float objectnessThreshold = 0.5; // Objectness threshold
@@ -195,19 +238,17 @@ int main()
     int inpHeight = 416; // Height of network's input image
 
     // Load names of classes
-    string classesFile = "data/models/coco.names";
+    string classesFile = "data/models/obj.names";
     ifstream ifs(classesFile.c_str());
     string line;
     while (getline(ifs, line)) classes.push_back(line);
 
     // Give the configuration and weight files for the model
-//    String modelConfiguration = "";//"data/models/yolov3.cfg";
-//    String modelWeights = "";//"data/models/yolov3.weights";
+    String modelConfiguration = "data/models/yolov3.cfg";
+    String modelWeights = "data/models/yolov3.weights";
 
     // Load the network
-    //Net net = readNetFromDarknet(modelConfiguration, modelWeights);
-    //Net net = readNetFromTorch("outputs/model_final.pth");
-    Net net = readNetFromONNX("outputs/model.onnx");
+    Net net = readNetFromDarknet(modelConfiguration, modelWeights);
 
     // TODO: Check model?
 
@@ -230,9 +271,20 @@ int main()
             break;
         }
 
+        /*
+        // Update the tracking result with new frame
+        multiTracker->update(frame);
+
+        // Draw tracked objects
+        for(unsigned i=0; i<multiTracker->getObjects().size(); i++)
+        {
+          rectangle(frame, multiTracker->getObjects()[i], colors[i], 2, 1);
+        }
+
+        // REMOVE
         if (state == TRACKING)
         {
-            bool ok = tracker->update(frame, bbox);
+            //bool ok = tracker->update(frame, bbox);
 
             if (ok)
             {
@@ -252,52 +304,59 @@ int main()
             {
                 state = DETECTION;
             }
-        }
-        if (state == DETECTION)
-        {
-            putText(frame, "Tracking failure detected", Point(100,90), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
+        }*/
+        //putText(frame, "Tracking failure detected", Point(100,90), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
 
-            // Create a 4D blob from a frame.
-            Mat blob;
-            blobFromImage(frame, blob, 1/255.0, Size(inpWidth, inpHeight), Scalar(0,0,0), true, false);
+        // Create a 4D blob from a frame.
+        Mat blob;
+        blobFromImage(frame, blob, 1/255.0, Size(inpWidth, inpHeight), Scalar(0,0,0), true, false);
 
-            //Sets the input to the network
-            net.setInput(blob);
+        //Sets the input to the network
+        net.setInput(blob);
 
-            // Runs the forward pass to get output of the output layers
-            vector<Mat> outs;
-            net.forward(outs, getOutputsNames(net));
+        // Runs the forward pass to get output of the output layers
+        vector<Mat> outs;
+        net.forward(outs, getOutputsNames(net));
 
-            // Remove the bounding boxes with low confidence
-            postprocess(frame, outs);
+        // Remove the bounding boxes with low confidence
+        postprocess(frame, outs);
 
-            // Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
-            vector<double> layersTimes;
-            double freq = getTickFrequency() / 1000;
-            double t = net.getPerfProfile(layersTimes) / freq;
-            string label = format("Inference time for a frame : %.2f ms", t);
-            putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
-        }
+        // Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
+        vector<double> layersTimes;
+        double freq = getTickFrequency() / 1000;
+        double t = net.getPerfProfile(layersTimes) / freq;
+        string label = format("Inference time for a frame : %.2f ms", t);
+        putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
 
         float fps = getTickFrequency() / ((double)getTickCount() - timer);
 
-        // Print state output
-        if (state == DETECTION)
-        {
-            putText(frame, "DETECTION", Point(100,70), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
-        }
-        else if (state == TRACKING)
-        {
-            putText(frame, "TRACKING", Point(100,70), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
-        }
+        putText(frame, "Atlantic cod quantity: " + std::to_string(codQuantity), Point(100,100), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
+        putText(frame, "Saithe quantity: " + std::to_string(saitheQuantity), Point(100,130), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
 
-        //putText(frame, "FPS : " + SSTR(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
-        putText(frame, trackerType + " Tracker", Point(100,150), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50),2);
+        putText(frame, "FPS : " + std::to_string(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
+        //putText(frame, trackerType + " Tracker", Point(100,150), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50),2);
 
         videoWrite.write(frame);
 
         imshow(WINDOW_TITLE, frame);
+
+        // Get the time
+        auto end = std::chrono::system_clock::now();
+        std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+        // Remove the newline after time which is typically included from the C library call
+        char *time = ctime(&end_time);
+        if (time[strlen(time)-1] == '\n') time[strlen(time)-1] = '\0';
+
+        // Log cod and saith quantities to csv file
+        if (codQuantity > 0 || saitheQuantity > 0)
+        {
+            logFile << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
+            cout << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
+        }
     }
+
+    logFile.close();
 
     video.release();
     videoWrite.release();

@@ -4,6 +4,7 @@ app/CMakeLists.txt.user
 build*
 out.avi
 in.mp4
+log.csv
 
 # Trainer
 *.png
