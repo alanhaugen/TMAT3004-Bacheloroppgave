@@ -8,4 +8,4 @@ QtCreator can open the cmake file CMakeLists.txt
 
 You need OpenCV, see https://medium.com/beesightsoft/build-opencv-opencv-contrib-on-windows-2e3b1ca96955 
 
-Download data used for training here: https://www.dropbox.com/s/38ry8ny1lwi1kip/data.zip
+Download data used for training here: https://www.dropbox.com/s/aym2lmnzjlam16v/data.zip
