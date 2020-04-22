@@ -7,7 +7,7 @@ SET(Python2_ROOT_DIR ${PYTHONHOME})
 
 find_package(Python2 COMPONENTS Development NumPy)
 
-SET(OpenCV_DIR C:eopencv-4.3.0/opencv/build)
+SET(OpenCV_DIR C:/opencv-4.3.0/opencv/build)
 
 if( UNIX )
     include_directories(~/anaconda2/include/python2.7 ~/anaconda2/lib/python2.7/site-packages/numpy/core/include/ ~/anaconda2/include)

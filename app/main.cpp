@@ -19,26 +19,49 @@ int inpWidth;  // Width of network's input image
 int inpHeight; // Height of network's input image
 vector<string> classes;
 
-const int trackingFailureFramesQuantity = 10;
+bool isTracking;
 
-//Ptr<Tracker> tracker;
-Rect2d bbox;
+vector<Rect2d> bboxes;
+vector<Ptr<Tracker>> trackers;
 int codQuantity, saitheQuantity;
 
 string objectLabel;
 
-std::ofstream logFile;
-
-enum
-{
-    DETECTION,
-    TRACKING
-};
-
 const char *WINDOW_TITLE = "Press ESC to quit";
+vector<string> trackerTypes = {"BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "GOTURN", "MOSSE", "CSRT"};
 
-#define SSTR( x ) static_cast< std::ostringstream & >( \
-( std::ostringstream() << std::dec << x ) ).str()
+// Create tracker by name
+Ptr<Tracker> createTrackerByName(string trackerType)
+{
+    Ptr<Tracker> tracker;
+    if (trackerType ==  trackerTypes[0])
+        tracker = TrackerBoosting::create();
+    else if (trackerType == trackerTypes[1])
+        tracker = TrackerMIL::create();
+    else if (trackerType == trackerTypes[2])
+        tracker = TrackerKCF::create();
+    else if (trackerType == trackerTypes[3])
+        tracker = TrackerTLD::create();
+    else if (trackerType == trackerTypes[4])
+        tracker = TrackerMedianFlow::create();
+    else if (trackerType == trackerTypes[5])
+        tracker = TrackerGOTURN::create();
+    else if (trackerType == trackerTypes[6])
+        tracker = TrackerMOSSE::create();
+    else if (trackerType == trackerTypes[7])
+        tracker = TrackerCSRT::create();
+    else
+    {
+        cout << "Incorrect tracker name" << endl;
+        cout << "Available trackers are: " << endl;
+        for (vector<string>::iterator it = trackerTypes.begin() ; it != trackerTypes.end(); ++it)
+        {
+            std::cout << " " << *it << endl;
+        }
+    }
+
+    return tracker;
+}
 
 // Get the names of the output layers
 auto getOutputsNames(const Net& net)
@@ -55,7 +78,7 @@ auto getOutputsNames(const Net& net)
         // Get the names of the output layers in names
         names.resize(outLayers.size());
         for (size_t i = 0; i < outLayers.size(); ++i)
-        names[i] = layersNames[outLayers[i] - 1];
+            names[i] = layersNames[outLayers[i] - 1];
     }
     return names;
 }
@@ -129,8 +152,16 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
                 confidences.push_back((float)confidence);
                 boxes.push_back(Rect(left, top, width, height));
 
-                bbox = Rect2d(centerX - (width / 2), centerY - (height / 2), width, height); // KFC works best with a tight crop
-                //tracker->init(frame, bbox);
+                if (isTracking == false)
+                {
+                    Rect2d bbox(centerX - (width / 2), centerY - (height / 2), width, height); // KCF works best with a tight crop
+                    bboxes.push_back(bbox);
+
+                    Ptr<Tracker> newTracker = createTrackerByName(trackerTypes[2]); // Use KCF
+                    newTracker->init(frame, Rect2d(bboxes[i]));
+
+                    trackers.push_back(newTracker);
+                }
             }
         }
     }
@@ -146,10 +177,15 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
         drawPred(classIds[idx], confidences[idx], box.x, box.y,
                  box.x + box.width, box.y + box.height, frame);
     }
+
+    isTracking = true;
 }
 
 int main(int argumentQuantity, char *arguments[])
 {
+    isTracking = true;
+
+    // Configuration for log file
     string filename = "log.csv";
     bool newFile = true;
 
@@ -161,9 +197,10 @@ int main(int argumentQuantity, char *arguments[])
     }
 
     // Open log file
+    ofstream logFile;
     logFile.open(filename, std::ios_base::app);
 
-    // Write what you will find in the log file on the first line, it is a csv file
+    // Write what you will find in the log file on the first line if it does not already exist
     if (newFile)
     {
         logFile << "atlantic_cod_quantity,saithe_quantity,datetime" << endl;
@@ -172,70 +209,52 @@ int main(int argumentQuantity, char *arguments[])
     // Open video file
     VideoCapture video;
 
+    // Print usage as a warning
+    clog << "Usage: ./OBJECT_DETECTOR <videoPath>" << endl;
+
     // Use webcam or filepath from command line
     if (argumentQuantity > 1)
     {
         string videoPath = arguments[1];
         video = VideoCapture(videoPath);
+        video.set(CAP_PROP_POS_FRAMES, 600); // TODO: REMOVE!
     }
     else
     {
-        clog << "Usage: ./OBJECT_DETECTOR <videoPath>\nNo video path given. Using camera 0" << endl;
+        clog << "No video path given. Using camera 0" << endl;
         video = VideoCapture(0);
     }
 
-    float width  = video.get(CAP_PROP_FRAME_WIDTH);
-    float height = video.get(CAP_PROP_FRAME_HEIGHT);
-
     if (video.isOpened() == false)
     {
-        cout << "Failed to open video stream" << endl;
+        cerr << "Failed to open video stream" << endl;
         return -1;
     }
 
-    VideoWriter videoWrite("out.avi", VideoWriter::fourcc('M','J','P','G'), 10, Size(width, height));
+    // Write out video with bounding boxes and labels to disk
+    //VideoWriter videoWrite("out.avi", VideoWriter::fourcc('M','J','P','G'), 10, Size(width, height));
 
-    namedWindow(WINDOW_TITLE, WINDOW_AUTOSIZE);
-
+    // Frame matrix
     Mat frame;
 
-    /*string trackerTypes[8] = {"BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "GOTURN", "CSRT", "MOSSE"};
-
-    string trackerType = trackerTypes[2];
-
-    if (trackerType == "BOOSTING")
-        tracker = TrackerBoosting::create();
-    else if (trackerType == "MIL")
-        tracker = TrackerMIL::create();
-    else if (trackerType == "KCF")
-        tracker = TrackerKCF::create();
-    else if (trackerType == "TLD")
-        tracker = TrackerTLD::create();
-    else if (trackerType == "MEDIANFLOW")
-        tracker = TrackerMedianFlow::create();
-    else if (trackerType == "GOTURN")
-        tracker = TrackerGOTURN::create();
-    else if (trackerType == "CSRT")
-        tracker = TrackerCSRT::create();
-    else if (trackerType == "MOSSE")
-        tracker = TrackerMOSSE::create();
-
-    // Create multitracker
-    Ptr<MultiTracker> multiTracker = cv::MultiTracker::create();
-
-    // Initialize multitracker
-    for(int i=0; i < bboxes.size(); i++)
-    {
-        multiTracker->add(createTrackerByName(trackerType), frame, Rect2d(bboxes[i]));
-    }
-    */
-
     // Initialize the parameters
-    float objectnessThreshold = 0.5; // Objectness threshold
-    float confThreshold = 0.5; // Confidence threshold
-    float nmsThreshold = 0.4;  // Non-maximum suppression threshold
     int inpWidth = 416;  // Width of network's input image
     int inpHeight = 416; // Height of network's input image
+
+    // Give the configuration and weight files for the model
+    String modelConfiguration = "data/models/yolov3.cfg";
+    String modelWeights = "data/models/yolov3.weights";
+
+    // Check if model exists in data folder
+    ifile = ifstream(modelConfiguration);
+    if (!ifile)
+    {
+        cerr << "YOLOv3 model could not be found. Please download and extract data from here: https://www.dropbox.com/s/aym2lmnzjlam16v/data.zip" << endl;
+        return -1;
+    }
+
+    // Load the network
+    Net net = readNetFromDarknet(modelConfiguration, modelWeights);
 
     // Load names of classes
     string classesFile = "data/models/obj.names";
@@ -243,22 +262,29 @@ int main(int argumentQuantity, char *arguments[])
     string line;
     while (getline(ifs, line)) classes.push_back(line);
 
-    // Give the configuration and weight files for the model
-    String modelConfiguration = "data/models/yolov3.cfg";
-    String modelWeights = "data/models/yolov3.weights";
+    // Configure user interface
+    namedWindow(WINDOW_TITLE, WINDOW_AUTOSIZE);
 
-    // Load the network
-    Net net = readNetFromDarknet(modelConfiguration, modelWeights);
-
-    // TODO: Check model?
-
+    // Main loop
     bool isAlive = true;
+    const int ESCAPE_KEYCODE = 27;
+    const int DELAY_MILLISECONDS = 1;
+
+    int key;
 
     while(isAlive)
     {
-        if (waitKey(25) == 27)
+        key = waitKey(DELAY_MILLISECONDS);
+
+        if (key == ESCAPE_KEYCODE)
         {
             isAlive = false;
+            break;
+        }
+
+        if (key == 32)
+        {
+            isTracking = false;
         }
 
         double timer = (double)getTickCount();
@@ -271,41 +297,27 @@ int main(int argumentQuantity, char *arguments[])
             break;
         }
 
-        /*
-        // Update the tracking result with new frame
-        multiTracker->update(frame);
-
-        // Draw tracked objects
-        for(unsigned i=0; i<multiTracker->getObjects().size(); i++)
+        // Loop through trackers manually
+        for(int i = 0; i < int(bboxes.size()); i++)
         {
-          rectangle(frame, multiTracker->getObjects()[i], colors[i], 2, 1);
-        }
+            Ptr<Tracker> tracker = trackers[i];
+            Rect2d bbox = bboxes[i];
 
-        // REMOVE
-        if (state == TRACKING)
-        {
-            //bool ok = tracker->update(frame, bbox);
+            // Update the tracking result with new frame
+            bool ok = tracker->update(frame, bbox);
 
             if (ok)
             {
-                // Tracking success, draw green rectangle around object
-                rectangle(frame, bbox, Scalar(0, 255, 0), 2, 1 );
-
-                // Display the label at the top of the bounding box
-                int baseLine;
-                Size labelSize = getTextSize(objectLabel, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
-                int top = bbox.y;
-                int left = bbox.x;
-                top = max(top, labelSize.height);
-                rectangle(frame, Point(left, top - round(1.5*labelSize.height)), Point(left + round(1.5*labelSize.width), top + baseLine), Scalar(255, 255, 255), FILLED);
-                putText(frame, objectLabel, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,0),1);
+                // Draw tracked objects
+                rectangle(frame, bbox, Scalar(128, 255, 50), 2, 1);
             }
             else
             {
-                state = DETECTION;
+                // Remove this tracker and bbox
+                //trackers.erase(trackers.begin() + i);
+                //bboxes.erase(bboxes.begin() + i);
             }
-        }*/
-        //putText(frame, "Tracking failure detected", Point(100,90), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
+        }
 
         // Create a 4D blob from a frame.
         Mat blob;
@@ -330,14 +342,11 @@ int main(int argumentQuantity, char *arguments[])
 
         float fps = getTickFrequency() / ((double)getTickCount() - timer);
 
+        putText(frame, "FPS: " + std::to_string(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
         putText(frame, "Atlantic cod quantity: " + std::to_string(codQuantity), Point(100,100), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
         putText(frame, "Saithe quantity: " + std::to_string(saitheQuantity), Point(100,130), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
 
-        putText(frame, "FPS : " + std::to_string(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
-        //putText(frame, trackerType + " Tracker", Point(100,150), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50),2);
-
-        videoWrite.write(frame);
-
+        //videoWrite.write(frame);
         imshow(WINDOW_TITLE, frame);
 
         // Get the time
@@ -359,7 +368,9 @@ int main(int argumentQuantity, char *arguments[])
     logFile.close();
 
     video.release();
-    videoWrite.release();
+    //videoWrite.release();
 
     destroyAllWindows();
+
+    return 0;
 }
