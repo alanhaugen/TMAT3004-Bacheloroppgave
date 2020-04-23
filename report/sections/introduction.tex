@@ -1,0 +1,34 @@
+\section{Innledning}
+
+%I innledningen skal du plassere deg i fagfeltet og vise at du har kjennskap til tidligere forskning. Innledningen skal gjøre rede for hva vi vet og hva vi ikke vet om feltet.
+
+%Dette gjør du ved å presentere:
+
+%et problem eller et fenomen du skal studere
+%bakgrunnen for valg av tema
+%problemstillingen eller hypotesene du skal undersøke
+%På slutten av introduksjonen kan du også si noe om hvordan du har tenkt å strukturere resten av oppgaven, som en kort leserguide.
+
+%Et tips er å begynne å skrive på innledningen tidlig, slik at den kan gi retning for det videre arbeidet ditt. Så går du heller over innledningen igjen på slutten for å skrive den helt ferdig. Da får du en innledning som har god sammenheng med resten av teksten.
+
+Sjømatdivisjonen og Akvadivisjonen ved Nofima har en strategisk internsatsing\footnote{\url{https://nofima.no/prosjekt/sameksistens/}} som går ut på å samle kunnskap om sameksistens mellom ulike marine næringer og interesser, deriblant om hvordan man kan unngå konflikter mellom ulike interesser. 
+
+En av problemstillingene er sameksistens mellom fiskeri- og oppdrettsnæringene, og hvordan oppdrettsanlegg påvirker de nærliggende fiskeplassene. I den forbindelse er det interessant å kartlegge omfanget av hvitfisk som beiter på fôr fra oppdrettsanlegg. Dette er en problemstilling som har vært i fokus hos media\footnote{For eksempel \url{https://fiskeribladet.no/nyheter/?artikkel=69867} (hentet 12.02.2020)} etter at flere fiskere har fanget fôrsprengt torsk og sei i fjorder hvor det finnes oppdrettsanlegg. Det hevdes at denne fisken er av betydelig dårligere kvalitet og den kan ha fått i seg medisiner gjennom fôret som gjør at den kan være farlig å spise. 
+
+Det behøves kunnskap om hvor mange villfisk som trekker til oppdrettsanlegg, og under hvilke forhold, slik at man kan komme nærmere en løsning som kan dempe konflikten mellom disse to næringene. 
+
+Målet med dette prosjektet var å utvikle et system som kan telle antall villfisk av ulike arter basert på en videostrøm fra et undervannskamera. Det er ønskelig å kunne vise resultatet som en fordeling av observasjoner over tid for hver art. 
+
+\subsection{Delmål}
+
+\subsubsection{Programvare skrevet i C++}
+
+Prosjektet består i hovedsak av å utvikle en programvare som kan gjøre følgende ved hjelp av maskinlæring: 
+
+\begin{enumerate}
+\item Segmentere fisk fra bakgrunn
+\item Klassifisere hver fisk etter art
+\item Spore hver fisk gjennom hvert bilde i videostrømmen inntil fisken forlater kameraets synsfelt
+\end{enumerate}
+
+Programvaren implementeres i C++ ved hjelp av OpenCV-biblioteket\footnote{https://opencv.org/}. Det kan også være aktuelt å lage et grafisk grensesnitt hvor tellingene fra hver art kan vises i sanntid, men dette er avhengig av om prosjektets omfang tillater det. 
