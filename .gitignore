@@ -7,7 +7,6 @@ in.mp4
 log.csv
 
 # Trainer
-*.png
 outputs
 
 # macOS
