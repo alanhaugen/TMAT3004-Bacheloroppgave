@@ -6,3 +6,20 @@
 \usepackage{parskip}
 \usepackage{verbatim}
 
+\usepackage[
+    style=apa,
+    backend=biber,
+    sortcites=true,
+    sorting=nyt,
+%    isbn=false,
+%    url=false,
+%    doi=false,
+%    eprint=false,
+    hyperref=false,
+    backref=false,
+%    firstinits=false,
+]{biblatex}
+
+\let \citeNP \cite
+\let \citeA \textcite
+\let \cite \parencite

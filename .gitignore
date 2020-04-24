@@ -16,6 +16,8 @@ outputs
 *.swp
 
 # LaTeX
+*.bcf
+*.xml
 #*.pdf
 *.aux
 *.glo

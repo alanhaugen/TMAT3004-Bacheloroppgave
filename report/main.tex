@@ -9,9 +9,9 @@
 \begin{document}
 
 \pagenumbering{gobble}
-\input{titlepage.tex}
+\input{titlepage}
 \newpage
-\include{sections/abstract}
+\include{abstract}
 \newpage
 \include{thanks}
 \newpage
@@ -83,7 +83,7 @@ Jonas Jäger, Erik Rodner, Joachim Denzler, Viviane Wolff1, og Klaus Fricke-Neud
 Department of Electrical Engineering and Information Technology, Fulda University of Applied Sciences, Germany, Computer Vision Group, Friedrich Schiller University Jena, Germany, 2016.
 
 \bibitem{marinescience} 
-Ahmad Salman, Shoaib Ahmad Siddiqui, Faisal Shafait, Ajmal Mian, Mark R. Shortis, Khawar Khurshid, Adrian Ulges, and Ulrich Schwanecke. 
+Ahmad Salman, Shoaib Ahmad Siddiqui, Faisal Shafait, Ajmal Mian, Mark R. Shortis, Khawar Khurshid, Adrian Ulges, og Ulrich Schwanecke. 
 \textit{Automatic fish detection in underwater videos by a deep neural network-based hybrid motion learning system}. 
 ICES Journal of Marine Science, 2019.
 
@@ -92,7 +92,7 @@ Suxia Cui , Yu Zhou, Yonghui Wang, og Lujun Zhai.
 \textit{Fish Detection Using Deep Learning}. 
 Applied Computational Intelligence and Soft Computing, 2020.
 
-\bibitem{latexcompanion} 
+\bibitem{Szegedy m.fl. 2014} 
 Christian Szegedy, Wei Liu, Yangqing Jia, Pierre Sermanet, Scott Reed, Dragomir Anguelov, Dumitru Erhan, Vincent Vanhoucke, og Andrew Rabinovich. 
 \textit{Going deeper with convolutions}. 
 Google Inc., University of Michigan, University of North Carolina, Chapel Hill, arXiv, 2014.
@@ -107,79 +107,124 @@ Vincent Dumoulin, og Francesco Visin.
 \textit{A guide to convolution arithmetic for deep learning}. 
 MILA, Université de Montréal, AIRLab, Politecnico di Milano, 2018.
 
-\bibitem{latexcompanion} 
-Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
-\textit{The \LaTeX\ Companion}. 
-Addison-Wesley, Reading, Massachusetts, 1993.
+\bibitem{resnet} 
+Kaiming He, Xiangyu Zhang, Shaoqing Ren, og Jian Sun. 
+\textit{Deep Residual Learning for Image Recognition}. 
+Microsoft Research, 2015.
+
+\bibitem{vgg} 
+Karen Simonyan, og Andrew Zisserman. 
+\textit{VERY DEEP CONVOLUTIONAL NETWORKS FOR LARGE-SCALE IMAGE RECOGNITION}. 
+Visual Geometry Group, Department of Engineering Science, University of Oxford, 2015.
+
+\bibitem{andrej} 
+Andrej Karpathy. 
+\textit{What I learned from competing against a ConvNet on ImageNet}. 
+Andrej Karpathy blog, 2014.
+
+\bibitem{texton_forests} 
+Jamie Shotton, Matthew Johnson, og Roberto Cipolla. 
+\textit{Semantic Texton Forests for Image Categorization and Segmentation}. 
+Toshiba Corporate R\&D Center Kawasaki, Japan, Department of Engineering University of Cambridge, UK, 2008.
+
+\bibitem{distributed} 
+Jeffrey Dean, Greg S. Corrado, Rajat Monga, Kai Chen, Matthieu Devin, Quoc V. Le, Mark Z. Mao, Marc’Aurelio Ranzato, Andrew Senior, Paul Tucker, Ke Yang, og Andrew Y. Ng. 
+\textit{Large Scale Distributed Deep Networks}. 
+Google Inc., Mountain View, CA, 1993.
+
+\bibitem{primate} 
+Charles F. Cadieu, Ha Hong, Daniel L. K. Yamins, Nicolas Pinto, Diego Ardila, Ethan A. Solomon,
+Najib J. Majaj, og James J. DiCarlo. 
+\textit{Deep Neural Networks Rival the Representation of Primate IT Cortex for Core Visual Object Recognition}. 
+PLOS Computational Biology, 2014.
+
+\bibitem{captioning} 
+Justin Johnson, Andrej Karpathy, og Li Fei-Fei. 
+\textit{DenseCap: Fully Convolutional Localization Networks for Dense Captioning}. 
+Department of Computer Science, Stanford University, 2015.
 
 \bibitem{latexcompanion} 
 Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
 \textit{The \LaTeX\ Companion}. 
 Addison-Wesley, Reading, Massachusetts, 1993.
 
-\bibitem{latexcompanion} 
-Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
-\textit{The \LaTeX\ Companion}. 
-Addison-Wesley, Reading, Massachusetts, 1993.
+\bibitem{Girshick 2015} 
+Ross Girshick. 
+\textit{Fast R-CNN}. 
+Microsoft Research, 2015.
 
-\bibitem{latexcompanion} 
-Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
-\textit{The \LaTeX\ Companion}. 
-Addison-Wesley, Reading, Massachusetts, 1993.
+\bibitem{Ren m.fl. 2016} 
+Shaoqing Ren, Kaiming He, Ross Girshick, og Jian Sun
+\textit{Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks}. 
+University of Science and Technology of China, Microsoft Research, 2016.
 
-\bibitem{latexcompanion} 
-Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
-\textit{The \LaTeX\ Companion}. 
-Addison-Wesley, Reading, Massachusetts, 1993.
+\bibitem{semantic_segmentation} 
+Ross Girshick, Jeff Donahue, Trevor Darrell, og Jitendra Malik. 
+\textit{Rich feature hierarchies for accurate object detection and semantic segmentation}. 
+UC Berkeley, 2014.
 
-\bibitem{latexcompanion} 
-Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
-\textit{The \LaTeX\ Companion}. 
-Addison-Wesley, Reading, Massachusetts, 1993.
+\bibitem{retinanet} 
+Tsung-Yi Lin, Priya Goyal, Ross Girshick, Kaiming He, Piotr Dollár.
+\textit{Focal Loss for Dense Object Detection}
+Facebook AI Research, 2018.
 
-\bibitem{latexcompanion} 
-Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
-\textit{The \LaTeX\ Companion}. 
-Addison-Wesley, Reading, Massachusetts, 1993.
+\bibitem{stochastic_depth} 
+Gao Huang, Yu Sun, Zhuang Liu, Daniel Sedra, og Kilian Q. Weinberger. 
+\textit{Deep Networks with Stochastic Depth}. 
+Cornell University, Tsinghua University, 2016.
 
-\bibitem{latexcompanion} 
-Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
-\textit{The \LaTeX\ Companion}. 
-Addison-Wesley, Reading, Massachusetts, 1993.
+\bibitem{yang} 
+Michael Ying Yang, og Wolfgang Förstner. 
+\textit{A Hierarchical Conditional Random Field Model for Labeling and Classifying Images of Man-made Scenes}. 
+Department of Photogrammetry, Institute of Geodesy and Geoinformation, University of Bonn Nussallee 15, 53115 Bonn, Germany, 2011.
 
-\bibitem{latexcompanion} 
-Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
-\textit{The \LaTeX\ Companion}. 
-Addison-Wesley, Reading, Massachusetts, 1993.
+\bibitem{Redmon 2016} 
+Joseph Redmon. 
+\textit{Darknet: Open Source Neural Networks in C}. 
+\url{http://pjreddie.com/darknet/}, 2013-2016.
 
-\bibitem{latexcompanion} 
-Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
-\textit{The \LaTeX\ Companion}. 
-Addison-Wesley, Reading, Massachusetts, 1993.
+\bibitem{Redmon 2018} 
+Joseph Redmon. 
+\textit{YOLOv3: An Incremental Improvement}. 
+arXiv, 2018.
 
-\bibitem{einstein} 
-Albert Einstein. 
-\textit{Zur Elektrodynamik bewegter K{\"o}rper}. (German) 
-[\textit{On the electrodynamics of moving bodies}]. 
-Annalen der Physik, 322(10):891–921, 1905.
+\bibitem{Robertsen 2020} 
+Roy Robertsen. 
+\textit{Sameksistens av marine næringer i kystsonen}. 
+Nofima, \url{https://nofima.no/prosjekt/sameksistens}, 2020.
 
-\bibitem{knuthwebsite} 
-Knuth: Computers and Typesetting,
-\\\texttt{http://www-cs-faculty.stanford.edu/\~{}uno/abcde.html}
+\bibitem{Olsen 2019} 
+Jon Eirik Olsen. 
+\textit{Ny oppmerksomhet rundt “pellets-fisken”}. 
+fiskeribladet, \url{https://fiskeribladet.no/nyheter/?artikkel=69867}, 2019. (hentet 24. April 2020)
+
+\bibitem{Trana m.fl. 2019} 
+Kjartan Trana, Dan Henrik Klausen, og Jon Bolstad 
+\textit{Denne torsken er full av fôr fra oppdrettsnæringa}. 
+NRK, \url{https://www.nrk.no/trondelag/fiskere-har-solgt-torsk-som-er-full-av-lakselusmiddel-_-vet-ikke-om-det-er-farlig-1.14742706}, 2019. (hentet 24. April 2020)
+
+\bibitem{Jakobsen 2017} 
+ Amalie Nygård Jakobsen
+\textit{Fikk torsk full av oppdrettsfôr: – Motbydelig fisk}. 
+NRK, \url{https://www.nrk.no/tromsogfinnmark/fikk-torsk-full-av-oppdrettsfor_-_-motbydelig-fisk-1.13662637}, 2017. (hentet 24. April 2020)
+
+\bibitem{Saether 2017} 
+Bjørn-Steinar Sæther. 
+\textit{Effekter av oppdrett på vill marin fisk}. 
+Nofima, \url{https://nofima.no/nyhet/2017/09/effekter-av-oppdrett-pa-vill-marin-fisk/}, 2017. (hentet 24. April 2020)
+
+\bibitem{Angell og Ekanger 2017} 
+Elise Angell, og Anders Ekanger. 
+\textit{Fekk fisk med magen full av oppdrettsfôr}. 
+NRK, \url{https://www.nrk.no/vestland/fekk-fisk-med-magen-full-av-oppdrettsfor-1.13677856}, 2017. (hentet 24. April 2020)
+
+\bibitem{Olsen m.fl. 2018} 
+Ole-Christian Olsen, John Inge Johansen, og Benedikte Grov. 
+\textit{Villfisk mettes av oppdrettsmat: – Jeg blir rett og slett forbanna}. 
+NRK, \url{https://www.nrk.no/nordland/villfisk-mettes-av-oppdrettsmat_-_-jeg-blir-rett-og-slett-forbanna-1.14003547}, 2018. (hentet 24. April 2020)
+
+\url{https://www.nrk.no/trondelag/laks-har-romt-fra-marine-harvest-anlegg-i-naeroy-1.13902322}
+
 \end{thebibliography}
-
-@misc{darknet13,
-  author =   {Joseph Redmon},
-  title =    {Darknet: Open Source Neural Networks in C},
-  howpublished = {\url{http://pjreddie.com/darknet/}},
-  year = {2013--2016}
-}
-
-@article{yolov3,
-  title={YOLOv3: An Incremental Improvement},
-  author={Redmon, Joseph and Farhadi, Ali},
-  journal = {arXiv},
-  year={2018}
-}
 
 \end{document}
