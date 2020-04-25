@@ -1,6 +1,6 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
-#include <opencv2/tracking.hpp>
+//#include <opencv2/tracking.hpp>
 #include <fstream>
 //#include "matplotlibcpp.h"
 #include <chrono>
@@ -19,19 +19,20 @@ int inpWidth;  // Width of network's input image
 int inpHeight; // Height of network's input image
 vector<string> classes;
 
-bool isTracking;
-
 vector<Rect2d> bboxes;
-vector<Ptr<Tracker>> trackers;
 int codQuantity, saitheQuantity;
 
 string objectLabel;
 
 const char *WINDOW_TITLE = "Press ESC to quit";
-vector<string> trackerTypes = {"BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "GOTURN", "MOSSE", "CSRT"};
+
+//bool isTracking;
+
+//vector<string> trackerTypes = {"BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "GOTURN", "MOSSE", "CSRT"};
+//vector<Ptr<Tracker>> trackers;
 
 // Create tracker by name
-Ptr<Tracker> createTrackerByName(string trackerType)
+/*Ptr<Tracker> createTrackerByName(string trackerType)
 {
     Ptr<Tracker> tracker;
     if (trackerType ==  trackerTypes[0])
@@ -61,7 +62,7 @@ Ptr<Tracker> createTrackerByName(string trackerType)
     }
 
     return tracker;
-}
+}*/
 
 // Get the names of the output layers
 auto getOutputsNames(const Net& net)
@@ -152,7 +153,7 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
                 confidences.push_back((float)confidence);
                 boxes.push_back(Rect(left, top, width, height));
 
-                if (isTracking == false)
+                /*if (isTracking == false)
                 {
                     Rect2d bbox(centerX - (width / 2), centerY - (height / 2), width, height); // KCF works best with a tight crop
                     bboxes.push_back(bbox);
@@ -161,7 +162,7 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
                     newTracker->init(frame, Rect2d(bboxes[i]));
 
                     trackers.push_back(newTracker);
-                }
+                }*/
             }
         }
     }
@@ -178,12 +179,12 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
                  box.x + box.width, box.y + box.height, frame);
     }
 
-    isTracking = true;
+    //isTracking = true;
 }
 
 int main(int argumentQuantity, char *arguments[])
 {
-    isTracking = true;
+    //isTracking = true;
 
     // Configuration for log file
     string filename = "log.csv";
@@ -281,10 +282,10 @@ int main(int argumentQuantity, char *arguments[])
             break;
         }
 
-        if (key == 32)
+        /*if (key == 32)
         {
             isTracking = false;
-        }
+        }*/
 
         double timer = (double)getTickCount();
 
@@ -297,7 +298,7 @@ int main(int argumentQuantity, char *arguments[])
         }
 
         // Loop through trackers manually
-        for(int i = 0; i < int(bboxes.size()); i++)
+        /*for(int i = 0; i < int(bboxes.size()); i++)
         {
             Ptr<Tracker> tracker = trackers[i];
             Rect2d bbox = bboxes[i];
@@ -316,7 +317,7 @@ int main(int argumentQuantity, char *arguments[])
                 //trackers.erase(trackers.begin() + i);
                 //bboxes.erase(bboxes.begin() + i);
             }
-        }
+        }*/
 
         // Create a 4D blob from a frame.
         Mat blob;
