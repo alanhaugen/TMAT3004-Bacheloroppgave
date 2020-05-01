@@ -218,6 +218,7 @@ int main(int argumentQuantity, char *arguments[])
     {
         string videoPath = arguments[1];
         video = VideoCapture(videoPath);
+        video.set(CAP_PROP_POS_FRAMES, 600);
     }
     else
     {

@@ -36,6 +36,10 @@ message(STATUS "    version: ${OpenCV_VERSION}")
 message(STATUS "    libraries: ${OpenCV_LIBS}")
 message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 
+add_executable(PROJECT_4 yolo.cpp)
+target_include_directories(PROJECT_4 PRIVATE ${PYTHON2_INCLUDE_DIRS} ${PYTHON2_NUMPY_INCLUDE_DIRS})
+target_link_libraries(PROJECT_4 PRIVATE ${OpenCV_LIBS} Python2::Python ) # libs # "${TORCH_LIBRARIES}"
+
 add_executable(OBJECT_DETECTOR main.cpp)
 target_include_directories(OBJECT_DETECTOR PRIVATE ${PYTHON2_INCLUDE_DIRS} ${PYTHON2_NUMPY_INCLUDE_DIRS})
 target_link_libraries(OBJECT_DETECTOR PRIVATE ${OpenCV_LIBS} Python2::Python ) # libs # "${TORCH_LIBRARIES}"

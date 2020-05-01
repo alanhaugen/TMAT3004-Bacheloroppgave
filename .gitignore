@@ -5,6 +5,7 @@ build*
 out.avi
 in.mp4
 log.csv
+*.autosave
 
 # Trainer
 outputs
