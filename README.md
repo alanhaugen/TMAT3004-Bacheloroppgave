@@ -10,4 +10,15 @@ You need OpenCV, see https://medium.com/beesightsoft/build-opencv-opencv-contrib
 
 Download data used for training here: https://www.dropbox.com/s/aym2lmnzjlam16v/data.zip
 
-The data above also includes YOLOv3 model now
+# Project overview
+
+app consists of several projects
+OBJECT_DETECTOR is the important project, it loads the model found in the data to count cod and saithe.
+DATASET_TOOL is for improving the dataset, to create new labels
+PROJECT_4 is just a test
+
+train.py will train a model with RetinaNet
+inference.py will create a video with the RetinaNet model
+Makefile will automatically download the data, and run train.py then inference.py
+
+report consists of my bachelor thesis
