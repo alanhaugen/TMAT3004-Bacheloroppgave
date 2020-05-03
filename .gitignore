@@ -10,6 +10,14 @@ log.csv
 # Trainer
 outputs
 
+# Notebooks
+*checkpoint.ipynb
+
+# Krita
+*.kra~
+*.png~
+*autosave.kra
+
 # macOS
 .DS_Store
 
@@ -17,6 +25,8 @@ outputs
 *.swp
 
 # LaTeX
+*.nav
+*.snm
 *.bcf
 *.xml
 *.pdf

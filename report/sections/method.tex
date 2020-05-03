@@ -9,4 +9,33 @@
 %Du skal også si noe om hvorfor du har gjort din undersøkelse på den måten du gjorde – og da peke på styrker og svakheter. I tillegg skal du drøfte etiske aspekter ved prosjektet. På den måten viser du at du har kommet frem til resultatene på en pålitelig og troverdig måte, men også at du er reflektert og kritisk overfor arbeidet du har gjort.
 
 %Husk også at du her, slik som i teorikapitlet, bare skal skrive om det metodiske som er relevant for din studie.
-\section{Materialer og metoder}
+\section{Metode}
+
+%Dette kapitlet er obligatorisk for alle forsøksoppgaver. Det bør innledes med et flytskjema/oversikt og en beskrivelse som letter leserens forståelse av hva som er gjort. Dette gjelder både for rene analyseoppgaver og for produktutviklingsoppgaver. 
+
+%Beskrivelsen av materialer og metoder skal være tilstrekkelig detaljert slik at andre kan vurdere arbeidet og om ønskelig gjenta forsøkene. Samtidig må man unngå å fylle opp rapporten med unødige detaljer. Dersom det er brukt en velkjent metode, er det nok å bruke metodens offisielle navn og henvise til offisiell kilde. Hvis det var nødvendig med modifikasjoner eller andre tilpasninger i forhold til metoden, må dette beskrives. Eventuell teori om metoden, hører hjemme i teoridelen. Beskriv det dere har gjort og ikke det dere skulle ha gjort. 
+
+%Hensikten med kapitlet Materialer og metoder er at andre skal kunne utføre det samme arbeidet på samme måte. Da må alle nødvendige opplysninger være med.
+
+Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to modeller, en RetinaNet modell og en YOLOv3 modell. Nettverkene hadde forhåndstrente vekter fra en modell trent på COCO datasettet til Microsoft, de ble ikke trent fra scratch. You should design a model which achieves 85 \% validation accuracy on the given dataset.
+
+Microsoft Azure plattformen ble anvendt til å trene modellene. Microsoft tilbyr Titan GPU-er i skyen, det gjør at treningen kan utføres uten at en trenger å investere i mektige grafikkprosessorer, og det gjør store mengder datakraft mer tilgjengelig. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid. Det tok ca. 2 dager å trene YOLOv3 modellen på nettskyen Azure med maskinstørrelsen Standard NC6 Promo (6 vcpu-er, 56 GiB dataminne). Trening av RetinaNet tok mye minder tid, men inference av RetinaNet tok over seks timer.
+
+You will use the full data to train the network. You need to achieve 85 \% accuracy for validation data to successfully complete this assignment.
+
+\subsection{Å forstå problemet}
+
+As you already know, Image Classification refers to the process of classifying an image on the basis of its visual content. So, the goal for the model is to look at the image and predict which object is present in the image. Obviously, the number of objects which it can predict depends on how many objects you train it on.
+
+In our problem, we want to classify an input image between 3 animals - Cat, Dog and Panda.
+
+What do we need and how to achieve that? 
+You need images of each animal with the correct label and train a decent size network which understands the input image.
+
+\subsection{Step 2A - Get the data}
+\subsection{Step 2B - Explore and Understand your data}
+\subsection{Step 2C - Create a sample data from the dataset}
+\subsection{Step 3 - Data Preparation}
+\subsection{Step 4 - Train a simple model on sample data and check the pipeline before proceeding to train the full network}
+\subsection{Step 5 - Train on Full Data}
+\subsection{Step 6 - Improve your model}
