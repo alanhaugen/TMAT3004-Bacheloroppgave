@@ -1,6 +1,6 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
-#include <opencv2/tracking.hpp>
+//#include <opencv2/tracking.hpp>
 #include <fstream>
 //#include "matplotlibcpp.h"
 
@@ -19,7 +19,7 @@ vector<string> classes;
 
 const int trackingFailureFramesQuantity = 10;
 
-Ptr<Tracker> tracker;
+//Ptr<Tracker> tracker;
 Rect2d bbox;
 
 string objectLabel;
@@ -116,8 +116,8 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
                 boxes.push_back(Rect(left, top, width, height));
 
                 //state = TRACKING;
-                bbox = Rect2d(centerX - (width / 2), centerY - (height / 2), width, height); // KFC works best with a tight crop
-                tracker->init(frame, bbox);
+                //bbox = Rect2d(centerX - (width / 2), centerY - (height / 2), width, height); // KFC works best with a tight crop
+                //tracker->init(frame, bbox);
             }
         }
     }
@@ -163,7 +163,7 @@ int main()
 
     string trackerType = trackerTypes[2];
 
-    if (trackerType == "BOOSTING")
+    /*if (trackerType == "BOOSTING")
         tracker = TrackerBoosting::create();
     else if (trackerType == "MIL")
         tracker = TrackerMIL::create();
@@ -178,7 +178,7 @@ int main()
     else if (trackerType == "CSRT")
         tracker = TrackerCSRT::create();
     else if (trackerType == "MOSSE")
-        tracker = TrackerMOSSE::create();
+        tracker = TrackerMOSSE::create();*/
 
     state = DETECTION;
 
@@ -221,7 +221,7 @@ int main()
             break;
         }
 
-        if (state == TRACKING)
+        /*if (state == TRACKING)
         {
             bool ok = tracker->update(frame, bbox);
 
@@ -243,7 +243,7 @@ int main()
             {
                 state = DETECTION;
             }
-        }
+        }*/
         if (state == DETECTION)
         {
             //putText(frame, "Tracking failure detected", Point(100,90), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,255),2);
@@ -282,7 +282,7 @@ int main()
             putText(frame, "TRACKING", Point(100,70), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
         }
 
-        putText(frame, "FPS : " + SSTR(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
+        putText(frame, "FPS : " + std::to_string(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
         //putText(frame, trackerType + " Tracker", Point(100,150), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50),2);
 
         //videoWrite.write(frame);

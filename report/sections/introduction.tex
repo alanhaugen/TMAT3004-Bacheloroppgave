@@ -18,11 +18,19 @@
 \end{center} 
 \end{figure} 
 
-Her presenteres automatisk fiskedeteksjon av torsk og sei med bilder tatt med undervannskameraer. Modellen er trent opp på fisk fra merder brukt til fiskeoppdrett og lagring. Se figur \ref{fig:data}.
+Her presenteres automatisk fiskedeteksjon av torsk og sei i bilder tatt med undervannskameraer. Modellen er trent opp på fisk fra merder brukt til fiskeoppdrett og lagring. Se figur \ref{fig:data}.
 
 Dette arbeidet er viktig for å forstå omfanget av torsk og sei som trekker til oppdrettsanlegg og spiser oppdrettsfôr fra under merdene. Forskere, samt fiskere og oppdrettsnæringen, ønsker å samle informasjon om villfisk som spiser oppdrettsfôr, fôret kan til forskjellige tider inneholde medisinrester. Manuell analyse av data fra undervannskameraer er tidskrevende, dessuten kan det kreve ekspertkunnskap om forskjellige fiskearter. Dette gjør det veldig vanskelig å gjennomføre et større datainnsamlingsprosjekt. Til tross for vanskelighetene så er slike analyser viktige. Kunnskap om de marine økosystemene, og effekten oppdrettsnæringen har på mattrygghet og kvalitet av villfisk, berører fiskere og befolkningen som spiser norsk fisk. Derfor er verktøy som gjør automatisk videoanalyse nødvendig, og bør utvikles for å støtte forskere i arbeidet deres.
 
-Dette prosjektet er gjort i samarbeid med Nofima som en del av Sameksistens prosjektet \cite{Robertsen 2020}. Dataprogrammet som har blitt utviklet for denne oppgaven kan ta imot undervannsvideo med høy oppløsning og telle antall norsk torsk og sei fortløpende.
+Dette prosjektet er gjort i samarbeid med Nofima som en del av Sameksistens prosjektet \cite{Robertsen 2020}. Dataprogrammet som har blitt utviklet for denne oppgaven kan ta imot undervannsvideo med høy oppløsning og telle antall norsk torsk og sei fortløpende. Se figur \ref{fig:inference}
+
+\begin{figure}
+\begin{center} 
+%\includegraphics[scale=0.6]{figures/cover}
+\includegraphics[scale=0.35]{figures/retinanet_cod_2}
+\caption{\small \sl Figuren viser inferens med en RetinaNet model. Råbilde er fra en video av en lagringsmerd med torsk. Modellen ble trent som en del av dette bachelorprosjektet. \label{fig:inference}} 
+\end{center} 
+\end{figure} 
 
 %bakgrunnen for valg av tema
 %problemstillingen eller hypotesene du skal undersøke
@@ -149,14 +157,14 @@ I 2018 presenterte Xu og Matzner forskning på deteksjon, tracking og klassifise
 
 Salman sitt team viste i 2019 at de kunne måle biomasse automatisk ved å bruke undervannsvideoer og dype nevrale nettverk.  Et slikt system må takle varierende lysstyrke, vinkelen fiskene sees fra, forskjellige havbunnsstrukturer, bevegelser i vegetasjon i bakgrunnen og forskjellige former og teksturer mellom fiskearter. De anvendte en Region-Based Convolutional Neural Network, et R-CNN, som er en state-of-the-art maskinlæringsteknikk, et alternativ til YOLO. Teknologien anvendes til objektdeteksjon, den gir informasjon om hvor i et bilde forskjellige objekter er samt hvor mange det er av de forskjellige objektene. De trente et nettverk og anvendte bakgrunns subtraksjon og optical flow, sammen med råbilde ga dette områder der fisk skulle detekteres. De brukte to datasett, et fra Fish4Knowledge sitt Complex Scenes dataset, den består av undervannsvideoer, og LifeCLEF 2015 datasettet. De oppnådde en deteksjonsnøyaktighet (F-Score) på 87.44 \% på Complex Scenes datasettet og 80.02 \% på LifeCLEF datasettet. Resultatene var så gode at de anbefaler teknikkene som de har anvendt for fiskedeteksjon til andre med lignende problemer. \cite{Salman m.fl. 2019}
 
-I 2020 så skrev Cui sitt team ``Fish Detection Using Deep Learning''. De jobber på en robot som kan utforske havet, se figur \ref{fig:auv}. I artikkelen deres dokumenterer de hvordan en lager en modell, et nevralt nettverk, som kan utføre fiskedeteksjon. De anvendte ``data augmentation'' teknikker. De brukte også Dropout algoritmen for å hindre at modellen ble overtilpasset, kjent som ``overfitting'' problemet. De endret også på loss funksjonen ettersom nettverket ble trent. Ved å bruke disse teknikkene så klarte de å redusere treningstiden og training loss. Systemet de lagde var optimalisert for et embedded system, altså svakere datamaskiner, en AUV robot. \cite{Cui m.fl. 2020}
-
 \begin{figure}
 \begin{center} 
 \includegraphics[scale=0.45]{figures/auv}
 \caption{\small \sl Figuren viser roboten til Cui sitt team. Den kan detektere fisk og skal brukes til havforskning. \cite{Cui m.fl. 2020} \label{fig:auv}} 
 \end{center} 
 \end{figure} 
+
+I 2020 så skrev Cui sitt team ``Fish Detection Using Deep Learning''. De jobber på en robot som kan utforske havet, se figur \ref{fig:auv}. I artikkelen deres dokumenterer de hvordan en lager en modell, et nevralt nettverk, som kan utføre fiskedeteksjon. De anvendte ``data augmentation'' teknikker. De brukte også Dropout algoritmen for å hindre at modellen ble overtilpasset, kjent som ``overfitting'' problemet. De endret også på loss funksjonen ettersom nettverket ble trent. Ved å bruke disse teknikkene så klarte de å redusere treningstiden og training loss. Systemet de lagde var optimalisert for et embedded system, altså svakere datamaskiner, en AUV robot. \cite{Cui m.fl. 2020}
 
 %\subsection{Perceptron}
 
