@@ -15,7 +15,7 @@
 \begin{figure}[h!]
 \begin{center} 
 \includegraphics[scale=0.35]{figures/dataset_tool_2}
-\caption{\small \sl Figuren viser et dataprogram som ble utviklet for å lage label data basert på opptakene fra Nofima. Dataprogrammet laster inn hvert femtiende bilde fra en video av en lagringsmerd av torsk. Denne videoen er 7 minutter lang. På figuren vises bilde nummer 3040. En modell som kan detektere objekter krever å bli trent på bilder av det den skal kjenne igjen, bilder med label data. Label data består av klassenummer, og $x_1$, $y_1$, $x_2$, $y_2$ posisjoner, som skaper et rektangel rundt objektene som finnes i bildet, for hvert objekt som finnes i treningsdataen. Med dette dataprogrammet så er å lage slik informasjon fra et bilde enkelt, brukeren trenger kun å lage et rektangel rundt hver torsk. Klassenummeret for torsk, her 0, og posisjonene av rektangelet, $x_1$, $y_1$, $x_2$, $y_2$, kjent som objektets ground truth bounding box, lagres til en tekstfil. Rådataen, bilde uten rektanglene eller den røde teksten som er øverst i venstre hjørne, lagres også automatisk til en mappe. \label{fig:dataset_tool}} 
+\caption{\small \sl Figuren viser et dataprogram som ble utviklet for å lage label data basert på opptakene fra Nofima. Dataprogrammet laster inn hvert femtiende bilde fra en video av en lagringsmerd av torsk. Denne videoen er 7 minutter lang. På figuren vises bilde nummer 3040. En modell som kan detektere objekter krever å bli trent på bilder av det den skal kjenne igjen, bilder med label data. Label data består av klassenummer, og `xmin', `ymin', `xmax', og `ymax' posisjoner, som skaper et rektangel rundt objektene som finnes i bildet, for hvert objekt som finnes i treningsdataen. Med dette dataprogrammet så er å lage slik informasjon fra et bilde enkelt, brukeren trenger kun å lage et rektangel rundt hver torsk. Klassenummeret for torsk, her 0, og posisjonene av rektangelet, `xmin', `ymin', `xmax', og `ymax', kjent som objektets ground truth bounding box, lagres til en tekstfil. Rådataen, bilde uten rektanglene eller den røde teksten som er øverst i venstre hjørne, lagres også automatisk til en mappe. \label{fig:dataset_tool}} 
 \end{center} 
 \end{figure} 
 
@@ -27,7 +27,11 @@
 
 Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to modeller, en RetinaNet modell og en YOLOv3 modell. Nettverkene hadde forhåndstrente vekter fra en modell trent på COCO datasettet til Microsoft, de ble ikke trent fra scratch. %You should design a model which achieves 85 \% validation accuracy on the given dataset.
 
-Microsoft Azure plattformen ble anvendt til å trene modellene. Microsoft tilbyr Nvidia Titan GPU-er i skyen, det gjør at treningen kan utføres uten at en trenger å investere i mektige grafikkprosessorer, store mengder datakraft blir tilgjengelig for folk flest. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid. Det tok ca. 2 dager å trene YOLOv3 modellen på nettskyen Azure med maskinstørrelsen Standard NC6 Promo (6 vcpu-er, 56 GiB dataminne). Trening av RetinaNet tok mye mindre tid, men inferens av RetinaNet tok over seks timer for 7 minutter video. YOLOv3 kan gjøre inferens på noen millisekunder per bilde, der RetinaNet bruker titals sekunder selv på kraftig maskinvare.% Se figur retinanet vs yolov3 resultater
+Microsoft Azure plattformen ble anvendt til å trene modellene. Microsoft tilbyr Nvidia Titan GPU-er i skyen, det gjør at treningen kan utføres uten at en trenger å investere i mektige grafikkprosessorer, store mengder datakraft blir tilgjengelig for folk flest. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid.
+
+Det tok ca. 2 dager å trene YOLOv3 modellen på nettskyen Azure med maskinstørrelsen Standard NC6 Promo (6 vcpu-er, 56 GiB dataminne). Trening av RetinaNet tok mye mindre tid, men inferens av RetinaNet tok over seks timer for 7 minutter video. YOLOv3 kan gjøre inferens på noen millisekunder per bilde, der RetinaNet bruker titals sekunder selv på kraftig maskinvare.% Se figur retinanet vs yolov3 resultater
+
+Kildekoden for prosjektet kan lastes ned fra: \\ \url{https://github.com/alanhaugen/TMAT3004-Bacheloroppgave}.
 
 \subsection{Å forstå problemet}
 
@@ -45,10 +49,10 @@ Datasettet bestod av 208 bilder av torsk, med til sammen 4582 instanser av torsk
 
 Det er viktig å se på dataen før en begynner å trene et nettverk. Det er viktig å se etter bias i bildene. Det er lurt å gå igjennom hvert eneste bilde, og se om det er noe en kan lære. Torsk og sei bildene kunne bli augmented, de kunne blant annet bli snudd horisontalt. Det gir dobbelt så mye treningsdata. Vær obs på at ikke alle treningssett tillater dette, for eksempel et datasett med lego.
 
-Det finnes to klasser i datasettet, torsk og sei. Se figur \ref{fig:tree} og tabell \ref{tab:classes}.
+Det var to klasser i datasettet, torsk og sei. Se figur \ref{fig:tree} og tabell \ref{tab:classes}.
 
 \begin{figure}[h!]
-\Tree[.Datasett [.labels ] [.train [.atlantic\_cod ]
+\Tree[.data [.labels ] [.train [.atlantic\_cod ]
                [.saithe ]]
           [.validation [.atlantic\_cod ]
                 [.saithe ]]]
@@ -70,12 +74,14 @@ Klassekode & Klassenavn    & Norsk klassenavn \\
 \end{tabular}
 \end{table}
 
-`Labels` mappen inneholder bounding box data for bildene. Det er en eller flere linjer per `.txt` fil. Hver linje representerer en bounding box. Representasjonen er i `xmin`, `ymin`, `xmax`, og `ymax` formatet. Se tabell \ref{tab:bbox}.
+`Labels` mappen inneholdt bounding box data for bildene. Det var en eller flere linjer per `.txt` fil. Hver linje representerer en bounding box. Representasjonen er i `xmin', `ymin', `xmax', og `ymax' formatet. Se tabell \ref{tab:bbox}.
 
-\begin{table}
+Filene som ble brukt til trening og validering ble definert i \url{data/fish_train.txt} og \url{data/fish_test.txt}. Se tabell \ref{tab:fish}
+
+\begin{table}[b]
 \bigskip
 \centering
-\caption{Label data for bilde \url{Datasett/train/atlantic_cod/fish_9440.png}, lagt i fil \url{Datasett/labels/fish_9440.txt}}
+\caption{Label data for bilde \url{data/train/atlantic_cod/fish_9440.png}, lagt i fil \url{data/labels/fish_9440.txt}}
 \label{tab:bbox} 
 \begin{tabular}[t]{lcccc}
 \toprule
@@ -83,6 +89,22 @@ Klassekode    & xmin      & ymin    & xmax     & ymax \\
 \midrule
 0 & 238 & 643 & 582 & 882 \\
 0 & 80   & 858 & 368 & 1071 \\
+\bottomrule	
+\end{tabular}
+\end{table}
+
+\begin{table}[b]
+\bigskip
+\centering
+\caption{Eksempel på filnavn i \url{data/fish_train.txt} og \url{data/fish_test.txt}}
+\label{tab:fish} 
+\begin{tabular}[t]{c}
+\toprule
+Filnavn i \url{fish_test.txt} \\
+\midrule
+\url{validation/atlantic_cod/fish_590.png} \\
+\url{validation/atlantic_cod/fish_640.png} \\
+\vdots \\
 \bottomrule	
 \end{tabular}
 \end{table}
@@ -120,9 +142,161 @@ Nettverket ble først trent opp på et utvalg av treningsdataen, for å teste ne
 
 RetinaNet modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned fra the model zoo, den heter \url{COCO-Detection/retinanet_R_50_FPN_3x.yam}. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
 
-Define configurations in the section — a configuration like training configuration, system configuration. In the section, you can define batch size, data path, learning rate, etc.
+\subsubsection{RetinaNet konfigurasjon og trening}
 
-You need to set up the training pipeline with a batchsize of 4 and run the experiment for 100 epochs. Make these changes in the Configrations given below.
+RetinaNet er implementert i detectron2, som bruker deep learning rammeverket PyTorch. Grensesnittet er programmeringsspråket Python. Detectron2 er utgitt under en Apache 2.0 lisens, det vil si at den kan brukes til hva enn en vil på en hvilken som helst måte, gratis, så lenge man aksepterer at facebook ikke blir ansvarlig for arbeidet som gjøres, og så lenge man ikke krediterer arbeidet en gjør til facebook \cite{The Apache Software Foundation 2004}. Detectron2 er tilgjengelig her: \url{https://detectron2.readthedocs.io/}
+
+Først må bibliotekene lastes inn. Se python koden under.
+
+\begin{lstlisting}[language=Python, caption=Her lastes bibliotekene inn i train.py for detectron2]
+import torch
+import detectron2
+#import onnx
+#from detectron2 import export
+from detectron2.utils.logger import setup_logger
+setup_logger()
+
+# import some common libraries
+import numpy as np
+import cv2
+import random
+import os
+import matplotlib.pyplot as plt
+
+# model_zoo has a lots of pre-trained model
+from detectron2 import model_zoo
+
+
+# DefaultTrainer is a class for training object detector
+from detectron2.engine import DefaultTrainer
+# DefaultPredictor is class for inference
+from detectron2.engine import DefaultPredictor
+
+# detectron2 has its configuration format
+from detectron2.config import get_cfg
+# detectron2 has implemented Visualizer of object detection
+from detectron2.utils.visualizer import Visualizer
+
+# from DatasetCatalog, detectron2 gets dataset and from MetadatCatalog it
+# gets metadata of the dataset
+from detectron2.data import DatasetCatalog, MetadataCatalog
+
+# BoxMode support bounding boxes in different format
+from detectron2.structures import BoxMode
+
+# COCOEvaluator based on COCO evaluation metric, inference_on_dataset is used for
+# evaluation for a given metric
+from detectron2.evaluation import COCOEvaluator, inference_on_dataset
+
+# build_detection_test_loader, used to create test loader for evaluation
+from detectron2.data import build_detection_test_loader
+
+\end{lstlisting}
+
+Konfigurasjonen defineres i neste kodesnutt. Konfigurasjonen av batch size, data path og learning rate er blant de viktigste variablene som settes her.
+
+%\begin{lstlisting}[language=Python, caption=Treningen og testingen, samt operativssystemet konfigureres]
+\begin{lstlisting}[language=Python, caption=Konfigurasjon i train.py]
+data_root = 'data'
+train_txt = 'fish_train.txt'
+test_txt  = 'fish_test.txt'
+
+train_data_name = 'fish_train'
+test_data_name  = 'fish_test'
+
+thing_classes = ['atlantic_cod', 'saithe']
+
+output_dir = 'outputs'
+
+def count_lines(fname):
+    with open(fname) as f:
+        for i, l in enumerate(f):
+            pass
+    return i + 1
+
+train_img_count = count_lines(os.path.join(data_root, train_txt))
+
+# Register train and test data
+# dataset can be registered only once with one name
+
+# register train data
+DatasetCatalog.register(name=train_data_name,
+                        func=lambda: get_fish_dicts(data_root, train_txt))
+train_metadata = MetadataCatalog.get(train_data_name).set(thing_classes=thing_classes)
+
+# register test data
+DatasetCatalog.register(name=test_data_name,
+                        func=lambda: get_fish_dicts(data_root, test_txt))
+test_metadata = MetadataCatalog.get(test_data_name).set(thing_classes=thing_classes)
+
+# default configuration
+cfg = get_cfg()
+
+# update configuration with RetinaNet configuration
+cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/retinanet_R_50_FPN_3x.yaml"))
+cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
+
+# We have registered the train and test data set with name fish_train and fish_test.
+# Let's replace the detectron2 default train dataset with our train dataset.
+cfg.DATASETS.TRAIN = (train_data_name,)
+
+# No metric implemented for the test dataset, we will have to update
+# cfg.DATASET.TEST with empty tuple
+cfg.DATASETS.TEST = ()
+
+# data loader configuration
+cfg.DATALOADER.NUM_WORKERS = 4
+
+# Update model URL in detectron2 config file
+cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/retinanet_R_50_FPN_3x.yaml")
+model_final_f10217.pkl"
+
+# solver configuration
+
+# batch size
+cfg.SOLVER.IMS_PER_BATCH = 4
+
+# choose a good learning rate
+cfg.SOLVER.BASE_LR = 0.001
+
+# We need to specify the number of iteration for training in
+# detectron2, not the number of epochs.
+# lets convert number of epoch to number or iteration (max iteration)
+
+epoch = 1000
+max_iter = int(epoch * train_img_count / cfg.SOLVER.IMS_PER_BATCH)
+max_iter = 500
+
+cfg.SOLVER.MAX_ITER = max_iter
+
+# number of output class
+cfg.MODEL.RETINANET.NUM_CLASSES = len(thing_classes)
+
+# update create ouptput directory
+cfg.OUTPUT_DIR = output_dir
+os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
+
+\end{lstlisting}
+
+Neste kodesnutt er trening, resultatene finnes på tensorboard: \\
+\url{https://tensorboard.dev/experiment/aZzjBUzKTAy19KPsDZPJ2g}
+
+\begin{lstlisting}[language=Python, caption=Treningskode i train.py]
+# Create a trainer instance with the configuration.
+trainer = DefaultTrainer(cfg) 
+
+# if rseume=False, because we don't have trained model yet. It will
+# download model from model url and load it
+trainer.resume_or_load(resume=False)
+
+# start training
+trainer.train()
+
+\end{lstlisting}
+
+%You need to set up the training pipeline with a batchsize of 4 and run the experiment for 100 epochs. Make these changes in the Configrations given below.
+
+\subsubsection{YOLOv3 trening}
 
 \subsection{Trene modellen på hele datasettet}
 
@@ -138,14 +312,102 @@ Decreasing batch size ...
 
 \subsection{Inferens}
 
-You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig Nvidia GPU, så prosesserer den bilder ved 30 FPS har har en mAP på 57.9 \% på COCO test-dev \cite{Redmon m.fl. 2020}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppdaven. Ifølge Redmon så er YOLOv3 like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Min erfaring er at den er rundt 10 ganger raskere, men mye mindre nøyaktig (må gjøre et eksperiment her). Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2020}. Se figur \ref{fig:yolo_inference}, \ref{fig:retinenet_inference} og \ref{fig:inference}.
+RetinaNet, introdusert av facebook ansatte i 2017 i Focal Loss for Dense Object Detection på arXiv, ble ansett som den beste objektdeteksjonsmodellen da dette dokumentet ble skrevet. Det var en forbedring på R-CNN. \cite{Lin m.fl. 2017}
 
-\begin{figure}
-\begin{center} 
-\includegraphics[scale=0.35]{figures/inference_yolo}
-\caption{\small \sl Figuren viser inference med YOLOv3. Rundt fiskene så lager YOLOv3 bounding boxes der den tror det finnes fisk, og gir den en label basert på det den tror at det er. Her får alle fiskene labelen ``atlantic cod'', dette er fra en lagringsmerd med torsk. Ved siden av navnet av klassen så står det hvor sikker nettverket er på at den har funnet en torsk, presisjonen av inferensen. I grønn tekst, øverst til venstre, står det at algoritmen kan telle 31 torsk i bildet, og 0 sei. \label{fig:yolo_inference}} 
-\end{center} 
-\end{figure} 
+You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig Nvidia GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon m.fl. 2020}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLOv3 like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Min erfaring er at den er rundt 10 ganger raskere, men mye mindre nøyaktig (må gjøre et eksperiment her). Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2020}. Se figur \ref{fig:yolo_inference}.
+
+\subsubsection{RetinaNet}
+
+Ettersom OpenCV kunne ikke laste inn en PyTorch modell da denne oppgaven ble skrevet, så ble inferens gjort med Python, og det ble ikke gjort et forsøk på å gjøre inference i sanntid på en videostrøm med RetinaNet. Se resultater i figur \ref{fig:retinenet_inference} og \ref{fig:inference}.
+
+Koden for inferens er under.
+
+\begin{lstlisting}[language=Python, caption=Inferens RetinaNet i inference.py]
+def video_read_write(video_path):
+    """
+    Read video frames one-by-one, flip it, and write in the other video.
+    video_path (str): path/to/video
+    """
+    video = cv2.VideoCapture(video_path)
+    
+    # Check if camera opened successfully
+    if not video.isOpened(): 
+        print("Error opening video file")
+        return
+    
+    # create video writer
+    width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    frames_per_second = video.get(cv2.CAP_PROP_FPS)
+    num_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+    
+    isStreamOpen = False
+    while video.isOpened():
+        ret, frame = video.read()
+        
+        if ret:
+            outputs = predictor(frame)
+
+            #print(outputs)
+            v = Visualizer(frame[:, :, ::-1],
+                           metadata=test_metadata, 
+                           scale=0.8
+            )
+
+            instances = outputs["instances"].to("cpu")
+
+            v = v.draw_instance_predictions(instances)
+
+            plt.imsave('outputs/frame_intermediate.png', v.get_image())
+
+            if isStreamOpen == False:
+                img = cv2.imread('outputs/frame_intermediate.png')
+                height, width, layers = img.shape
+                size = (width,height)
+                out = cv2.VideoWriter('out.avi',cv2.VideoWriter_fourcc(*'DIVX'),
+                		      frames_per_second, size)
+                isStreamOpen = True
+
+            img = cv2.imread('outputs/frame_intermediate.png')
+
+            cv2.putText(img, 'num instances: ' + str(len(instances)), (5,100),
+            		cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 2, cv2.LINE_AA)
+            out.write(img)
+
+            print ('num instances: ' + str(len(instances)))
+        else:
+            break
+    
+    out.release()
+    video.release()
+    
+    return
+
+cfg.DATASETS.TEST = (test_data_name,)
+
+# create a predictor instance with the configuration (it has our fine-tuned model)
+# this predictor does prdiction on a single image
+predictor = DefaultPredictor(cfg)
+
+# create directory for evaluation
+eval_dir = os.path.join(cfg.OUTPUT_DIR, 'coco_eval')
+os.makedirs(eval_dir, exist_ok=True)
+
+# create evaluator instance with coco evaluator
+evaluator = COCOEvaluator(dataset_name=test_data_name,
+                          cfg=cfg,
+                          distributed=False,
+                          output_dir=eval_dir)
+
+# create validation data loader
+val_loader = build_detection_test_loader(cfg, test_data_name)
+
+# start validation 
+inference_on_dataset(trainer.model, val_loader, evaluator)
+
+# Run inference on video
+video_read_write('in.mp4')
+\end{lstlisting}
 
 \begin{figure}
 \begin{center} 
@@ -154,6 +416,23 @@ You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssyst
 \end{center} 
 \end{figure} 
 
+\begin{figure}
+\begin{center} 
+\includegraphics[scale=0.35]{figures/inference_yolo}
+\caption{\small \sl Figuren viser inference med YOLOv3. Rundt fiskene så lager YOLOv3 bounding boxes der den tror det finnes fisk, og gir den en label basert på det den tror at det er. Her får alle fiskene labelen ``atlantic cod'', dette er fra en lagringsmerd med torsk. Ved siden av navnet av klassen så står det hvor sikker nettverket er på at den har funnet en torsk, presisjonen av inferensen. I grønn tekst, øverst til venstre, står det at algoritmen kan telle 31 torsk i bildet, og 0 sei. \label{fig:yolo_inference}} 
+\end{center} 
+\end{figure} 
+
 \subsubsection{OpenCV program}
 
+OpenCV (Open Source Computer Vision Library) er en åpenkildekode maskinsyn og maskinlæring programvarebibliotek. OpenCV ble laget for å levere en kjent infrastruktur for maskinsynprogrammer, OpenCV teamet ønsker å gjøre maskinsensorikk mer utbredt i kommersielle produkter. OpenCV er et produkt gitt ut under BSD-lisensen, det gjør biblioteket tilgjengelig for bedrifter som ønsker å anvende kildekoden. \cite{OpenCV Team 2020}
+
+OpenCV har C++, Python, Java og MATLAB grensesnitt og støtter Windows, Linux, Android og macOS. OpenCV Teamet forsøker først og fremst å levere sanntids maskinsyn for dataprogrammer og drar nytte av prosessorteknologi slik som MMX og SSE instruksjoner når de er tilgjengelige. CUDA og OpenCL støtte var under utvikling, men var enda ikke tilgjengelig da denne oppgaven ble skrevet. Det hadde gjort dataprogrammet mye raskere, den ville dratt nytte av GPU-en og ikke bare CPU-en på maskinen. OpenCV er skrevet i C++ og virker uten konflikter med STL datastrukturer. \cite{OpenCV Team 2020}
+
+Det ble skrevet et C++ program som bruker OpenCV til sanntids fiskedeteksjon med YOLOv3 modellen. OpenCV hadde fortsatt dårlig støtte av ONIX formatet, caffe2 formatet, og PyTorch da denne oppgaven ble skrevet. Den forrige oppdateringen av OpenCV, som forbedret ONIX støtte, var 4.3.0 utgitt 6. April, 2020. \cite{OpenCV Team 2020}
+
+Inferens med YOLOv3 ble gjort i OpenCV programmet. Programmet heter OBJECT\_DETECTOR, den laster inn en YOLOv3 konfigurasjon og modell og en videostrøm, som kan være et kamera koblet til maskinen, og gjør inferens på videostrømmen. Se figur \ref{fig:yolo_inference}.
+
 %\subsection{COCO Detection Evaluation} % For analyse kapittelet?
+
+\subsection{Segmentering}

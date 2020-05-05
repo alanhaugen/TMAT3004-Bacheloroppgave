@@ -197,7 +197,7 @@ if __name__ == "__main__":
 
     # detectron2 configuration
 
-    # default confugration
+    # default configuration
     cfg = get_cfg()
 
     # update configuration with RetinaNet configuration
@@ -205,7 +205,7 @@ if __name__ == "__main__":
     #cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
 
-    # We have registered the train and test data set with name traffic_sign_train and traffic_sign_test.
+    # We have registered the train and test data set with name fish_train and fish_test.
     # Let's replace the detectron2 default train dataset with our train dataset.
     cfg.DATASETS.TRAIN = (train_data_name,)
 
@@ -219,7 +219,7 @@ if __name__ == "__main__":
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/retinanet_R_50_FPN_3x.yaml")
     #cfg.MODEL.WEIGHTS = "detectron2://COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x/137849600/model_final_f10217.pkl"
 
-    # slover configuration
+    # solver configuration
 
     # batch size
     cfg.SOLVER.IMS_PER_BATCH = 4
@@ -237,7 +237,6 @@ if __name__ == "__main__":
     cfg.SOLVER.MAX_ITER = max_iter
 
     # number of output class
-    # we have only one class that is Traffic Sign
     cfg.MODEL.RETINANET.NUM_CLASSES = len(thing_classes)
 
     # update create ouptput directory

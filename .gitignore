@@ -3,7 +3,7 @@ app/build/*
 app/CMakeLists.txt.user
 build*
 out.avi
-in.mp4
+in*.mp4
 log.csv
 *.autosave
 
@@ -25,6 +25,7 @@ outputs
 *.swp
 
 # LaTeX
+*pytxcode
 *.nav
 *.snm
 *.bcf
