@@ -25,11 +25,11 @@
 
 %Hensikten med kapitlet Materialer og metoder er at andre skal kunne utføre det samme arbeidet på samme måte. Da må alle nødvendige opplysninger være med.
 
-Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to modeller, en RetinaNet modell og en YOLOv3 modell. Nettverkene hadde forhåndstrente vekter fra en modell trent på COCO datasettet til Microsoft, de ble ikke trent fra scratch. %You should design a model which achieves 85 \% validation accuracy on the given dataset.
+Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to modeller, en RetinaNet modell og en YOLOv4 modell. RetinaNet hadde forhåndstrente vekter fra en modell trent på COCO datasettet til Microsoft, og YOLOv4 hadde fohåndstrente vekter fra en modell trent på ImageNet datasettet, modellene ble ikke trent fra scratch. %You should design a model which achieves 85 \% validation accuracy on the given dataset.
 
 Microsoft Azure plattformen ble anvendt til å trene modellene. Microsoft tilbyr Nvidia Titan GPU-er i skyen, det gjør at treningen kan utføres uten at en trenger å investere i mektige grafikkprosessorer, store mengder datakraft blir tilgjengelig for folk flest. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid.
 
-Det tok ca. 2 dager å trene YOLOv3 modellen på nettskyen Azure med maskinstørrelsen Standard NC6 Promo (6 vcpu-er, 56 GiB dataminne). Trening av RetinaNet tok mye mindre tid, men inferens av RetinaNet tok over seks timer for 7 minutter video. YOLOv3 kan gjøre inferens på noen millisekunder per bilde, der RetinaNet bruker titals sekunder selv på kraftig maskinvare.% Se figur retinanet vs yolov3 resultater
+Det tok ca. 2 dager å trene YOLOv4 modellen på nettskyen Azure med maskinstørrelsen Standard NC6 Promo (6 vcpu-er, 56 GiB dataminne). Trening av RetinaNet tok mye mindre tid, men inferens av RetinaNet tok over seks timer for 7 minutter video. YOLOv4 kan gjøre inferens på noen millisekunder per bilde, der RetinaNet bruker titals sekunder selv på kraftig maskinvare.% Se figur retinanet vs YOLOv4 resultater
 
 Kildekoden for prosjektet kan lastes ned fra: \\ \url{https://github.com/alanhaugen/TMAT3004-Bacheloroppgave}.
 
@@ -113,7 +113,7 @@ Filnavn i \url{fish_test.txt} \\
 
 Da dataen hadde blitt organisert, og label data nøye konstruert, så ble nettverkene konfigurert og treningen ble satt i gang. Dataen ble matet inn i treningsprogrammet, inn i deep learning rammeverkene.
 
-Det ble trent opp to nettverk. Den ene, RetinaNet, er en del av detectron2 fra Facebook. Den ble trent og konfigurert med PyTorch. Den andre modellen var YOLOv3, den er utviklet av Joseph Redmon og trenes med deep learning rammeverket som han har skrevet i C, den heter darknet. Konfigurasjon gjøres ved å endre på tekstfiler og kommandolinjeparameterene til rammeverket.
+Det ble trent opp to nettverk. Den ene, RetinaNet, er en del av detectron2 fra Facebook. Den ble trent og konfigurert med PyTorch. Den andre modellen var YOLOv4, den trenes med deep learning rammeverket darknet. Konfigurasjon gjøres ved å endre på tekstfiler og kommandolinjeparameterene til rammeverket.
 
 \subsubsection{Dataaugmentering}
 
@@ -121,9 +121,9 @@ Dataen må først normaliseres på en standard måte, for eksempel ved å subtra
 
 Det ble ikke gjort endringer på standardmåten detectron2 og darknet gjør dataaugmentering.
 
-\subsubsection{YOLOv3 label data og bildeformat}
+\subsubsection{YOLOv4 label data og bildeformat}
 
-YOLOv3 har et annet label-format sammenlignet med RetinaNet, dessuten krever den bilder i jpeg formatet, med filudvidelsen .jpg. Label-dataen legges sammen med bildene. Konvertering fra RetinaNet sitt format til YOLOv3 ble gjort med et awk-skript. Formatet til YOLOv3 er:
+YOLOv4 har et annet label-format sammenlignet med RetinaNet, dessuten krever den bilder i jpeg formatet, med filudvidelsen .jpg. Label-dataen legges sammen med bildene. Konvertering fra RetinaNet sitt format til YOLOv4 ble gjort med et awk-skript. Formatet til YOLOv4 er:
 
 \begin{verbatim}
 [klassenavn] [objekt midtpunkt i X] [objekt midtpunkt i Y]
@@ -138,7 +138,7 @@ mogrify -format jpg *.png
 
 \subsection{Tren nettverket på et lite utvalg av dataen som en test før en trener et fullt nettverk}
 
-Nettverket ble først trent opp på et utvalg av treningsdataen, for å teste nettverket. 208 bilder med 4582 instanser av torsk ble grunnlaget for de første RetinaNet og YOLOv3 modellene.
+Nettverket ble først trent opp på et utvalg av treningsdataen, for å teste nettverket. 208 bilder med 4582 instanser av torsk ble grunnlaget for de første RetinaNet og YOLOv4 modellene.
 
 RetinaNet modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned fra the model zoo, den heter \url{COCO-Detection/retinanet_R_50_FPN_3x.yam}. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
 
@@ -193,7 +193,7 @@ from detectron2.data import build_detection_test_loader
 
 \end{lstlisting}
 
-Konfigurasjonen defineres i neste kodesnutt. Konfigurasjonen av batch size, data path og learning rate er blant de viktigste variablene som settes her.
+Konfigurasjonen defineres i neste kodesnutt.
 
 %\begin{lstlisting}[language=Python, caption=Treningen og testingen, samt operativssystemet konfigureres]
 \begin{lstlisting}[language=Python, caption=Konfigurasjon i train.py]
@@ -250,9 +250,11 @@ cfg.DATALOADER.NUM_WORKERS = 4
 # Update model URL in detectron2 config file
 cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/retinanet_R_50_FPN_3x.yaml")
 model_final_f10217.pkl"
+\end{lstlisting}
 
-# solver configuration
+Konfigurasjonen av batch size, data path og learning rate er de viktigste variablene, det er det neste som settes her. 
 
+\begin{lstlisting}[language=Python, caption=Solver konfigurasjon i train.py]
 # batch size
 cfg.SOLVER.IMS_PER_BATCH = 4
 
@@ -296,7 +298,76 @@ trainer.train()
 
 %You need to set up the training pipeline with a batchsize of 4 and run the experiment for 100 epochs. Make these changes in the Configrations given below.
 
-\subsubsection{YOLOv3 trening}
+\subsubsection{YOLOv4 trening}
+
+AlexeyAB sin fork av darknet ble anvendt, det er en versjon av Joseph Redmon sin Darknet: Open Source Neural Networks in C med Windows og Linux støtte. Dessuten støtter den nyere versjoner av OpenCV, den støtter også YOLOv4. En god guide til darknet og YOLO finnes på githuben til AlexeyAB. \cite{AlexeyAB 2020}
+
+YOLOv4 ble trent med vekter fra en forhåndstrent modell. Først må darknet installeres. Se under.
+
+\begin{verbatim}
+git clone https://github.com/AlexeyAB/darknet
+cd darknet
+make  
+\end{verbatim}
+
+Dette vil kompilere darknet for CPU-en.
+
+%For å aktivere GPU-støtte, som vil gjøre treningen mye raskere om en har en Nvidia GPU med nok minne, settes GPU = 1 i Makefile-en, deretter rekompileres rammeverket. Rammeverket rekompileres ved å skrive make clean etterfulgt av make.
+
+For å få gode resultater så ble forhåndstrente vekter fra darknet53 (237 MB), et nettverk trent opp på ImageNet datasettet, lastet ned.
+
+\begin{verbatim}
+wget https://pjreddie.com/media/files/darknet53.conv.74
+\end{verbatim}
+
+Filen obj.data ble laget med følgende innhold.
+
+\begin{lstlisting}[language={}, caption=obj.data]
+classes = 2
+train  = /home/awh/darknet/fish_train.txt
+valid  = /home/awh/darknet/fish_test.txt
+names = obj.names
+backup = /yolo/backup/
+\end{lstlisting}
+
+obj.names ble laget med følgende innhold.
+
+\begin{lstlisting}[language={}, caption=obj.names]
+atlantic_cod
+saithe
+\end{lstlisting}
+
+YOLOv4 må konfigureres.
+
+\begin{verbatim}
+cp cfg/YOLOv4.cfg YOLOv4.cfg
+\end{verbatim}
+
+Det er to klasser. Derfor ble det gjort følgende endringer i YOLOv4.cfg filen.
+
+\begin{itemize}
+  \item linjen batch ble satt til batch=64
+  \item linjen subdivisions ble satt til subdivisions=16
+  \item linjen max\_batches ble satt til max\_batches = 4000
+  \item linjen steps ble satt til steps=4000,4500
+  \item størrelsen av nettverket ble satt til width=416 height=416
+  \item linjen classes ble satt til classes=2
+  \item linjen filters ble satt til filters=21
+\end{itemize}
+
+Nå kan nettverket trenes.
+
+\begin{verbatim}
+./darknet detector train obj.data YOLOv4.cfg darknet53.conv.74 -map
+\end{verbatim}
+
+Treningen kan ta flere dager. Etter treningen så ble den beste modellen lastet ned.
+
+\begin{verbatim}
+scp awh@public-ip:/yolo/backup/YOLOv4_best.weights YOLOv4.weights
+\end{verbatim}
+
+Modellen ble brukt i OpenCV programmet beskrevet i del \ref{part:opencv}. 
 
 \subsection{Trene modellen på hele datasettet}
 
@@ -314,9 +385,16 @@ Decreasing batch size ...
 
 RetinaNet, introdusert av facebook ansatte i 2017 i Focal Loss for Dense Object Detection på arXiv, ble ansett som den beste objektdeteksjonsmodellen da dette dokumentet ble skrevet. Det var en forbedring på R-CNN. \cite{Lin m.fl. 2017}
 
-You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig Nvidia GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon m.fl. 2020}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLOv3 like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Min erfaring er at den er rundt 10 ganger raskere, men mye mindre nøyaktig (må gjøre et eksperiment her). Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2020}. Se figur \ref{fig:yolo_inference}.
+You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig Nvidia GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon m.fl. 2020}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLOv4 like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Min erfaring er at den er rundt 10 ganger raskere, men mye mindre nøyaktig (må gjøre et eksperiment her). Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2020}. Se figur \ref{fig:yolo_inference}.
 
 \subsubsection{RetinaNet}
+
+\begin{figure}
+\begin{center} 
+\includegraphics[scale=0.35]{figures/retinanet_cod}
+\caption{\small \sl Figuren viser objektdeteksjon av torsk i lagringsmerd med RetinaNet. \label{fig:retinenet_inference}} 
+\end{center} 
+\end{figure} 
 
 Ettersom OpenCV kunne ikke laste inn en PyTorch modell da denne oppgaven ble skrevet, så ble inferens gjort med Python, og det ble ikke gjort et forsøk på å gjøre inference i sanntid på en videostrøm med RetinaNet. Se resultater i figur \ref{fig:retinenet_inference} og \ref{fig:inference}.
 
@@ -409,29 +487,427 @@ inference_on_dataset(trainer.model, val_loader, evaluator)
 video_read_write('in.mp4')
 \end{lstlisting}
 
-\begin{figure}
-\begin{center} 
-\includegraphics[scale=0.35]{figures/retinanet_cod}
-\caption{\small \sl Figuren viser inference med RetinaNet. \label{fig:retinenet_inference}} 
-\end{center} 
-\end{figure} 
-
-\begin{figure}
-\begin{center} 
-\includegraphics[scale=0.35]{figures/inference_yolo}
-\caption{\small \sl Figuren viser inference med YOLOv3. Rundt fiskene så lager YOLOv3 bounding boxes der den tror det finnes fisk, og gir den en label basert på det den tror at det er. Her får alle fiskene labelen ``atlantic cod'', dette er fra en lagringsmerd med torsk. Ved siden av navnet av klassen så står det hvor sikker nettverket er på at den har funnet en torsk, presisjonen av inferensen. I grønn tekst, øverst til venstre, står det at algoritmen kan telle 31 torsk i bildet, og 0 sei. \label{fig:yolo_inference}} 
-\end{center} 
-\end{figure} 
-
-\subsubsection{OpenCV program}
+\subsubsection{OpenCV program} \label{part:opencv}
 
 OpenCV (Open Source Computer Vision Library) er en åpenkildekode maskinsyn og maskinlæring programvarebibliotek. OpenCV ble laget for å levere en kjent infrastruktur for maskinsynprogrammer, OpenCV teamet ønsker å gjøre maskinsensorikk mer utbredt i kommersielle produkter. OpenCV er et produkt gitt ut under BSD-lisensen, det gjør biblioteket tilgjengelig for bedrifter som ønsker å anvende kildekoden. \cite{OpenCV Team 2020}
 
 OpenCV har C++, Python, Java og MATLAB grensesnitt og støtter Windows, Linux, Android og macOS. OpenCV Teamet forsøker først og fremst å levere sanntids maskinsyn for dataprogrammer og drar nytte av prosessorteknologi slik som MMX og SSE instruksjoner når de er tilgjengelige. CUDA og OpenCL støtte var under utvikling, men var enda ikke tilgjengelig da denne oppgaven ble skrevet. Det hadde gjort dataprogrammet mye raskere, den ville dratt nytte av GPU-en og ikke bare CPU-en på maskinen. OpenCV er skrevet i C++ og virker uten konflikter med STL datastrukturer. \cite{OpenCV Team 2020}
 
-Det ble skrevet et C++ program som bruker OpenCV til sanntids fiskedeteksjon med YOLOv3 modellen. OpenCV hadde fortsatt dårlig støtte av ONIX formatet, caffe2 formatet, og PyTorch da denne oppgaven ble skrevet. Den forrige oppdateringen av OpenCV, som forbedret ONIX støtte, var 4.3.0 utgitt 6. April, 2020. \cite{OpenCV Team 2020}
+Det ble skrevet et C++ program som bruker OpenCV til sanntids fiskedeteksjon med YOLOv4 modellen. OpenCV hadde fortsatt dårlig støtte av ONIX formatet, caffe2 formatet, og PyTorch da denne oppgaven ble skrevet. OpenCV 3.4 ble anvendt, da den fikk nylig støtte for YOLOv4. \cite{OpenCV Team 2020}
 
-Inferens med YOLOv3 ble gjort i OpenCV programmet. Programmet heter OBJECT\_DETECTOR, den laster inn en YOLOv3 konfigurasjon og modell og en videostrøm, som kan være et kamera koblet til maskinen, og gjør inferens på videostrømmen. Se figur \ref{fig:yolo_inference}.
+\begin{figure}
+\begin{center} 
+\includegraphics[scale=0.35]{figures/inference_yolo}
+\caption{\small \sl Figuren viser inference med YOLOv4. Rundt fiskene så lager YOLOv4 bounding boxes der den tror det finnes fisk, og gir den en label basert på det den tror at det er. Her får alle fiskene labelen ``atlantic cod'', dette er fra en lagringsmerd med torsk. Ved siden av navnet av klassen så står det hvor sikker nettverket er på at den har funnet en torsk, presisjonen av inferensen. I grønn tekst, øverst til venstre, står det at algoritmen kan telle 31 torsk i bildet, og 0 sei. \label{fig:yolo_inference}} 
+\end{center} 
+\end{figure} 
+
+Inferens med YOLOv4 ble gjort i OpenCV programmet. Programmet heter OBJECT\_DETECTOR, den laster inn en YOLOv4 konfigurasjon, en modell, og en videostrøm. Videostrømmen kan komme fra et kamera koblet til maskinen eller en fil på filsystemet. Programmet analyserer videostrømmen og logger mengden torsk og sei som blir observert. Se figur \ref{fig:yolo_inference}.
+
+Når en lager et C++ program så må en kompilator og build-system bli valgt. For Windows så ble msvc++, som er en del av Visual Studio Community 2019, valgt. På macOS så ble clang brukt. Build-systemet cmake ble valgt. Alle disse verktøyene er tilgjengelig gratis, msvc++ er det eneste verktøyet som ikke er et åpen kildekodeprosjekt i tillegg til å være gratis. CMakeLists.txt beskriver C++ programmet. CMakelists.txt er en konfigurasjonsfil for cmake build-systemet, et av build systemene som kan brukes til å holde styr på C++ programmer. Det er nyttig å ha et IDE, en Intergrated Development Environment, når man programmerer i C++. QtCreator open source er et velutviklet IDE som kan laste inn cmake prosjekter.
+
+OpenCV-prosjektet bruker også cmake. OpenCV 3.4 ble anvendt til å lage OBJECT\_DETECTOR. Det er mulig å installere OpenCV fra kildekode, og kompilere prosjektet med hjelp av QtCreator.
+
+\begin{verbatim}
+mkdir opencv-3.4
+cd opencv-3.4
+git clone https://github.com/opencv/opencv
+git clone https://github.com/opencv/opencv_contrib
+cd opencv
+git checkout 3.4
+cd ../opencv_contrib
+git checkout 3.4
+cd modules
+pwd
+\end{verbatim}
+
+QtCreator open source ble lastet ned fra \url{https://www.qt.io/download}. CMakeLists.txt i opencv-3.4/opencv ble åpnet i QtCreator. OPENCV\_EXTRA\_MODULES\_PATH ble satt til opencv\_contrib/modules på filsystemet. Dette kan gjøres fra Projects modusen i QtCreator. Se sidepanelet i figur \ref{fig:qtcreator}.
+
+\begin{figure}
+\begin{center} 
+\includegraphics[scale=0.2]{figures/qtcreator}
+\caption{\small \sl QtCreator. \label{fig:qtcreator}} 
+\end{center} 
+\end{figure} 
+
+\begin{lstlisting}[language=C++, caption=main.cpp]
+#include <opencv2/opencv.hpp>
+#include <opencv2/dnn.hpp>
+//#include <opencv2/tracking.hpp>
+#include <fstream>
+//#include "matplotlibcpp.h"
+#include <chrono>
+#include <ctime>
+
+using namespace std;
+//using namespace matplotlibcpp;
+using namespace cv::dnn;
+using namespace cv;
+
+// globals
+float objectnessThreshold; // Objectness threshold
+float confThreshold; // Confidence threshold
+float nmsThreshold;  // Non-maximum suppression threshold
+int inpWidth;  // Width of network's input image
+int inpHeight; // Height of network's input image
+vector<string> classes;
+
+vector<Rect2d> bboxes;
+int codQuantity, saitheQuantity;
+
+string objectLabel;
+
+const char *WINDOW_TITLE = "Press ESC to quit";
+
+//bool isTracking;
+
+//vector<string> trackerTypes = {"BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "GOTURN", "MOSSE", "CSRT"};
+//vector<Ptr<Tracker>> trackers;
+
+// Create tracker by name
+/*Ptr<Tracker> createTrackerByName(string trackerType)
+{
+    Ptr<Tracker> tracker;
+    if (trackerType ==  trackerTypes[0])
+        tracker = TrackerBoosting::create();
+    else if (trackerType == trackerTypes[1])
+        tracker = TrackerMIL::create();
+    else if (trackerType == trackerTypes[2])
+        tracker = TrackerKCF::create();
+    else if (trackerType == trackerTypes[3])
+        tracker = TrackerTLD::create();
+    else if (trackerType == trackerTypes[4])
+        tracker = TrackerMedianFlow::create();
+    else if (trackerType == trackerTypes[5])
+        tracker = TrackerGOTURN::create();
+    else if (trackerType == trackerTypes[6])
+        tracker = TrackerMOSSE::create();
+    else if (trackerType == trackerTypes[7])
+        tracker = TrackerCSRT::create();
+    else
+    {
+        cout << "Incorrect tracker name" << endl;
+        cout << "Available trackers are: " << endl;
+        for (vector<string>::iterator it = trackerTypes.begin() ; it != trackerTypes.end(); ++it)
+        {
+            std::cout << " " << *it << endl;
+        }
+    }
+
+    return tracker;
+}*/
+
+// Get the names of the output layers
+auto getOutputsNames(const Net& net)
+{
+    static vector<String> names;
+    if (names.empty())
+    {
+        // Get the indices of the output layers, i.e. the layers with unconnected outputs
+        vector<int> outLayers = net.getUnconnectedOutLayers();
+
+        // Get the names of all the layers in the network
+        vector<String> layersNames = net.getLayerNames();
+
+        // Get the names of the output layers in names
+        names.resize(outLayers.size());
+        for (size_t i = 0; i < outLayers.size(); ++i)
+            names[i] = layersNames[outLayers[i] - 1];
+    }
+    return names;
+}
+
+// Draw the predicted bounding box
+void drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame)
+{
+    // Draw a rectangle displaying the bounding box
+    rectangle(frame, Point(left, top), Point(right, bottom), Scalar(255, 178, 50), 3);
+
+    // Get the label for the class name and its confidence
+    string label = format("%.1f", conf * 100);
+    if (!classes.empty())
+    {
+        CV_Assert(classId < (int)classes.size());
+        label = classes[classId] + " " + label + "\%";
+    }
+
+    // Display the label at the top of the bounding box
+    int baseLine;
+    Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
+    top = max(top, labelSize.height);
+    rectangle(frame, Point(left, top - round(1.5*labelSize.height)), Point(left + round(1.5*labelSize.width), top + baseLine), Scalar(255, 255, 255), FILLED);
+    putText(frame, label, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,0),1);
+
+    objectLabel = label;
+}
+
+// Remove the bounding boxes with low confidence using non-maxima suppression
+void postprocess(Mat& frame, const vector<Mat>& outs)
+{
+    vector<int> classIds;
+    vector<float> confidences;
+    vector<Rect> boxes;
+
+    codQuantity = 0;
+    saitheQuantity = 0;
+
+    for (size_t i = 0; i < outs.size(); ++i)
+    {
+        // Scan through all the bounding boxes output from the network and keep only the
+        // ones with high confidence scores. Assign the box's class label as the class
+        // with the highest score for the box.
+        float* data = (float*)outs[i].data;
+        for (int j = 0; j < outs[i].rows; ++j, data += outs[i].cols)
+        {
+            Mat scores = outs[i].row(j).colRange(5, outs[i].cols);
+            Point classIdPoint;
+            double confidence;
+            // Get the value and location of the maximum score
+            minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
+
+            if (confidence > confThreshold)
+            {
+                if (classes[classIdPoint.x] == "atlantic cod") {
+                    codQuantity++;
+                }
+                else if (classes[classIdPoint.x] == "saithe")
+                {
+                    saitheQuantity++;
+                }
+
+                int centerX = (int)(data[0] * frame.cols);
+                int centerY = (int)(data[1] * frame.rows);
+                int width = (int)(data[2] * frame.cols);
+                int height = (int)(data[3] * frame.rows);
+                int left = centerX - width / 2;
+                int top = centerY - height / 2;
+
+                classIds.push_back(classIdPoint.x);
+                confidences.push_back((float)confidence);
+                boxes.push_back(Rect(left, top, width, height));
+
+                /*if (isTracking == false)
+                {
+                    Rect2d bbox(centerX - (width / 2), centerY - (height / 2), width, height); // KCF works best with a tight crop
+                    bboxes.push_back(bbox);
+
+                    Ptr<Tracker> newTracker = createTrackerByName(trackerTypes[2]); // Use KCF
+                    newTracker->init(frame, Rect2d(bboxes[i]));
+
+                    trackers.push_back(newTracker);
+                }*/
+            }
+        }
+    }
+
+    // Perform non maximum suppression to eliminate redundant overlapping boxes with
+    // lower confidences
+    vector<int> indices;
+    NMSBoxes(boxes, confidences, confThreshold, nmsThreshold, indices);
+    for (size_t i = 0; i < indices.size(); ++i)
+    {
+        int idx = indices[i];
+        Rect box = boxes[idx];
+        drawPred(classIds[idx], confidences[idx], box.x, box.y,
+                 box.x + box.width, box.y + box.height, frame);
+    }
+
+    //isTracking = true;
+}
+
+int main(int argumentQuantity, char *arguments[])
+{
+    //isTracking = true;
+
+    // Configuration for log file
+    string filename = "log.csv";
+    bool newFile = true;
+
+    // Check if log file exists
+    ifstream ifile(filename);
+    if (ifile)
+    {
+        newFile = false;
+    }
+
+    // Open log file
+    ofstream logFile;
+    logFile.open(filename, std::ios_base::app);
+
+    // Write what you will find in the log file on the first line if it does not already exist
+    if (newFile)
+    {
+        logFile << "atlantic_cod_quantity,saithe_quantity,datetime" << endl;
+    }
+
+    // Open video file
+    VideoCapture video;
+
+    // Print usage as a warning
+    clog << "Usage: ./OBJECT_DETECTOR <videoPath>" << endl;
+
+    // Use webcam or filepath from command line
+    if (argumentQuantity > 1)
+    {
+        string videoPath = arguments[1];
+        video = VideoCapture(videoPath);
+    }
+    else
+    {
+        clog << "No video path given. Using camera 0" << endl;
+        video = VideoCapture(0);
+    }
+
+    if (video.isOpened() == false)
+    {
+        cerr << "Failed to open video stream" << endl;
+        return -1;
+    }
+
+    // Write out video with bounding boxes and labels to disk
+    //VideoWriter videoWrite("out.avi", VideoWriter::fourcc('M','J','P','G'), 10, Size(width, height));
+
+    // Frame matrix
+    Mat frame;
+
+    // Initialize the parameters
+    int inpWidth = 416;  // Width of network's input image
+    int inpHeight = 416; // Height of network's input image
+
+    // Give the configuration and weight files for the model
+    String modelConfiguration = "data/models/yolov3.cfg";
+    String modelWeights = "data/models/yolov3.weights";
+
+    // Check if model exists in data folder
+    ifile = ifstream(modelConfiguration);
+    if (!ifile)
+    {
+        cerr << "YOLOv3 model could not be found. Please download and extract data from here: https://www.dropbox.com/s/aym2lmnzjlam16v/data.zip" << endl;
+        return -1;
+    }
+
+    // Load the network
+    Net net = readNetFromDarknet(modelConfiguration, modelWeights);
+
+    // Load names of classes
+    string classesFile = "data/models/obj.names";
+    ifstream ifs(classesFile.c_str());
+    string line;
+    while (getline(ifs, line)) classes.push_back(line);
+
+    // Configure user interface
+    namedWindow(WINDOW_TITLE, WINDOW_AUTOSIZE);
+
+    // Main loop
+    bool isAlive = true;
+    const int ESCAPE_KEYCODE = 27;
+    const int DELAY_MILLISECONDS = 1;
+
+    int key;
+
+    while(isAlive)
+    {
+        key = waitKey(DELAY_MILLISECONDS);
+
+        if (key == ESCAPE_KEYCODE)
+        {
+            isAlive = false;
+            break;
+        }
+
+        /*if (key == 32)
+        {
+            isTracking = false;
+        }*/
+
+        double timer = (double)getTickCount();
+
+        video >> frame;
+
+        if (frame.empty())
+        {
+            isAlive = false;
+            break;
+        }
+
+        // Loop through trackers manually
+        /*for(int i = 0; i < int(bboxes.size()); i++)
+        {
+            Ptr<Tracker> tracker = trackers[i];
+            Rect2d bbox = bboxes[i];
+
+            // Update the tracking result with new frame
+            bool ok = tracker->update(frame, bbox);
+
+            if (ok)
+            {
+                // Draw tracked objects
+                rectangle(frame, bbox, Scalar(128, 255, 50), 2, 1);
+            }
+            else
+            {
+                // Remove this tracker and bbox
+                //trackers.erase(trackers.begin() + i);
+                //bboxes.erase(bboxes.begin() + i);
+            }
+        }*/
+
+        // Create a 4D blob from a frame.
+        Mat blob;
+        blobFromImage(frame, blob, 1/255.0, Size(inpWidth, inpHeight), Scalar(0,0,0), true, false);
+
+        //Sets the input to the network
+        net.setInput(blob);
+
+        // Runs the forward pass to get output of the output layers
+        vector<Mat> outs;
+        net.forward(outs, getOutputsNames(net));
+
+        // Remove the bounding boxes with low confidence
+        postprocess(frame, outs);
+
+        // Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
+        vector<double> layersTimes;
+        double freq = getTickFrequency() / 1000;
+        double t = net.getPerfProfile(layersTimes) / freq;
+        string label = format("Inference time for a frame : %.2f ms", t);
+        putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
+
+        float fps = getTickFrequency() / ((double)getTickCount() - timer);
+
+        putText(frame, "FPS: " + std::to_string(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
+        putText(frame, "Atlantic cod quantity: " + std::to_string(codQuantity), Point(100,100), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
+        putText(frame, "Saithe quantity: " + std::to_string(saitheQuantity), Point(100,130), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
+
+        //videoWrite.write(frame);
+        imshow(WINDOW_TITLE, frame);
+
+        // Get the time
+        auto end = std::chrono::system_clock::now();
+        std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+        // Remove the newline after time which is typically included from the C library call
+        char *time = ctime(&end_time);
+        if (time[strlen(time)-1] == '\n') time[strlen(time)-1] = '\0';
+
+        // Log cod and saith quantities to csv file
+        if (codQuantity > 0 || saitheQuantity > 0)
+        {
+            logFile << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
+            cout << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
+        }
+    }
+
+    logFile.close();
+
+    video.release();
+    //videoWrite.release();
+
+    destroyAllWindows();
+
+    return 0;
+}
+\end{lstlisting}
 
 %\subsection{COCO Detection Evaluation} % For analyse kapittelet?
 
