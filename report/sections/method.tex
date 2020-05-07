@@ -27,7 +27,7 @@
 
 Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to modeller, en RetinaNet modell og en YOLOv4 modell. RetinaNet hadde forhåndstrente vekter fra en modell trent på COCO datasettet til Microsoft, og YOLOv4 hadde fohåndstrente vekter fra en modell trent på ImageNet datasettet, modellene ble ikke trent fra scratch. %You should design a model which achieves 85 \% validation accuracy on the given dataset.
 
-Microsoft Azure plattformen ble anvendt til å trene modellene. Microsoft tilbyr Nvidia Titan GPU-er i skyen, det gjør at treningen kan utføres uten at en trenger å investere i mektige grafikkprosessorer, store mengder datakraft blir tilgjengelig for folk flest. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid.
+Microsoft Azure plattformen ble anvendt til å trene modellene. Microsoft tilbyr Nvidia Titan GPU-er i skyen. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid.
 
 Det tok ca. 2 dager å trene YOLOv4 modellen på nettskyen Azure med maskinstørrelsen Standard NC6 Promo (6 vcpu-er, 56 GiB dataminne). Trening av RetinaNet tok mye mindre tid, men inferens av RetinaNet tok over seks timer for 7 minutter video. YOLOv4 kan gjøre inferens på noen millisekunder per bilde, der RetinaNet bruker titals sekunder selv på kraftig maskinvare.% Se figur retinanet vs YOLOv4 resultater
 
@@ -138,13 +138,13 @@ mogrify -format jpg *.png
 
 \subsection{Tren nettverket på et lite utvalg av dataen som en test før en trener et fullt nettverk}
 
-Nettverket ble først trent opp på et utvalg av treningsdataen, for å teste nettverket. 208 bilder med 4582 instanser av torsk ble grunnlaget for de første RetinaNet og YOLOv4 modellene.
+Nettverket ble først trent opp på et utvalg av treningsdataen, for å teste nettverket. 208 bilder med 4582 instanser av torsk ble grunnlaget for de første RetinaNet og YOLOv4 modellene. Dette steget gjøres som en sanity check før en begynner på trening som kan ta mange timer.
 
 RetinaNet modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned fra the model zoo, den heter \url{COCO-Detection/retinanet_R_50_FPN_3x.yam}. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
 
 \subsubsection{RetinaNet konfigurasjon og trening}
 
-RetinaNet er implementert i detectron2, som bruker deep learning rammeverket PyTorch. Grensesnittet er programmeringsspråket Python. Detectron2 er utgitt under en Apache 2.0 lisens, det vil si at den kan brukes til hva enn en vil på en hvilken som helst måte, gratis, så lenge man aksepterer at facebook ikke blir ansvarlig for arbeidet som gjøres, og så lenge man ikke krediterer arbeidet en gjør til facebook \cite{The Apache Software Foundation 2004}. Detectron2 er tilgjengelig her: \url{https://detectron2.readthedocs.io/}
+RetinaNet er implementert i detectron2, som bruker deep learning rammeverket PyTorch. Grensesnittet er programmeringsspråket Python. Detectron2 er utgitt under en Apache 2.0 lisens, det vil si at den kan brukes til hva enn en vil på en hvilken som helst måte, gratis, så lenge man aksepterer at facebook ikke blir ansvarlig for arbeidet som gjøres, og så lenge man ikke krediterer arbeidet en gjør til facebook \cite{The Apache Software Foundation 2004}. Detectron2 installeringsinstrukser er tilgjengelig her: \url{https://detectron2.readthedocs.io/}
 
 Først må bibliotekene lastes inn. Se python koden under.
 
@@ -300,30 +300,35 @@ trainer.train()
 
 \subsubsection{YOLOv4 trening}
 
-AlexeyAB sin fork av darknet ble anvendt, det er en versjon av Joseph Redmon sin Darknet: Open Source Neural Networks in C med Windows og Linux støtte. Dessuten støtter den nyere versjoner av OpenCV, den støtter også YOLOv4. En god guide til darknet og YOLO finnes på githuben til AlexeyAB. \cite{AlexeyAB 2020}
+AlexeyAB sin fork av darknet ble anvendt, det er en versjon av Joseph Redmon sin Darknet: Open Source Neural Networks in C med Windows og Linux støtte. Den støtter nyere versjoner av OpenCV og den nyeste YOLO, YOLOv4. En god guide til darknet og YOLO finnes på githuben til AlexeyAB. \cite{AlexeyAB 2020}
 
 YOLOv4 ble trent med vekter fra en forhåndstrent modell. Først må darknet installeres. Se under.
 
 \begin{verbatim}
 git clone https://github.com/AlexeyAB/darknet
 cd darknet
-make  
 \end{verbatim}
 
-Dette vil kompilere darknet for CPU-en.
+Omgjør linjen OPENCV=0 til OPENCV=1 i Makefile.
+
+\begin{verbatim}
+make
+\end{verbatim}
+
+Dette vil kompilere darknet for CPU-en med OpenCV støtte.
 
 %For å aktivere GPU-støtte, som vil gjøre treningen mye raskere om en har en Nvidia GPU med nok minne, settes GPU = 1 i Makefile-en, deretter rekompileres rammeverket. Rammeverket rekompileres ved å skrive make clean etterfulgt av make.
 
-For å få gode resultater så ble forhåndstrente vekter fra darknet53 (237 MB), et nettverk trent opp på ImageNet datasettet, lastet ned.
+For å få gode resultater så ble forhåndstrente vekter for de convolutional lagene lastet ned. Den forhåndstrente darknet modellen (162 MiB) kan lastes ned her: \url{https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137}
 
 \begin{verbatim}
-wget https://pjreddie.com/media/files/darknet53.conv.74
+cp yolov4.conv.137 build\darknet\x64
 \end{verbatim}
 
 Filen obj.data ble laget med følgende innhold.
 
 \begin{lstlisting}[language={}, caption=obj.data]
-classes = 2
+classes = 1
 train  = /home/awh/darknet/fish_train.txt
 valid  = /home/awh/darknet/fish_test.txt
 names = obj.names
@@ -340,10 +345,10 @@ saithe
 YOLOv4 må konfigureres.
 
 \begin{verbatim}
-cp cfg/YOLOv4.cfg YOLOv4.cfg
+cp cfg/yolov4-custom.cfg yolo-obj.cfg
 \end{verbatim}
 
-Det er to klasser. Derfor ble det gjort følgende endringer i YOLOv4.cfg filen.
+Det kun en klasse i testutvalget. Følgende endringer ble gjort i yolo-obj.cfg filen.
 
 \begin{itemize}
   \item linjen batch ble satt til batch=64
@@ -351,14 +356,22 @@ Det er to klasser. Derfor ble det gjort følgende endringer i YOLOv4.cfg filen.
   \item linjen max\_batches ble satt til max\_batches = 4000
   \item linjen steps ble satt til steps=4000,4500
   \item størrelsen av nettverket ble satt til width=416 height=416
-  \item linjen classes ble satt til classes=2
-  \item linjen filters ble satt til filters=21
+  \item linjen classes ble satt til classes=1 for hver av de tre yolo lagene
+  \item linjen filters ble satt til filters=18 i hver av de tre convolution lagene som kommer før yolo lagene
 \end{itemize}
 
-Nå kan nettverket trenes.
+For hver linje i fish\_train.txt og fish\_test.txt så ble filendingene omgjort til .jpg.
+
+Nettverket ble trent med følgende kommando på ubuntu linux maskinen på Azure.
 
 \begin{verbatim}
-./darknet detector train obj.data YOLOv4.cfg darknet53.conv.74 -map
+./darknet detector train obj.data yolo-obj.cfg yolov4.conv.137 -map
+\end{verbatim}
+
+Om en bruker Windows brukes følgende kommando.
+
+\begin{verbatim}
+darknet.exe detector train obj.data yolo-obj.cfg yolov4.conv.137 -map
 \end{verbatim}
 
 Treningen kan ta flere dager. Etter treningen så ble den beste modellen lastet ned.
@@ -370,6 +383,31 @@ scp awh@public-ip:/yolo/backup/YOLOv4_best.weights YOLOv4.weights
 Modellen ble brukt i OpenCV programmet beskrevet i del \ref{part:opencv}. 
 
 \subsection{Trene modellen på hele datasettet}
+
+Det ble trent opp en ny RetinaNet og en ny YOLOv4 modell med hele datasettet. Nettverkene hadde blitt testet og fungerte slik som forventet.
+
+Hele datasettet, inkludert seidata, ble lagt til fish\_train.txt og fish\_test.txt. 80 \% av dataen var treningsdata, 20 \% valideringsdata.
+
+\subsubsection{RetinaNet}
+
+RetinaNet trengte ikke å bli videre konfigurert. Koden som ble skrevet tidligere ble anvendt til å trene nettverket.
+
+\begin{verbatim}
+python train.py
+\end{verbatim}
+
+\subsubsection{YOLOv4}
+
+YOLOv4 måtte bli konfigurert for to klasser, torsk og sei. Det ble gjort følgende endringer i yolo-obj.cfg filen.
+
+\begin{itemize}
+  \item linjen classes ble satt til classes=2 for hver av de tre yolo lagene
+  \item linjen filters ble satt til filters=21 i hver av de tre convolution lagene som kommer før yolo lagene
+\end{itemize}
+
+Linjen classes = 1 ble omgjort til classes = 2 i obj.data. 
+
+Filendingene i fish\_train.txt og fish\_test.txt var .jpg, som før.
 
 Optimizers and learning rate schedulers [You can even get good results without a learning rate shceduler]
 Regularization techniques like Data Augmentation, Dropout, BatchNorm
@@ -493,7 +531,7 @@ OpenCV (Open Source Computer Vision Library) er en åpenkildekode maskinsyn og m
 
 OpenCV har C++, Python, Java og MATLAB grensesnitt og støtter Windows, Linux, Android og macOS. OpenCV Teamet forsøker først og fremst å levere sanntids maskinsyn for dataprogrammer og drar nytte av prosessorteknologi slik som MMX og SSE instruksjoner når de er tilgjengelige. CUDA og OpenCL støtte var under utvikling, men var enda ikke tilgjengelig da denne oppgaven ble skrevet. Det hadde gjort dataprogrammet mye raskere, den ville dratt nytte av GPU-en og ikke bare CPU-en på maskinen. OpenCV er skrevet i C++ og virker uten konflikter med STL datastrukturer. \cite{OpenCV Team 2020}
 
-Det ble skrevet et C++ program som bruker OpenCV til sanntids fiskedeteksjon med YOLOv4 modellen. OpenCV hadde fortsatt dårlig støtte av ONIX formatet, caffe2 formatet, og PyTorch da denne oppgaven ble skrevet. OpenCV 3.4 ble anvendt, da den fikk nylig støtte for YOLOv4. \cite{OpenCV Team 2020}
+Det ble skrevet et C++ program som bruker OpenCV til sanntids fiskedeteksjon med YOLOv4 modellen. OpenCV hadde fortsatt dårlig støtte av ONIX formatet, caffe2 formatet, og PyTorch da denne oppgaven ble skrevet. OpenCV 3.4 ble anvendt, da den fikk nylig støtte for YOLOv4. \cite{Batanina 2020}
 
 \begin{figure}
 \begin{center} 
@@ -506,22 +544,25 @@ Inferens med YOLOv4 ble gjort i OpenCV programmet. Programmet heter OBJECT\_DETE
 
 Når en lager et C++ program så må en kompilator og build-system bli valgt. For Windows så ble msvc++, som er en del av Visual Studio Community 2019, valgt. På macOS så ble clang brukt. Build-systemet cmake ble valgt. Alle disse verktøyene er tilgjengelig gratis, msvc++ er det eneste verktøyet som ikke er et åpen kildekodeprosjekt i tillegg til å være gratis. CMakeLists.txt beskriver C++ programmet. CMakelists.txt er en konfigurasjonsfil for cmake build-systemet, et av build systemene som kan brukes til å holde styr på C++ programmer. Det er nyttig å ha et IDE, en Intergrated Development Environment, når man programmerer i C++. QtCreator open source er et velutviklet IDE som kan laste inn cmake prosjekter.
 
-OpenCV-prosjektet bruker også cmake. OpenCV 3.4 ble anvendt til å lage OBJECT\_DETECTOR. Det er mulig å installere OpenCV fra kildekode, og kompilere prosjektet med hjelp av QtCreator.
+OpenCV-prosjektet bruker også cmake, og er også skrevet i C++. Her installeres OpenCV fra kommandolinjen på et unix system.
 
 \begin{verbatim}
 mkdir opencv-3.4
 cd opencv-3.4
 git clone https://github.com/opencv/opencv
 git clone https://github.com/opencv/opencv_contrib
-cd opencv
-git checkout 3.4
-cd ../opencv_contrib
+cd opencv_contrib
 git checkout 3.4
 cd modules
-pwd
+dir=$(pwd)
+cd ../../opencv
+git checkout 3.4
+mkdir build
+cd build
+cmake OPENCV_EXTRA_MODULES_PATH=$dir ..
+make
+make install
 \end{verbatim}
-
-QtCreator open source ble lastet ned fra \url{https://www.qt.io/download}. CMakeLists.txt i opencv-3.4/opencv ble åpnet i QtCreator. OPENCV\_EXTRA\_MODULES\_PATH ble satt til opencv\_contrib/modules på filsystemet. Dette kan gjøres fra Projects modusen i QtCreator. Se sidepanelet i figur \ref{fig:qtcreator}.
 
 \begin{figure}
 \begin{center} 
@@ -529,6 +570,59 @@ QtCreator open source ble lastet ned fra \url{https://www.qt.io/download}. CMake
 \caption{\small \sl QtCreator. \label{fig:qtcreator}} 
 \end{center} 
 \end{figure} 
+
+Det er også mulig å kompilere OpenCV med hjelp fra QtCreator. QtCreator open source ble lastet ned fra \url{https://www.qt.io/download}. CMakeLists.txt i opencv-3.4/opencv ble åpnet i QtCreator. OPENCV\_EXTRA\_MODULES\_PATH ble satt til opencv\_contrib/modules på filsystemet. Dette kan gjøres fra Projects modusen i QtCreator. Se sidepanelet i figur \ref{fig:qtcreator}.
+
+Anaconda individual med python 2 ble brukt. Det ble laget en cmake CMakeLists.txt fil for prosjektet. Denne burde muligens endres om andre vil kompilere prosjektet, merk at anaconda ble installert til hjemmemappen til brukeren. Prosjektet består av to programmer. OBJECT\_DETECTOR gjør fiskedeteksjon. Se figur \ref{fig:yolo_inference}. DATASET\_TOOL ble brukt til å lage label data ut av videoer. Se figur \ref{fig:dataset_tool}.
+
+\begin{lstlisting}[language=, caption=CMakeLists.txt]
+cmake_minimum_required(VERSION 2.8.12)
+
+PROJECT(app)
+SET(CMAKE_CXX_STANDARD 14)
+
+SET(Python2_ROOT_DIR ${PYTHONHOME})
+
+find_package(Python2 COMPONENTS Development NumPy)
+
+SET(OpenCV_DIR C:/opencv-3.4/opencv/build)
+
+if( UNIX )
+    include_directories(~/anaconda2/include/python2.7 ~/anaconda2/lib/python2.7/site-packages/numpy/core/include/ ~/anaconda2/include)
+else()
+    include_directories(${PYTHON_INCLUDE_DIRS} ~/Anaconda2/Lib/site-packages/numpy/core/include)
+endif()
+
+if(MSVC)
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+endif()
+
+find_package( OpenCV REQUIRED )
+
+set(OpenCV_STATIC ON) # Easier to share binaries
+
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+
+# If the package has been found, several variables will
+# be set, you can find the full list with descriptions
+# in the OpenCVConfig.cmake file.
+# Print some message showing some of them
+message(STATUS "OpenCV library status:")
+message(STATUS "    config: ${OpenCV_DIR}")
+message(STATUS "    version: ${OpenCV_VERSION}")
+message(STATUS "    libraries: ${OpenCV_LIBS}")
+message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
+
+add_executable(OBJECT_DETECTOR main.cpp)
+target_include_directories(OBJECT_DETECTOR PRIVATE ${PYTHON2_INCLUDE_DIRS} ${PYTHON2_NUMPY_INCLUDE_DIRS})
+target_link_libraries(OBJECT_DETECTOR PRIVATE ${OpenCV_LIBS} Python2::Python ) # libs # "${TORCH_LIBRARIES}"
+
+add_executable(DATASET_TOOL datasettool.cpp)
+target_include_directories(DATASET_TOOL PRIVATE ${PYTHON2_INCLUDE_DIRS} ${PYTHON2_NUMPY_INCLUDE_DIRS})
+target_link_libraries(DATASET_TOOL PRIVATE ${OpenCV_LIBS} Python2::Python ) # libs # "${TORCH_LIBRARIES}"
+\end{lstlisting}
+
+main.cpp er kildekoden til OBJECT\_DETECTOR. Først lastes bibliotekene inn.
 
 \begin{lstlisting}[language=C++, caption=main.cpp]
 #include <opencv2/opencv.hpp>
@@ -558,45 +652,11 @@ int codQuantity, saitheQuantity;
 string objectLabel;
 
 const char *WINDOW_TITLE = "Press ESC to quit";
+\end{lstlisting}
 
-//bool isTracking;
+getOutputsNames henter ut label navn fra det ytterste laget i modellen. Se figur \ref{fig:deep}.
 
-//vector<string> trackerTypes = {"BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW", "GOTURN", "MOSSE", "CSRT"};
-//vector<Ptr<Tracker>> trackers;
-
-// Create tracker by name
-/*Ptr<Tracker> createTrackerByName(string trackerType)
-{
-    Ptr<Tracker> tracker;
-    if (trackerType ==  trackerTypes[0])
-        tracker = TrackerBoosting::create();
-    else if (trackerType == trackerTypes[1])
-        tracker = TrackerMIL::create();
-    else if (trackerType == trackerTypes[2])
-        tracker = TrackerKCF::create();
-    else if (trackerType == trackerTypes[3])
-        tracker = TrackerTLD::create();
-    else if (trackerType == trackerTypes[4])
-        tracker = TrackerMedianFlow::create();
-    else if (trackerType == trackerTypes[5])
-        tracker = TrackerGOTURN::create();
-    else if (trackerType == trackerTypes[6])
-        tracker = TrackerMOSSE::create();
-    else if (trackerType == trackerTypes[7])
-        tracker = TrackerCSRT::create();
-    else
-    {
-        cout << "Incorrect tracker name" << endl;
-        cout << "Available trackers are: " << endl;
-        for (vector<string>::iterator it = trackerTypes.begin() ; it != trackerTypes.end(); ++it)
-        {
-            std::cout << " " << *it << endl;
-        }
-    }
-
-    return tracker;
-}*/
-
+\begin{lstlisting}[language=C++, caption=main.cpp]
 // Get the names of the output layers
 auto getOutputsNames(const Net& net)
 {
@@ -616,7 +676,11 @@ auto getOutputsNames(const Net& net)
     }
     return names;
 }
+\end{lstlisting}
 
+drawPred lager en bounding box rundt objektene som detekteres av modellen.
+
+\begin{lstlisting}[language=C++, caption=main.cpp]
 // Draw the predicted bounding box
 void drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame)
 {
@@ -640,7 +704,11 @@ void drawPred(int classId, float conf, int left, int top, int right, int bottom,
 
     objectLabel = label;
 }
+\end{lstlisting}
 
+postprocess henter alle instanser av fiskene i et bilde som er over en non-maxima suppression confidence boundary. Deretter sjekker den om objektet er en torsk eller sei, og teller mengden torsk og sei i bildet.
+
+\begin{lstlisting}[language=C++, caption=main.cpp]
 // Remove the bounding boxes with low confidence using non-maxima suppression
 void postprocess(Mat& frame, const vector<Mat>& outs)
 {
@@ -714,11 +782,13 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
 
     //isTracking = true;
 }
+\end{lstlisting}
 
+main er programmets main-entry point. Det er her dataprogrammet starter. Den åpner en logg, log.csv, og så åpner den en videostrøm. Deretter laster den inn YOLOv4 modellen.
+
+\begin{lstlisting}[language=C++, caption=main.cpp]
 int main(int argumentQuantity, char *arguments[])
 {
-    //isTracking = true;
-
     // Configuration for log file
     string filename = "log.csv";
     bool newFile = true;
@@ -797,7 +867,11 @@ int main(int argumentQuantity, char *arguments[])
 
     // Configure user interface
     namedWindow(WINDOW_TITLE, WINDOW_AUTOSIZE);
+\end{lstlisting}
 
+Den neste kodesnutten er programmets main loop. Denne koden repeteres til videoen har gått tomt for frames, eller at brukeren trykker på ESC på tastaturet. For hver frame i videostrømmen så lagres antall torsk og sei observert til log.csv, med mindre det er ingen torsk eller sei som blir oppdaget.
+
+\begin{lstlisting}[language=C++, caption=main.cpp]
     // Main loop
     bool isAlive = true;
     const int ESCAPE_KEYCODE = 27;
@@ -815,11 +889,6 @@ int main(int argumentQuantity, char *arguments[])
             break;
         }
 
-        /*if (key == 32)
-        {
-            isTracking = false;
-        }*/
-
         double timer = (double)getTickCount();
 
         video >> frame;
@@ -829,28 +898,6 @@ int main(int argumentQuantity, char *arguments[])
             isAlive = false;
             break;
         }
-
-        // Loop through trackers manually
-        /*for(int i = 0; i < int(bboxes.size()); i++)
-        {
-            Ptr<Tracker> tracker = trackers[i];
-            Rect2d bbox = bboxes[i];
-
-            // Update the tracking result with new frame
-            bool ok = tracker->update(frame, bbox);
-
-            if (ok)
-            {
-                // Draw tracked objects
-                rectangle(frame, bbox, Scalar(128, 255, 50), 2, 1);
-            }
-            else
-            {
-                // Remove this tracker and bbox
-                //trackers.erase(trackers.begin() + i);
-                //bboxes.erase(bboxes.begin() + i);
-            }
-        }*/
 
         // Create a 4D blob from a frame.
         Mat blob;
@@ -912,3 +959,10 @@ int main(int argumentQuantity, char *arguments[])
 %\subsection{COCO Detection Evaluation} % For analyse kapittelet?
 
 \subsection{Segmentering}
+
+\begin{figure}[h!]
+\begin{center} 
+\includegraphics[scale=0.25]{figures/labelme}
+\caption{\small \sl Figuren viser dataprogrammet labelme. \cite{Wada 2016} \label{fig:labelme}} 
+\end{center} 
+\end{figure} 
