@@ -85,7 +85,7 @@ Klassekode & Klassenavn    & Norsk klassenavn \\
 
 `Labels` mappen inneholdt bounding box data for bildene. Det var en eller flere linjer per `.txt` fil. Hver linje representerer en bounding box. Representasjonen er i `xmin', `ymin', `xmax', og `ymax' formatet. Se tabell \ref{tab:bbox}.
 
-Filene som ble brukt til trening og validering ble definert i \url{data/fish_train.txt} og \url{data/fish_test.txt}. Se tabell \ref{tab:fish}
+Filene som ble brukt til trening og validering ble definert i \url{data/fish_train.txt} og \url{data/fish_test.txt}. Se tabell \ref{tab:fish}.
 
 \begin{table}[b]
 \bigskip
@@ -309,7 +309,9 @@ trainer.train()
 
 \subsubsection{YOLOv4 trening}
 
-AlexeyAB sin fork av darknet ble anvendt, det er en versjon av Joseph Redmon sin Darknet: Open Source Neural Networks in C med Windows og Linux støtte. Den støtter nyere versjoner av OpenCV og den nyeste YOLO, YOLOv4. En god guide til darknet og YOLO finnes på githuben til AlexeyAB. \cite{AlexeyAB 2020}
+Alexey Bochkovskiy sin fork av darknet ble anvendt, det er en versjon av Joseph Redmon sin Darknet: Open Source Neural Networks in C med Windows og Linux støtte. Den støtter nyere versjoner av OpenCV og det som var den nyeste versjonen av YOLO da denne rapporten ble skrevet, YOLOv4, som ble utgitt 23. April \cite{Bochkovskiy m.fl. 2020}. En god guide til darknet og YOLO finnes på githuben til Alexey. \cite{Bochkovskiy 2020}
+
+cuDDN ble installert etter Nvidia sine instrukser. \url{https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#installlinux-tar}
 
 YOLOv4 ble trent med vekter fra en forhåndstrent modell. Først må darknet installeres. Se under.
 
@@ -318,13 +320,27 @@ git clone https://github.com/AlexeyAB/darknet
 cd darknet
 \end{verbatim}
 
-Omgjør linjen OPENCV=0 til OPENCV=1 i Makefile.
+Omgjør linjene GPU=0, CUDNN=0, og OPENCV=0 og til GPU=1, CUDNN=1 og OPENCV=1 i Makefile.
+
+\begin{lstlisting}[language={}, caption=De første linjene i Makefile]
+GPU=1
+CUDNN=1
+CUDNN_HALF=0
+OPENCV=1
+AVX=0
+OPENMP=0
+LIBSO=0
+ZED_CAMERA=0 # ZED SDK 3.0 and above
+ZED_CAMERA_v2_8=0 # ZED SDK 2.X
+\end{lstlisting}
+
+Kompiler rammeverket.
 
 \begin{verbatim}
 make
 \end{verbatim}
 
-Dette vil kompilere darknet for CPU-en med OpenCV støtte.
+Dette vil kompilere darknet for GPU-en med OpenCV støtte.
 
 %For å aktivere GPU-støtte, som vil gjøre treningen mye raskere om en har en Nvidia GPU med nok minne, settes GPU = 1 i Makefile-en, deretter rekompileres rammeverket. Rammeverket rekompileres ved å skrive make clean etterfulgt av make.
 
@@ -395,7 +411,7 @@ Modellen ble brukt i OpenCV programmet beskrevet i del \ref{part:opencv}.
 
 Det ble trent opp en ny RetinaNet og en ny YOLOv4 modell med hele datasettet. Nettverkene hadde blitt testet og fungerte slik som forventet.
 
-Hele datasettet, inkludert seidata, ble lagt til fish\_train.txt og fish\_test.txt. 80 \% av dataen var treningsdata, 20 \% valideringsdata.
+Hele datasettet, inkludert seidata, ble lagt til fish\_train.txt og fish\_test.txt. Som tidligere, 80 \% av dataen var treningsdata, 20 \% valideringsdata.
 
 \subsubsection{RetinaNet}
 
