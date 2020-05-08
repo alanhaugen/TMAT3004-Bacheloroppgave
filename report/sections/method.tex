@@ -35,13 +35,22 @@ Kildekoden for prosjektet kan lastes ned fra: \\ \url{https://github.com/alanhau
 
 \subsection{Å forstå problemet}
 
-Før en begynner så er det viktig å være sikker på at man forstår problemet en skal løse. I denne oppgaven så skulle mengden av to fisk, torsk og sei, telles. Det er to klasser. For å løse denne oppgaven kreves bilder av hver fisk med korrekt label-data og et rimelig stort nettverk som kan forstå og trenes på bilder.
+Før en begynner så er det viktig å være sikker på at man forstår problemet en skal løse. I denne oppgaven så skulle mengden av to fisk, torsk og sei, telles med maskinsyn. Det er to klasser. For å løse denne oppgaven kreves bilder av hver fisk med korrekt label-data og et rimelig stort nettverk som kan forstå og trenes på bilder.
 
 Objektdeteksjon handler om to ting. Områder av bilde som kan inneholde en klasse må genereres, og så må disse delene av et bilde klassifiseres basert på det visuelle innholdet i bildeområdet, et bildeområde kalles for en patch innenfor maskinsyn. Områdene der det kan være objekter kalles for ankre. Med andre ord, målet for modellen er å se på en del av et bilde og finne ut hvilket objekt som finnes i dette området. Nettverket kan kun finne de objektene som den har blitt trent til å gjenkjenne.
 
 \subsection{Få tak i data}
 
-Det neste steget var å få tak i data. Datasettet som ble laget for dette prosjektet bestod av bilder fra en lagringsmerd av torsk, og bilder av torsk og sei fra under et oppdrettsanlegg. Bildene er basert på opptak fra Nofima. Se figur \ref{fig:data}. Opptakene ble omgjort til bilder, og label data lagt inn manuelt. Se figur \ref{fig:dataset_tool}. Dette er fargebilder, så de består av tre kanaler, og har størrelsen 1920 $\times$ 1080. %You need to achieve 85 \% accuracy for validation data to successfully complete this assignment. Check it out here.
+Det neste steget var å få tak i data. Datasettet som ble laget for dette prosjektet bestod av bilder fra en lagringsmerd av torsk, og bilder av sei fra Havbruksstasjonen i Tromsø. Se figur \ref{fig:data} og \ref{fig:nofima}. Opptakene av fiskene ble laget av Nofima og ble omgjort til bilder. Label data lagt inn manuelt. Se figur \ref{fig:dataset_tool}. Dataen av torsk var fargebilder, så de bestod av tre kanaler, og hadde størrelsen 1920 $\times$ 1080. %You need to achieve 85 \% accuracy for validation data to successfully complete this assignment. Check it out here.
+
+\begin{figure}[h!]
+\begin{center} 
+\includegraphics[scale=0.05,angle=-90,origin=c]{figures/camera_1}
+\includegraphics[scale=0.05,angle=-90,origin=c]{figures/camera_2}
+\includegraphics[scale=0.05]{figures/camera_3}
+\caption{\small \sl Figuren viser kamerautstyret som ble anvendt til å lage seidataen. Nofima anskaffet et undervannskamera av typen Steinsvik Orbit-3300 som styres via et MB-3000 kontrollpanel. \label{fig:nofima}} 
+\end{center} 
+\end{figure} 
 
 Datasettet bestod av 208 bilder av torsk, med til sammen 4582 instanser av torsk i bildene. Det var (--) bilder av sei med (--) instanser av fisken i bildene. Bildene av torsk og sei ble satt i hver sin mappe. De ble splittet etter forholdet 80/20, 80 \% av dataen var for trening, og 20 \% for validering.
 
@@ -869,7 +878,7 @@ int main(int argumentQuantity, char *arguments[])
     namedWindow(WINDOW_TITLE, WINDOW_AUTOSIZE);
 \end{lstlisting}
 
-Den neste kodesnutten er programmets main loop. Denne koden repeteres til videoen har gått tomt for frames, eller at brukeren trykker på ESC på tastaturet. For hver frame i videostrømmen så lagres antall torsk og sei observert til log.csv, med mindre det er ingen torsk eller sei som blir oppdaget.
+Den neste kodesnutten er programmets main loop. Denne koden repeteres til videoen har gått tomt for bilder, eller at brukeren trykker på ESC på tastaturet. For hvert bilde i videostrømmen så lagres antall torsk og sei observert til log.csv, med mindre det er ingen torsk eller sei som blir oppdaget.
 
 \begin{lstlisting}[language=C++, caption=main.cpp]
     // Main loop
