@@ -320,12 +320,12 @@ git clone https://github.com/AlexeyAB/darknet
 cd darknet
 \end{verbatim}
 
-Omgjør linjene GPU=0, CUDNN=0, og OPENCV=0 og til GPU=1, CUDNN=1 og OPENCV=1 i Makefile.
+Omgjør linjene GPU=0, CUDNN=0, CUDNN\_HALF=0 og OPENCV=0 og til GPU=1, CUDNN=1, CUDNN\_HALF=1 og OPENCV=1 i Makefile.
 
 \begin{lstlisting}[language={}, caption=De første linjene i Makefile]
 GPU=1
 CUDNN=1
-CUDNN_HALF=0
+CUDNN_HALF=1
 OPENCV=1
 AVX=0
 OPENMP=0
@@ -347,15 +347,15 @@ Dette vil kompilere darknet for GPU-en med OpenCV støtte.
 For å få gode resultater så ble forhåndstrente vekter for de convolutional lagene lastet ned. Den forhåndstrente darknet modellen (162 MiB) kan lastes ned her: \url{https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137}
 
 \begin{verbatim}
-cp yolov4.conv.137 build\darknet\x64
+cp yolov4.conv.137 build/darknet/x64
 \end{verbatim}
 
 Filen obj.data ble laget med følgende innhold.
 
 \begin{lstlisting}[language={}, caption=obj.data]
 classes = 1
-train  = /home/awh/darknet/fish_train.txt
-valid  = /home/awh/darknet/fish_test.txt
+train  = /yolo/data/fish_train.txt
+valid  = /yolo/data/fish_test.txt
 names = obj.names
 backup = /yolo/backup/
 \end{lstlisting}
@@ -446,9 +446,9 @@ Decreasing batch size ...
 
 \subsection{Inferens}
 
-RetinaNet, introdusert av facebook ansatte i 2017 i Focal Loss for Dense Object Detection på arXiv, ble ansett som den beste objektdeteksjonsmodellen da dette dokumentet ble skrevet. Det var en forbedring på R-CNN. \cite{Lin m.fl. 2017}
+RetinaNet, introdusert av facebook-ansatte i 2017 i Focal Loss for Dense Object Detection på arXiv, ble ansett som den beste objektdeteksjonsmodellen da dette dokumentet ble skrevet. Det var en forbedring av R-CNN. \cite{Lin m.fl. 2017}
 
-You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig Nvidia GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon m.fl. 2020}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLOv4 like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Min erfaring er at den er rundt 10 ganger raskere, men mye mindre nøyaktig (må gjøre et eksperiment her). Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2020}. Se figur \ref{fig:yolo_inference}.
+You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig Nvidia GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon m.fl. 2020}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLO like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2020}. Se figur \ref{fig:yolo_inference}. %Min erfaring er at den er rundt 10 ganger raskere, men mye mindre nøyaktig (må gjøre et eksperiment her). 
 
 \subsubsection{RetinaNet}
 
@@ -561,7 +561,7 @@ Det ble skrevet et C++ program som bruker OpenCV til sanntids fiskedeteksjon med
 \begin{figure}
 \begin{center} 
 \includegraphics[scale=0.35]{figures/inference_yolo}
-\caption{\small \sl Figuren viser inference med YOLOv4. Rundt fiskene så lager YOLOv4 bounding boxes der den tror det finnes fisk, og gir den en label basert på det den tror at det er. Her får alle fiskene labelen ``atlantic cod'', dette er fra en lagringsmerd med torsk. Ved siden av navnet av klassen så står det hvor sikker nettverket er på at den har funnet en torsk, presisjonen av inferensen. I grønn tekst, øverst til venstre, står det at algoritmen kan telle 31 torsk i bildet, og 0 sei. \label{fig:yolo_inference}} 
+\caption{\small \sl Figuren viser inferens med YOLOv4. Rundt fiskene så lager YOLOv4 bounding boxes der den tror det finnes fisk, og gir den en label basert på det den tror at det er. Her får alle fiskene labelen ``atlantic cod'', dette er fra en lagringsmerd med torsk. Ved siden av navnet av klassen så står det hvor sikker nettverket er på at den har funnet en torsk, presisjonen av inferensen. I grønn tekst, øverst til venstre, står det at algoritmen kan telle 31 torsk i bildet, og 0 sei. \label{fig:yolo_inference}} 
 \end{center} 
 \end{figure} 
 
@@ -598,7 +598,7 @@ make install
 
 Det er også mulig å kompilere OpenCV med hjelp fra QtCreator. QtCreator open source ble lastet ned fra \url{https://www.qt.io/download}. CMakeLists.txt i opencv-3.4/opencv ble åpnet i QtCreator. OPENCV\_EXTRA\_MODULES\_PATH ble satt til opencv\_contrib/modules på filsystemet. Dette kan gjøres fra Projects modusen i QtCreator. Se sidepanelet i figur \ref{fig:qtcreator}.
 
-Anaconda individual med python 2 ble brukt. Det ble laget en cmake CMakeLists.txt fil for prosjektet. Denne burde muligens endres om andre vil kompilere prosjektet, merk at anaconda ble installert til hjemmemappen til brukeren. Prosjektet består av to programmer. OBJECT\_DETECTOR gjør fiskedeteksjon. Se figur \ref{fig:yolo_inference}. DATASET\_TOOL ble brukt til å lage label data ut av videoer. Se figur \ref{fig:dataset_tool}.
+Anaconda individual edition med python 2 ble brukt. Det ble laget en cmake CMakeLists.txt fil for prosjektet. Denne burde muligens endres om andre ønsker å kompilere prosjektet, merk at anaconda ble installert til hjemmemappen til brukeren. Prosjektet består av to programmer. OBJECT\_DETECTOR gjør fiskedeteksjon. Se figur \ref{fig:yolo_inference}. DATASET\_TOOL ble brukt til å lage label data ut av videoer. Se figur \ref{fig:dataset_tool}.
 
 \begin{lstlisting}[language=, caption=CMakeLists.txt]
 cmake_minimum_required(VERSION 2.8.12)
@@ -613,9 +613,11 @@ find_package(Python2 COMPONENTS Development NumPy)
 SET(OpenCV_DIR C:/opencv-3.4/opencv/build)
 
 if( UNIX )
-    include_directories(~/anaconda2/include/python2.7 ~/anaconda2/lib/python2.7/site-packages/numpy/core/include/ ~/anaconda2/include)
+    include_directories(~/anaconda2/include/python2.7 ~/anaconda2/lib/python2.7/\
+    site-packages/numpy/core/include/ ~/anaconda2/include)
 else()
-    include_directories(${PYTHON_INCLUDE_DIRS} ~/Anaconda2/Lib/site-packages/numpy/core/include)
+    include_directories(${PYTHON_INCLUDE_DIRS} ~/Anaconda2/Lib/site-packages/numpy/core/\
+    	include)
 endif()
 
 if(MSVC)
@@ -639,12 +641,14 @@ message(STATUS "    libraries: ${OpenCV_LIBS}")
 message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 
 add_executable(OBJECT_DETECTOR main.cpp)
-target_include_directories(OBJECT_DETECTOR PRIVATE ${PYTHON2_INCLUDE_DIRS} ${PYTHON2_NUMPY_INCLUDE_DIRS})
-target_link_libraries(OBJECT_DETECTOR PRIVATE ${OpenCV_LIBS} Python2::Python ) # libs # "${TORCH_LIBRARIES}"
+target_include_directories(OBJECT_DETECTOR PRIVATE ${PYTHON2_INCLUDE_DIRS} \
+	${PYTHON2_NUMPY_INCLUDE_DIRS})
+target_link_libraries(OBJECT_DETECTOR PRIVATE ${OpenCV_LIBS} Python2::Python )
 
 add_executable(DATASET_TOOL datasettool.cpp)
-target_include_directories(DATASET_TOOL PRIVATE ${PYTHON2_INCLUDE_DIRS} ${PYTHON2_NUMPY_INCLUDE_DIRS})
-target_link_libraries(DATASET_TOOL PRIVATE ${OpenCV_LIBS} Python2::Python ) # libs # "${TORCH_LIBRARIES}"
+target_include_directories(DATASET_TOOL PRIVATE ${PYTHON2_INCLUDE_DIRS}\
+	 ${PYTHON2_NUMPY_INCLUDE_DIRS})
+target_link_libraries(DATASET_TOOL PRIVATE ${OpenCV_LIBS} Python2::Python )
 \end{lstlisting}
 
 main.cpp er kildekoden til OBJECT\_DETECTOR. Først lastes bibliotekene inn.
@@ -724,7 +728,12 @@ void drawPred(int classId, float conf, int left, int top, int right, int bottom,
     int baseLine;
     Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
     top = max(top, labelSize.height);
-    rectangle(frame, Point(left, top - round(1.5*labelSize.height)), Point(left + round(1.5*labelSize.width), top + baseLine), Scalar(255, 255, 255), FILLED);
+    rectangle(frame,
+    		   Point(left, top - round(1.5*labelSize.height)),
+		   Point(left + round(1.5*labelSize.width),
+		   top + baseLine),
+		   Scalar(255, 255, 255),
+		   FILLED);
     putText(frame, label, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,0),1);
 
     objectLabel = label;
@@ -778,17 +787,6 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
                 classIds.push_back(classIdPoint.x);
                 confidences.push_back((float)confidence);
                 boxes.push_back(Rect(left, top, width, height));
-
-                /*if (isTracking == false)
-                {
-                    Rect2d bbox(centerX - (width / 2), centerY - (height / 2), width, height); // KCF works best with a tight crop
-                    bboxes.push_back(bbox);
-
-                    Ptr<Tracker> newTracker = createTrackerByName(trackerTypes[2]); // Use KCF
-                    newTracker->init(frame, Rect2d(bboxes[i]));
-
-                    trackers.push_back(newTracker);
-                }*/
             }
         }
     }
@@ -804,12 +802,10 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
         drawPred(classIds[idx], confidences[idx], box.x, box.y,
                  box.x + box.width, box.y + box.height, frame);
     }
-
-    //isTracking = true;
 }
 \end{lstlisting}
 
-main er programmets main-entry point. Det er her dataprogrammet starter. Den åpner en logg, log.csv, og så åpner den en videostrøm. Deretter laster den inn YOLOv4 modellen.
+main er programmets entry point. Det er her dataprogrammet starter. Den åpner en logg, log.csv, og så åpner den en videostrøm. Deretter laster den inn YOLOv4 modellen.
 
 \begin{lstlisting}[language=C++, caption=main.cpp]
 int main(int argumentQuantity, char *arguments[])
@@ -829,7 +825,8 @@ int main(int argumentQuantity, char *arguments[])
     ofstream logFile;
     logFile.open(filename, std::ios_base::app);
 
-    // Write what you will find in the log file on the first line if it does not already exist
+    // Write what you will find in the log file on the first line
+    // if it does not already exist
     if (newFile)
     {
         logFile << "atlantic_cod_quantity,saithe_quantity,datetime" << endl;
@@ -859,9 +856,6 @@ int main(int argumentQuantity, char *arguments[])
         return -1;
     }
 
-    // Write out video with bounding boxes and labels to disk
-    //VideoWriter videoWrite("out.avi", VideoWriter::fourcc('M','J','P','G'), 10, Size(width, height));
-
     // Frame matrix
     Mat frame;
 
@@ -870,14 +864,14 @@ int main(int argumentQuantity, char *arguments[])
     int inpHeight = 416; // Height of network's input image
 
     // Give the configuration and weight files for the model
-    String modelConfiguration = "data/models/yolov3.cfg";
-    String modelWeights = "data/models/yolov3.weights";
+    String modelConfiguration = "data/models/yolov4.cfg";
+    String modelWeights = "data/models/yolov4.weights";
 
     // Check if model exists in data folder
     ifile = ifstream(modelConfiguration);
     if (!ifile)
     {
-        cerr << "YOLOv3 model could not be found. Please download and extract data from here: https://www.dropbox.com/s/aym2lmnzjlam16v/data.zip" << endl;
+        cerr << "YOLOv4 model could not be found." << endl;
         return -1;
     }
 
@@ -926,7 +920,13 @@ Den neste kodesnutten er programmets main loop. Denne koden repeteres til videoe
 
         // Create a 4D blob from a frame.
         Mat blob;
-        blobFromImage(frame, blob, 1/255.0, Size(inpWidth, inpHeight), Scalar(0,0,0), true, false);
+        blobFromImage(frame, 
+        		blob,
+        		1/255.0,
+        		Size(inpWidth, inpHeight),
+        		Scalar(0,0,0),
+        		true,
+        		false);
 
         //Sets the input to the network
         net.setInput(blob);
@@ -938,7 +938,9 @@ Den neste kodesnutten er programmets main loop. Denne koden repeteres til videoe
         // Remove the bounding boxes with low confidence
         postprocess(frame, outs);
 
-        // Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
+        // Put efficiency information.
+        // The function getPerfProfile returns the overall time for inference(t)
+        // and the timings for each of the layers(in layersTimes)
         vector<double> layersTimes;
         double freq = getTickFrequency() / 1000;
         double t = net.getPerfProfile(layersTimes) / freq;
@@ -947,9 +949,25 @@ Den neste kodesnutten er programmets main loop. Denne koden repeteres til videoe
 
         float fps = getTickFrequency() / ((double)getTickCount() - timer);
 
-        putText(frame, "FPS: " + std::to_string(int(fps)), Point(100,50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
-        putText(frame, "Atlantic cod quantity: " + std::to_string(codQuantity), Point(100,100), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
-        putText(frame, "Saithe quantity: " + std::to_string(saitheQuantity), Point(100,130), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50,170,50), 2);
+        putText(frame,
+        		    "FPS: " + std::to_string(int(fps)),
+		    Point(100,50),
+		    FONT_HERSHEY_SIMPLEX, 0.75,
+		    Scalar(50,170,50), 2);
+        putText(frame,
+        		    "Atlantic cod quantity: " + std::to_string(codQuantity),
+		    Point(100,100),
+		    FONT_HERSHEY_SIMPLEX,
+		    0.75,
+		    Scalar(50,170,50),
+		    2);
+        putText(frame,
+        		    "Saithe quantity: " + std::to_string(saitheQuantity),
+		    Point(100,130),
+		    FONT_HERSHEY_SIMPLEX,
+		    0.75,
+		    Scalar(50,170,50),
+		    2);
 
         //videoWrite.write(frame);
         imshow(WINDOW_TITLE, frame);
