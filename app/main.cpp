@@ -242,14 +242,14 @@ int main(int argumentQuantity, char *arguments[])
     int inpHeight = 416; // Height of network's input image
 
     // Give the configuration and weight files for the model
-    String modelConfiguration = "data/models/yolov3.cfg";
-    String modelWeights = "data/models/yolov3.weights";
+    String modelConfiguration = "data/models/yolo-obj.cfg";
+    String modelWeights = "data/models/yolo.weights";
 
     // Check if model exists in data folder
     ifile = ifstream(modelConfiguration);
     if (!ifile)
     {
-        cerr << "YOLOv3 model could not be found. Please download and extract data from here: https://www.dropbox.com/s/aym2lmnzjlam16v/data.zip" << endl;
+        cerr << "YOLOv4 model could not be found. Please download and extract data from here: https://www.dropbox.com/s/aym2lmnzjlam16v/data.zip" << endl;
         return -1;
     }
 
