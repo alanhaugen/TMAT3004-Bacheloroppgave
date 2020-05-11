@@ -156,7 +156,7 @@ if __name__ == "__main__":
     train_data_name = 'fish_train'
     test_data_name  = 'fish_test'
 
-    thing_classes = ['atlantic_cod', 'seithe']
+    thing_classes = ['atlantic_cod', 'saithe']
 
     output_dir = 'outputs'
 
