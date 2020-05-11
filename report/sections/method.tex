@@ -41,7 +41,7 @@ Objektdeteksjon handler om to ting. Områder av bilde som kan inneholde en klass
 
 \subsection{Få tak i data}
 
-Det neste steget var å få tak i data. Datasettet som ble laget for dette prosjektet bestod av bilder fra en lagringsmerd av torsk, og bilder av sei fra Havbruksstasjonen i Tromsø. Se figur \ref{fig:data} og \ref{fig:nofima}. Opptakene av fiskene ble laget av Nofima og ble omgjort til bilder. Label data lagt inn manuelt. Se figur \ref{fig:dataset_tool}. Dataen av torsk var fargebilder, så de bestod av tre kanaler, og hadde størrelsen 1920 $\times$ 1080. %You need to achieve 85 \% accuracy for validation data to successfully complete this assignment. Check it out here.
+Det neste steget var å få tak i data. Datasettet som ble laget for dette prosjektet bestod av bilder fra en lagringsmerd av torsk, og bilder av sei fra Havbruksstasjonen i Tromsø. Se figur \ref{fig:data} og \ref{fig:nofima}. Opptakene av fiskene ble laget av Nofima og ble omgjort til bilder. Label data lagt inn manuelt. Se figur \ref{fig:dataset_tool}. Dataen av torsk var fargebilder, så de bestod av tre kanaler, og hadde størrelsen 1920 $\times$ 1080. Bildene av sei var gråtoner, kun en kanal, og hadde størrelsen 640 $\times$ 480. %You need to achieve 85 \% accuracy for validation data to successfully complete this assignment. Check it out here.
 
 \begin{figure}[h!]
 \begin{center} 
@@ -52,7 +52,7 @@ Det neste steget var å få tak i data. Datasettet som ble laget for dette prosj
 \end{center} 
 \end{figure} 
 
-Datasettet bestod av 208 bilder av torsk, med til sammen 4582 instanser av torsk i bildene. Det var (--) bilder av sei med (--) instanser av fisken i bildene. Bildene av torsk og sei ble satt i hver sin mappe. De ble splittet etter forholdet 80/20, 80 \% av dataen var for trening, og 20 \% for validering.
+Datasettet bestod av 208 bilder av torsk, med til sammen 4582 instanser av torsk i bildene. Det var 604 bilder av sei med 5525 instanser av fisken i bildene. Bildene av torsk og sei ble satt i hver sin mappe. De ble splittet etter forholdet 80/20, 80 \% av dataen var for trening, og 20 \% for validering.
 
 \subsubsection{Utforsk og forstå dataen}
 
@@ -85,12 +85,12 @@ Klassekode & Klassenavn    & Norsk klassenavn \\
 
 `Labels` mappen inneholdt bounding box data for bildene. Det var en eller flere linjer per `.txt` fil. Hver linje representerer en bounding box. Representasjonen er i `xmin', `ymin', `xmax', og `ymax' formatet. Se tabell \ref{tab:bbox}.
 
-Filene som ble brukt til trening og validering ble definert i \url{data/fish_train.txt} og \url{data/fish_test.txt}. Se tabell \ref{tab:fish}.
+Filene som ble brukt til trening og validering ble definert i data\/fish\_train.txt og data\/fish\_test.txt. Se tabell \ref{tab:fish}.
 
 \begin{table}[b]
 \bigskip
 \centering
-\caption{Label data for bilde \url{data/train/atlantic_cod/fish_9440.png}, lagt i fil \url{data/labels/fish_9440.txt}}
+\caption{Label data for bilde data\/train\/atlantic\_cod\/fish\_9440.png, lagt i fil data\/labels\/fish\_9440.txt}
 \label{tab:bbox} 
 \begin{tabular}[t]{lcccc}
 \toprule
@@ -105,14 +105,14 @@ Klassekode    & xmin      & ymin    & xmax     & ymax \\
 \begin{table}[b]
 \bigskip
 \centering
-\caption{Eksempel på filnavn i \url{data/fish_train.txt} og \url{data/fish_test.txt}}
+\caption{Eksempel på filnavn i data\/fish\_train.txt og data\/fish\_test.txt}
 \label{tab:fish} 
 \begin{tabular}[t]{c}
 \toprule
-Filnavn i \url{fish_test.txt} \\
+Filnavn i fish\_test.txt \\
 \midrule
-\url{validation/atlantic_cod/fish_590.png} \\
-\url{validation/atlantic_cod/fish_640.png} \\
+validation/atlantic\_cod/fish\_590.png \\
+validation/atlantic\_cod/fish\_640.png \\
 \vdots \\
 \bottomrule	
 \end{tabular}
@@ -149,7 +149,7 @@ mogrify -format jpg *.png
 
 Nettverket ble først trent opp på et utvalg av treningsdataen, for å teste nettverket. 208 bilder med 4582 instanser av torsk ble grunnlaget for de første RetinaNet og YOLOv4 modellene. Dette steget gjøres som en sanity check før en begynner på trening som kan ta mange timer.
 
-RetinaNet modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned fra the model zoo, den heter \url{COCO-Detection/retinanet_R_50_FPN_3x.yam}. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
+RetinaNet modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned fra the model zoo, den heter COCO-Detection\/retinanet\_R\_50\_FPN\_3x.yam. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
 
 \subsubsection{RetinaNet konfigurasjon og trening}
 
@@ -434,15 +434,18 @@ Linjen classes = 1 ble omgjort til classes = 2 i obj.data.
 
 Filendingene i fish\_train.txt og fish\_test.txt var .jpg, som før.
 
-Optimizers and learning rate schedulers [You can even get good results without a learning rate shceduler]
-Regularization techniques like Data Augmentation, Dropout, BatchNorm
+Learning rate var 0.001, learning rate scheduler ble satt med momentum 0.949 og decay lik 0.0005.
+%Optimizers and learning rate schedulers [You can even get good results without a learning rate shceduler]
+%Regularization techniques like Data Augmentation, Dropout, BatchNorm
 
 \subsection{Forbedre modellen}
 
-Lowering learning rate helps
-Adding a convolutional layer helps
-Increasing epochs helps when learning rate is low
-Decreasing batch size ...
+Når modellen har blitt trent ferdig bør den forbedres. Den mest effektive måten å forbedre en deep learning modell er å endre learning rate i konfigurasjonen, og så trene modellen på nytt. Det kan også hjelpe å bruke en ny modell, vanligvis så er en modell med flere convolutional lag bedre. Dype nevrale nettverk blir stadig dypere ettersom forskere utvikler nye modeller. Det er også mulig å trene modellen over flere epoker eller iterasjoner. YOLO modellen ble oppgradert til YOLOv4. RetinaNet modellen ble mye bedre når den ble trent over flere iterasjoner. Endringene ble gjort underveis i prosjektet. 
+
+%Lowering learning rate helps
+%Adding a convolutional layer helps
+%Increasing epochs helps when learning rate is low
+%Decreasing batch size ...
 
 \subsection{Inferens}
 
@@ -864,8 +867,8 @@ int main(int argumentQuantity, char *arguments[])
     int inpHeight = 416; // Height of network's input image
 
     // Give the configuration and weight files for the model
-    String modelConfiguration = "data/models/yolov4.cfg";
-    String modelWeights = "data/models/yolov4.weights";
+    String modelConfiguration = "data/models/yolov-obj.cfg";
+    String modelWeights = "data/models/yolo.weights";
 
     // Check if model exists in data folder
     ifile = ifstream(modelConfiguration);
@@ -980,7 +983,7 @@ Den neste kodesnutten er programmets main loop. Denne koden repeteres til videoe
         char *time = ctime(&end_time);
         if (time[strlen(time)-1] == '\n') time[strlen(time)-1] = '\0';
 
-        // Log cod and saith quantities to csv file
+        // Log cod and saithe quantities to csv file
         if (codQuantity > 0 || saitheQuantity > 0)
         {
             logFile << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;

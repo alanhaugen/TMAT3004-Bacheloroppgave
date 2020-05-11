@@ -9,18 +9,30 @@
 
 \section{Teori}
 
+%Deep learning and unsupervised feature learning have shown great promise in many practical ap- plications. State-of-the-art performance has been reported in several domains, ranging from speech recognition [1, 2], visual object recognition [3, 4], to text processing [5, 6].
+
+%It has also been observed that increasing the scale of deep learning, with respect to the number of training examples, the number of model parameters, or both, can drastically improve ultimate classification accuracy [3, 4, 7]. These results have led to a surge of interest in scaling up the training and inference algorithms used for these models [8] and in improving applicable optimization procedures [7, 9]. The use of GPUs [1, 2, 3, 8] is a significant advance in recent years that makes the training of modestly sized deep networks practical. A known limitation of the GPU approach is that the training speed-up is small when the model does not fit in GPU memory (typically less than 6 gigabytes). To use a GPU effectively, researchers often reduce the size of the data or parameters so that CPU-to-GPU transfers are not a significant bottleneck. While data and parameter reduction work well for small problems (e.g. acoustic modeling for speech recognition), they are less attractive for problems with a large number of examples and dimensions (e.g., high-resolution images).
+
 \subsection{Maskinlæring}
+
+%Over the last several years􏰈 machine learning techniques􏰈 particularly when applied to neural networks􏰈 have played an increasingly imp ortant role in the design of pattern recognition systems􏰇 In fact􏰈 it could be argued that the availability of learning techniques has b een a crucial fac􏰗 tor in the recent success of pattern recognition applications such as continuous speech recognition and handwriting recognition.
+
 \subsubsection{Data is king}
 \subsubsection{Datainnsamling}
 \subsection{Modell}
 \subsubsection{Den biologiske inspirasjonen}
+\subsubsection{Bias}
 \subsection{Algoritme}
 \subsection{Objektdeteksjon}
+
+%Our core visual processing module is a Convolutional Neural Network (CNN) [29, 26], which has emerged as a powerful model for visual recognition tasks [38]. The first application of these models to dense predic- tion tasks was introduced in R-CNN [15], where each re- gion of interest was processed independently. Further work has focused on processing all regions with only single for- ward pass of the CNN [18, 14], and on eliminating explicit region proposal methods by directly predicting the bound- ing boxes either in the image coordinate system [45, 10], or in a fully convolutional [31] and hence position-invariant settings [39, 37, 36]. Most related to our approach is the work of Ren et al. [37] who develop a region proposal net- work (RPN) that regresses from anchors to regions of in- terest. However, they adopt a 4-step optimization process, while our approach does not require training pipelines. Ad- ditionally, we replace their RoI pooling mechanism with a differentiable, spatial soft attention mechanism [20, 17]. In particular, this change allows us to backpropagate through the region proposal network and train the whole model jointly.
+
 \subsection{Trening}
 \subsection{Evaluering}
-\subsubsection{Error rates}
-\subsubsection{Confidence intervals}
-\subsection{Inteferens}
+\subsubsection{Nøyaktighet} % error rate
+\subsubsection{Presisjon} 
+\subsubsection{Konfidensintervall} % confidence interval
+\subsection{Inferens}
 \subsubsection{Ground truth} %(grunnfestet sanhet?)
 \subsubsection{Bilder per sekund} %FPS (bilder per sekund)
 \subsubsection{State-of-the-art maskinsyn} % (topp moderne)

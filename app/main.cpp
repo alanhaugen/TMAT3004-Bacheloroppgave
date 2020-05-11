@@ -357,7 +357,7 @@ int main(int argumentQuantity, char *arguments[])
         char *time = ctime(&end_time);
         if (time[strlen(time)-1] == '\n') time[strlen(time)-1] = '\0';
 
-        // Log cod and saith quantities to csv file
+        // Log cod and saithe quantities to csv file
         if (codQuantity > 0 || saitheQuantity > 0)
         {
             logFile << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
