@@ -8,7 +8,7 @@ outputs/model_final.pth: train.py data
 	python train.py
 
 data:
-	curl -L https://www.dropbox.com/s/aym2lmnzjlam16v/data.zip --output data.zip
+	#curl -L path/to/data --output data.zip
 	unzip data.zip
 	rm data.zip
 

@@ -2,7 +2,7 @@
 app/build/*
 app/CMakeLists.txt.user
 build*
-out.avi
+out*.avi
 in*.mp4
 log.csv
 *.autosave

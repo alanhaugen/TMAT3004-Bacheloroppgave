@@ -249,7 +249,7 @@ int main(int argumentQuantity, char *arguments[])
     ifile = ifstream(modelConfiguration);
     if (!ifile)
     {
-        cerr << "YOLOv4 model could not be found. Please download and extract data from here: https://www.dropbox.com/s/aym2lmnzjlam16v/data.zip" << endl;
+        cerr << "YOLOv4 model could not be found. Please download and extract data to data folder." << endl;
         return -1;
     }
 

@@ -7,7 +7,16 @@
 
 \section{Analyse}
 
+\begin{figure}[h!]
+\begin{center} 
+\includegraphics[scale=0.35]{figures/retinanet_inference_saithe}
+\caption{\small \sl Sei RetinaNet. \label{fig:retinanet_inference_saithe}}
+\end{center}
+\end{figure}
+
 Det ble trent opp to modeller, en RetinaNet modell og en YOLOv4 modell. Dataen av torsk bestod av tre kanaler, og hadde størrelsen 1920 $\times$ 1080. Bildene av sei bestod av kun en kanal, og hadde størrelsen 640 $\times$ 480. Dette fører til bias. Datasettet burde bestå av data uten bias. Modellene som er trent kan effektivt se forskjell på torsk og sei som finnes i bildene, men ettersom bildene ble tatt på så forskjellige måter, der sei dataen var i gråtoner og torsk var i farger, så vil modellen muligens se etter fisk av gråtoner, ikke sei, når den ser etter sei. Datasettet bestod av 208 bilder av torsk, med til sammen 4582 instanser av torsk i bildene. Det var 604 bilder av sei med 5525 instanser av fisken i bildene. Det er litt flere instanser av sei enn av torsk. Det kan også øke bias i modellen i noe grad.
+
+Det som er lettere for mennesker å forstå er også lettere for maskiner å forstå. Data is king innenfor maskinsyn, å ha gode bilder er et must for å få gode resultater. 
 
 A classification accuracy of 94.3 \% was achieved when classifying only the 16 fish species which we focussed on for this trial. All other evaluations include the other species class which contains a number of fish species which are non-relevant to the research goals, but can be encountered while underwater sampling. The re- sults obtained by the different model configurations are summa- rized in Table 2. The model based on ResNet (He et al., 2016) by cross-pooling activations from layer 4b15 and 4b20, with local region size of 3 and training of a linear SVM on top of the cross-pooled features, was able to achieve the highest classifica- tion accuracy of 89.0 \% if the other species class is included. A change to a local region size of 1 produces a slightly inferior result of 86.9 \% classification accuracy for all classes. In compari- son, the AlexNet and VGGNet model configurations produced significantly degraded results.
 
