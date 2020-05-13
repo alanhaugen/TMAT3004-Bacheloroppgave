@@ -25,9 +25,9 @@
 
 %Hensikten med kapitlet Materialer og metoder er at andre skal kunne utføre det samme arbeidet på samme måte. Da må alle nødvendige opplysninger være med.
 
-Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to modeller, en RetinaNet modell og en YOLOv4 modell. RetinaNet hadde forhåndstrente vekter fra en modell trent på COCO datasettet til Microsoft, og YOLOv4 hadde fohåndstrente vekter fra en modell trent på ImageNet datasettet, modellene ble ikke trent fra scratch. %You should design a model which achieves 85 \% validation accuracy on the given dataset.
+Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to modeller, en RetinaNet modell og en YOLOv4 modell. RetinaNet hadde forhåndstrente vekter fra en modell trent på COCO datasettet til Microsoft, og YOLOv4 hadde fohåndstrente vekter fra en modell darknet modell, modellene ble ikke trent fra scratch. \cite{Lin m.fl. 2015 s. 1} %You should design a model which achieves 85 \% validation accuracy on the given dataset.
 
-Microsoft Azure plattformen ble anvendt til å trene modellene. Microsoft tilbyr Nvidia Titan GPU-er i skyen. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid.
+Microsoft Azure plattformen ble anvendt til å trene modellene. Microsoft tilbyr NVidia Titan GPU-er i skyen. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid.
 
 Det tok ca. 2 dager å trene YOLOv4 modellen på nettskyen Azure med maskinstørrelsen Standard NC6 Promo (6 vcpu-er, 56 GiB dataminne). Trening av RetinaNet tok mye mindre tid, men inferens av RetinaNet tok over seks timer for 7 minutter video. YOLOv4 kan gjøre inferens på noen millisekunder per bilde, der RetinaNet bruker titals sekunder selv på kraftig maskinvare.% Se figur retinanet vs YOLOv4 resultater
 
@@ -37,7 +37,7 @@ Kildekoden for prosjektet kan lastes ned fra: \\ \url{https://github.com/alanhau
 
 Før en begynner så er det viktig å være sikker på at man forstår problemet en skal løse. I denne oppgaven så skulle mengden av to fisk, torsk og sei, telles med maskinsyn. Det er to klasser. For å løse denne oppgaven kreves bilder av hver fisk med korrekt label-data og et rimelig stort nettverk som kan forstå og trenes på bilder.
 
-Objektdeteksjon handler om to ting. Områder av bilde som kan inneholde en klasse må genereres, og så må disse delene av et bilde klassifiseres basert på det visuelle innholdet i bildeområdet, et bildeområde kalles for en patch innenfor maskinsyn. Områdene der det kan være objekter kalles for ankre. Med andre ord, målet for modellen er å se på en del av et bilde og finne ut hvilket objekt som finnes i dette området. Nettverket kan kun finne de objektene som den har blitt trent til å gjenkjenne.
+Objektdeteksjon handler om to ting. Områder av bilde som kan inneholde en klasse må genereres, og så må disse delene av et bilde klassifiseres basert på det visuelle innholdet i bildeområdet, et bildeområde kalles for en patch innenfor maskinsyn. Områdene der det kan være objekter kalles for ankre. Med andre ord, målet for modellen er å se på en del av et bilde og finne ut hvilket objekt som finnes i dette området. Nettverket kan kun finne de objektene som den har blitt trent til å gjenkjenne. \cite{LeCun m.fl. 1998 s. 23}
 
 \subsection{Få tak i data}
 
@@ -83,7 +83,7 @@ Klassekode & Klassenavn    & Norsk klassenavn \\
 \end{tabular}
 \end{table}
 
-`Labels` mappen inneholdt bounding box data for bildene. Det var en eller flere linjer per `.txt` fil. Hver linje representerer en bounding box. Representasjonen er i `xmin', `ymin', `xmax', og `ymax' formatet. Se tabell \ref{tab:bbox}.
+`Labels' mappen inneholdt bounding box data for bildene. Det var en eller flere linjer per `.txt' fil. Hver linje representerer en bounding box. Representasjonen er i `xmin', `ymin', `xmax', og `ymax' formatet. Se tabell \ref{tab:bbox}.
 
 Filene som ble brukt til trening og validering ble definert i data/fish\_train.txt og data/fish\_test.txt. Se tabell \ref{tab:fish}.
 
@@ -151,119 +151,42 @@ Nettverket ble først trent opp på et utvalg av treningsdataen, for å teste ne
 
 RetinaNet modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned fra the model zoo, den heter COCO-Detection/retinanet\_R\_50\_FPN\_3x.yam. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
 
+\subsubsection{Heterogene maskiner}
+
+%Alle datamaskiner er i dag heterogene. De består av en CPU og en GPU, en Central Processing Unit og en Graphics Processing Unit. GPU-en kommer fra dataspillindustrien. Den første personlige datamaskinen, Apple ][, som var en kopi av spillmaskinen Atari 2600, hadde ikke en GPU. Etter Star Fox fra Argonaut Software, 1993, som var et spill som inneholdt den første GPU-en, så begynte flere maskiner å inkludere GPU-er.\footnote{Google viser sin respekt til den første GPU-en SuperFX som var i StarFox. Skriv ``Do a barrel roll'', en kjent replikk fra spillet, inn i google og se nettsiden rulle rundt y-aksen} På personlige datamaskiner og mobiltelefoner så har GPU-en gjort at maskinene bruker mindre strøm, som har ført til bedre batterilevetid. Datamaskiner, slik forbrukere typisk forstår dem, er inspirert av Xerox Alto, sekretærens datamaskin. I dag programmerer mange mennesker maskiner ved å ta i bruk grafiske brukergrensesnitt, og gjør arbeidet som tidligere var gjort av sekretærer. Alt fra regneark, skrive på maskin, telefonsamtaler osv. gjøres pliktoppfyllende på et digitalt skrivebord. Hver av disse maskinene, telefon, skrivemaskin, kalkulator, er ikke lenger på pulten til dagens sekretærer, de har blitt ikoner i et grafisk brukergrensesnitt. Dette hadde ikke vært mulig uten Atari og deres innovasjoner som gjorde sanntids-grafikk på billig maskinvare mulig.
+
+Alle datamaskiner er i dag heterogene. De består av en CPU og en GPU, en Central Processing Unit og en Graphics Processing Unit. En programmerer CPU-en med språk slik som Python, C, C++, osv. Til å begynne med så var grafikkprosessorer fixed-function, et bestemt API tillot maskinvareakselerasjon av enkelte grafikkinstrukser. \cite{Dean m.fl. 2012}
+
+I 2009 introduserte NVidia den første generelt programmerbare GPU-en, deres nye grafikkprosessorer kunne programmeres i CUDA, et språk som ligner på C. Dette gjorde det mulig å gjøre andre ting enn grafikk på grafikkprosessorer. Grafikkprosessorer er spesielt flinke til oppgaver som er ``massively parallell''. %Forskere begynte å simulere proteiner og celler på GPU-en, det finnes for eksempel et prosjekt som heter Folding@home, der forbrukere kan låne bort GPU-en sin til forskning. Proteiner som fører til sykdommer slik som COVID-19 og parkinsons sykdom blir forsøkt forstått ved å gjøre simulasjoner på maskinene hjemme hos folk, forskningen krever enorme mengder datakraft.
+
+Det er ikke tilfeldig at det var i 2012 at deep learning tok av. Alex sitt team anvendte CUDA til å gjøre maskinlæring på en GPU istedet for en CPU, slik det hadde blitt gjort tidligere. Dessuten hadde ikke-lineær aktivering blitt oppfunnet \cite{LeCun m.fl. 1998 s. 3}. Resultatene har ført til en revolusjon innenfor kunstig intelligens. Batch normalization har også forbedret resultatene \cite{Ioffe og Szegedy 2015 s. 1}. Se figur \ref{fig:comparison}.
+
+I dette forsøket så anvendes GPU-en til å gjøre maskinlæring og trene deep learning modeller.
+
+\begin{figure} 
+\begin{center} 
+\includegraphics[scale=1.0]{figures/comparison}
+\caption{\small \sl Figuren viser AlexNet på venstre side, og nye fremskritt de siste 10 årene på høyre side som har gjort deep learning populært \cite{Karpathy 2014} \label{fig:comparison}}
+\end{center} 
+\end{figure} 
+
+\subsubsection{Azure nettsky}
+
+Det er mulig å leie maskinvare på skyen. 
+
 \subsubsection{RetinaNet konfigurasjon og trening}
 
 RetinaNet er implementert i detectron2, som bruker deep learning rammeverket PyTorch. Grensesnittet er programmeringsspråket Python. Detectron2 er utgitt under en Apache 2.0 lisens, det vil si at den kan brukes til hva enn en vil på en hvilken som helst måte, gratis, så lenge man aksepterer at facebook ikke blir ansvarlig for arbeidet som gjøres, og så lenge man ikke krediterer arbeidet en gjør til facebook \cite{The Apache Software Foundation 2004}. Detectron2 installeringsinstrukser er tilgjengelig her: \url{https://detectron2.readthedocs.io/}
 
-Først må bibliotekene lastes inn. Se python koden under.
+Et utvalg av programkoden som har blitt skrevet for denne oppgaven har blitt lagt ved i vedlegg \ref{appendix:code}.
 
-\begin{lstlisting}[language=Python, caption=Her lastes bibliotekene inn i train.py for detectron2]
-import torch
-import detectron2
-#import onnx
-#from detectron2 import export
-from detectron2.utils.logger import setup_logger
-setup_logger()
+Først må bibliotekene lastes inn. Se python koden i listing \ref{lst:load} i vedlegg \ref{appendix:code}.
 
-# import some common libraries
-import numpy as np
-import cv2
-import random
-import os
-import matplotlib.pyplot as plt
+Konfigurasjonen defineres i kodesnutt listing \ref{lst:config}.
 
-# model_zoo has a lots of pre-trained model
-from detectron2 import model_zoo
+Konfigurasjonen av batch size, data path og learning rate er de viktigste variablene, det er det neste som settes i listingen under. 
 
-
-# DefaultTrainer is a class for training object detector
-from detectron2.engine import DefaultTrainer
-# DefaultPredictor is class for inference
-from detectron2.engine import DefaultPredictor
-
-# detectron2 has its configuration format
-from detectron2.config import get_cfg
-# detectron2 has implemented Visualizer of object detection
-from detectron2.utils.visualizer import Visualizer
-
-# from DatasetCatalog, detectron2 gets dataset and from MetadatCatalog it
-# gets metadata of the dataset
-from detectron2.data import DatasetCatalog, MetadataCatalog
-
-# BoxMode support bounding boxes in different format
-from detectron2.structures import BoxMode
-
-# COCOEvaluator based on COCO evaluation metric, inference_on_dataset is used for
-# evaluation for a given metric
-from detectron2.evaluation import COCOEvaluator, inference_on_dataset
-
-# build_detection_test_loader, used to create test loader for evaluation
-from detectron2.data import build_detection_test_loader
-
-\end{lstlisting}
-
-Konfigurasjonen defineres i neste kodesnutt.
-
-%\begin{lstlisting}[language=Python, caption=Treningen og testingen, samt operativssystemet konfigureres]
-\begin{lstlisting}[language=Python, caption=Konfigurasjon i train.py]
-data_root = 'data'
-train_txt = 'fish_train.txt'
-test_txt  = 'fish_test.txt'
-
-train_data_name = 'fish_train'
-test_data_name  = 'fish_test'
-
-thing_classes = ['atlantic_cod', 'saithe']
-
-output_dir = 'outputs'
-
-def count_lines(fname):
-    with open(fname) as f:
-        for i, l in enumerate(f):
-            pass
-    return i + 1
-
-train_img_count = count_lines(os.path.join(data_root, train_txt))
-
-# Register train and test data
-# dataset can be registered only once with one name
-
-# register train data
-DatasetCatalog.register(name=train_data_name,
-                        func=lambda: get_fish_dicts(data_root, train_txt))
-train_metadata = MetadataCatalog.get(train_data_name).set(thing_classes=thing_classes)
-
-# register test data
-DatasetCatalog.register(name=test_data_name,
-                        func=lambda: get_fish_dicts(data_root, test_txt))
-test_metadata = MetadataCatalog.get(test_data_name).set(thing_classes=thing_classes)
-
-# default configuration
-cfg = get_cfg()
-
-# update configuration with RetinaNet configuration
-cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/retinanet_R_50_FPN_3x.yaml"))
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
-
-# We have registered the train and test data set with name fish_train and fish_test.
-# Let's replace the detectron2 default train dataset with our train dataset.
-cfg.DATASETS.TRAIN = (train_data_name,)
-
-# No metric implemented for the test dataset, we will have to update
-# cfg.DATASET.TEST with empty tuple
-cfg.DATASETS.TEST = ()
-
-# data loader configuration
-cfg.DATALOADER.NUM_WORKERS = 4
-
-# Update model URL in detectron2 config file
-cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/retinanet_R_50_FPN_3x.yaml")
-model_final_f10217.pkl"
-\end{lstlisting}
-
-Konfigurasjonen av batch size, data path og learning rate er de viktigste variablene, det er det neste som settes her. 
-
-\begin{lstlisting}[language=Python, caption=Solver konfigurasjon i train.py]
+\begin{lstlisting}[language=Python, caption=Solver konfigurasjon i train.py,label={lst:solver_config}]
 # batch size
 cfg.SOLVER.IMS_PER_BATCH = 4
 
@@ -289,10 +212,10 @@ os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
 \end{lstlisting}
 
-Neste kodesnutt er trening, resultatene finnes på tensorboard: \\
+Neste kodesnutt er trening, listing \ref{lst:train}, resultatene finnes på tensorboard: \\
 \url{https://tensorboard.dev/experiment/aZzjBUzKTAy19KPsDZPJ2g}
 
-\begin{lstlisting}[language=Python, caption=Treningskode i train.py]
+\begin{lstlisting}[language=Python, caption=Treningskode i train.py,label={lst:train}]
 # Create a trainer instance with the configuration.
 trainer = DefaultTrainer(cfg) 
 
@@ -311,7 +234,7 @@ trainer.train()
 
 Alexey Bochkovskiy sin fork av darknet ble anvendt, det er en versjon av Joseph Redmon sin Darknet: Open Source Neural Networks in C med Windows og Linux støtte. Den støtter nyere versjoner av OpenCV og det som var den nyeste versjonen av YOLO da denne rapporten ble skrevet, YOLOv4, som ble utgitt 23. April \cite{Bochkovskiy m.fl. 2020}. En god guide til darknet og YOLO finnes på githuben til Alexey. \cite{Bochkovskiy 2020}
 
-cuDDN ble installert etter Nvidia sine instrukser. \url{https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#installlinux-tar}
+cuDDN ble installert etter NVidia sine instrukser. \url{https://docs.NVidia.com/deeplearning/sdk/cudnn-install/index.html#installlinux-tar}
 
 YOLOv4 ble trent med vekter fra en forhåndstrent modell. Først må darknet installeres. Se under.
 
@@ -342,7 +265,7 @@ make
 
 Dette vil kompilere darknet for GPU-en med OpenCV støtte.
 
-%For å aktivere GPU-støtte, som vil gjøre treningen mye raskere om en har en Nvidia GPU med nok minne, settes GPU = 1 i Makefile-en, deretter rekompileres rammeverket. Rammeverket rekompileres ved å skrive make clean etterfulgt av make.
+%For å aktivere GPU-støtte, som vil gjøre treningen mye raskere om en har en NVidia GPU med nok minne, settes GPU = 1 i Makefile-en, deretter rekompileres rammeverket. Rammeverket rekompileres ved å skrive make clean etterfulgt av make.
 
 For å få gode resultater så ble forhåndstrente vekter for de convolutional lagene lastet ned. Den forhåndstrente darknet modellen (162 MiB) kan lastes ned her: \url{https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.conv.137}
 
@@ -440,7 +363,7 @@ Learning rate var 0.001, learning rate scheduler ble satt med momentum 0.949 og 
 
 \subsection{Forbedre modellen}
 
-Når modellen har blitt trent ferdig bør den forbedres. Den mest effektive måten å forbedre en deep learning modell er å endre learning rate i konfigurasjonen, og så trene modellen på nytt. Det kan også hjelpe å bruke en ny modell, vanligvis så er en modell med flere convolutional lag bedre. Dype nevrale nettverk blir stadig dypere ettersom forskere utvikler nye modeller. Det er også mulig å trene modellen over flere epoker eller iterasjoner. YOLO modellen ble oppgradert til YOLOv4. RetinaNet modellen ble mye bedre når den ble trent over flere iterasjoner. Endringene ble gjort underveis i prosjektet. 
+Når modellen har blitt trent ferdig bør den forbedres. Den mest effektive måten å forbedre en deep learning modell er å endre learning rate i konfigurasjonen, og så trene modellen på nytt. Det kan også hjelpe å bruke en ny modell, vanligvis så er en modell med flere convolutional lag bedre. Dype nevrale nettverk blir stadig dypere ettersom forskere utvikler nye modeller \cite{Szegedy m.fl. s. 1}. Det er også mulig å trene modellen over flere epoker eller iterasjoner. YOLO modellen ble oppgradert til YOLOv4. RetinaNet modellen ble mye bedre når den ble trent over flere iterasjoner. Endringene ble gjort underveis i prosjektet. 
 
 %Lowering learning rate helps
 %Adding a convolutional layer helps
@@ -451,7 +374,7 @@ Når modellen har blitt trent ferdig bør den forbedres. Den mest effektive måt
 
 RetinaNet, introdusert av facebook-ansatte i 2017 i Focal Loss for Dense Object Detection på arXiv, ble ansett som den beste objektdeteksjonsmodellen da dette dokumentet ble skrevet. Det var en forbedring av R-CNN. \cite{Lin m.fl. 2017}
 
-You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig Nvidia GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon m.fl. 2020}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLO like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2020}. Se figur \ref{fig:yolo_inference}. %Min erfaring er at den er rundt 10 ganger raskere, men mye mindre nøyaktig (må gjøre et eksperiment her). 
+You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig NVidia GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon m.fl. 2020}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLO like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2020}. Se figur \ref{fig:yolo_inference}. %Min erfaring er at den er rundt 10 ganger raskere, men mye mindre nøyaktig (må gjøre et eksperiment her). 
 
 \subsubsection{RetinaNet}
 
@@ -464,94 +387,7 @@ You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssyst
 
 Ettersom OpenCV kunne ikke laste inn en PyTorch modell da denne oppgaven ble skrevet, så ble inferens gjort med Python, og det ble ikke gjort et forsøk på å gjøre inference i sanntid på en videostrøm med RetinaNet. Se resultater i figur \ref{fig:retinenet_inference} og \ref{fig:inference}.
 
-Koden for inferens er under.
-
-\begin{lstlisting}[language=Python, caption=Inferens RetinaNet i inference.py]
-def video_read_write(video_path):
-    """
-    Read video frames one-by-one, flip it, and write in the other video.
-    video_path (str): path/to/video
-    """
-    video = cv2.VideoCapture(video_path)
-    
-    # Check if camera opened successfully
-    if not video.isOpened(): 
-        print("Error opening video file")
-        return
-    
-    # create video writer
-    width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    frames_per_second = video.get(cv2.CAP_PROP_FPS)
-    num_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
-    
-    isStreamOpen = False
-    while video.isOpened():
-        ret, frame = video.read()
-        
-        if ret:
-            outputs = predictor(frame)
-
-            #print(outputs)
-            v = Visualizer(frame[:, :, ::-1],
-                           metadata=test_metadata, 
-                           scale=0.8
-            )
-
-            instances = outputs["instances"].to("cpu")
-
-            v = v.draw_instance_predictions(instances)
-
-            plt.imsave('outputs/frame_intermediate.png', v.get_image())
-
-            if isStreamOpen == False:
-                img = cv2.imread('outputs/frame_intermediate.png')
-                height, width, layers = img.shape
-                size = (width,height)
-                out = cv2.VideoWriter('out.avi',cv2.VideoWriter_fourcc(*'DIVX'),
-                		      frames_per_second, size)
-                isStreamOpen = True
-
-            img = cv2.imread('outputs/frame_intermediate.png')
-
-            cv2.putText(img, 'num instances: ' + str(len(instances)), (5,100),
-            		cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 2, cv2.LINE_AA)
-            out.write(img)
-
-            print ('num instances: ' + str(len(instances)))
-        else:
-            break
-    
-    out.release()
-    video.release()
-    
-    return
-
-cfg.DATASETS.TEST = (test_data_name,)
-
-# create a predictor instance with the configuration (it has our fine-tuned model)
-# this predictor does prdiction on a single image
-predictor = DefaultPredictor(cfg)
-
-# create directory for evaluation
-eval_dir = os.path.join(cfg.OUTPUT_DIR, 'coco_eval')
-os.makedirs(eval_dir, exist_ok=True)
-
-# create evaluator instance with coco evaluator
-evaluator = COCOEvaluator(dataset_name=test_data_name,
-                          cfg=cfg,
-                          distributed=False,
-                          output_dir=eval_dir)
-
-# create validation data loader
-val_loader = build_detection_test_loader(cfg, test_data_name)
-
-# start validation 
-inference_on_dataset(trainer.model, val_loader, evaluator)
-
-# Run inference on video
-video_read_write('in.mp4')
-\end{lstlisting}
+Koden for inferens er i vedlegg A, listing \ref{lst:inferens_retinanet}.
 
 \subsubsection{OpenCV program} \label{part:opencv}
 
@@ -601,406 +437,19 @@ make install
 
 Det er også mulig å kompilere OpenCV med hjelp fra QtCreator. QtCreator open source ble lastet ned fra \url{https://www.qt.io/download}. CMakeLists.txt i opencv-3.4/opencv ble åpnet i QtCreator. OPENCV\_EXTRA\_MODULES\_PATH ble satt til opencv\_contrib/modules på filsystemet. Dette kan gjøres fra Projects modusen i QtCreator. Se sidepanelet i figur \ref{fig:qtcreator}.
 
-Anaconda individual edition med python 2 ble brukt. Det ble laget en cmake CMakeLists.txt fil for prosjektet. Denne burde muligens endres om andre ønsker å kompilere prosjektet, merk at anaconda ble installert til hjemmemappen til brukeren. Prosjektet består av to programmer. OBJECT\_DETECTOR gjør fiskedeteksjon. Se figur \ref{fig:yolo_inference}. DATASET\_TOOL ble brukt til å lage label data ut av videoer. Se figur \ref{fig:dataset_tool}.
+Anaconda individual edition med python 2 ble brukt. Det ble laget en cmake CMakeLists.txt fil for prosjektet. Se listing \ref{lst:cmake} i vedlegg \ref{appendix:code}. Denne burde muligens endres om andre ønsker å kompilere prosjektet, merk at anaconda ble installert til hjemmemappen til brukeren. Prosjektet består av to programmer. OBJECT\_DETECTOR gjør fiskedeteksjon. Se figur \ref{fig:yolo_inference}. DATASET\_TOOL ble brukt til å lage label data ut av videoer. Se figur \ref{fig:dataset_tool}.
 
-\begin{lstlisting}[language=, caption=CMakeLists.txt]
-cmake_minimum_required(VERSION 2.8.12)
+main.cpp er kildekoden til OBJECT\_DETECTOR. Først lastes bibliotekene inn. Se listing \ref{lst:header}
 
-PROJECT(app)
-SET(CMAKE_CXX_STANDARD 14)
+getOutputsNames henter ut label navn fra det ytterste laget i modellen. Se figur \ref{fig:deep} og listing \ref{lst:getOutputsNames}.
 
-SET(Python2_ROOT_DIR ${PYTHONHOME})
+drawPred lager en bounding box rundt objektene som detekteres av modellen. Se listing \ref{lst:drawPred}.
 
-find_package(Python2 COMPONENTS Development NumPy)
+postprocess henter alle instanser av fiskene i et bilde som er over en non-maxima suppression confidence boundary. Deretter sjekker den om objektet er en torsk eller sei, og teller mengden torsk og sei i bildet. Se listing \ref{lst:postprocess}.
 
-SET(OpenCV_DIR C:/opencv-3.4/opencv/build)
+main er programmets entry point. Det er her dataprogrammet starter. Den åpner en logg, log.csv, og så åpner den en videostrøm. Deretter laster den inn YOLOv4 modellen. Se listing \ref{lst:main}
 
-if( UNIX )
-    include_directories(~/anaconda2/include/python2.7 ~/anaconda2/lib/python2.7/\
-    site-packages/numpy/core/include/ ~/anaconda2/include)
-else()
-    include_directories(${PYTHON_INCLUDE_DIRS} ~/Anaconda2/Lib/site-packages/numpy/core/\
-    	include)
-endif()
-
-if(MSVC)
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-endif()
-
-find_package( OpenCV REQUIRED )
-
-set(OpenCV_STATIC ON) # Easier to share binaries
-
-include_directories( ${OpenCV_INCLUDE_DIRS} )
-
-# If the package has been found, several variables will
-# be set, you can find the full list with descriptions
-# in the OpenCVConfig.cmake file.
-# Print some message showing some of them
-message(STATUS "OpenCV library status:")
-message(STATUS "    config: ${OpenCV_DIR}")
-message(STATUS "    version: ${OpenCV_VERSION}")
-message(STATUS "    libraries: ${OpenCV_LIBS}")
-message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
-
-add_executable(OBJECT_DETECTOR main.cpp)
-target_include_directories(OBJECT_DETECTOR PRIVATE ${PYTHON2_INCLUDE_DIRS} \
-	${PYTHON2_NUMPY_INCLUDE_DIRS})
-target_link_libraries(OBJECT_DETECTOR PRIVATE ${OpenCV_LIBS} Python2::Python )
-
-add_executable(DATASET_TOOL datasettool.cpp)
-target_include_directories(DATASET_TOOL PRIVATE ${PYTHON2_INCLUDE_DIRS}\
-	 ${PYTHON2_NUMPY_INCLUDE_DIRS})
-target_link_libraries(DATASET_TOOL PRIVATE ${OpenCV_LIBS} Python2::Python )
-\end{lstlisting}
-
-main.cpp er kildekoden til OBJECT\_DETECTOR. Først lastes bibliotekene inn.
-
-\begin{lstlisting}[language=C++, caption=main.cpp]
-#include <opencv2/opencv.hpp>
-#include <opencv2/dnn.hpp>
-//#include <opencv2/tracking.hpp>
-#include <fstream>
-//#include "matplotlibcpp.h"
-#include <chrono>
-#include <ctime>
-
-using namespace std;
-//using namespace matplotlibcpp;
-using namespace cv::dnn;
-using namespace cv;
-
-// globals
-float objectnessThreshold; // Objectness threshold
-float confThreshold; // Confidence threshold
-float nmsThreshold;  // Non-maximum suppression threshold
-int inpWidth;  // Width of network's input image
-int inpHeight; // Height of network's input image
-vector<string> classes;
-
-vector<Rect2d> bboxes;
-int codQuantity, saitheQuantity;
-
-string objectLabel;
-
-const char *WINDOW_TITLE = "Press ESC to quit";
-\end{lstlisting}
-
-getOutputsNames henter ut label navn fra det ytterste laget i modellen. Se figur \ref{fig:deep}.
-
-\begin{lstlisting}[language=C++, caption=main.cpp]
-// Get the names of the output layers
-auto getOutputsNames(const Net& net)
-{
-    static vector<String> names;
-    if (names.empty())
-    {
-        // Get the indices of the output layers, i.e. the layers with unconnected outputs
-        vector<int> outLayers = net.getUnconnectedOutLayers();
-
-        // Get the names of all the layers in the network
-        vector<String> layersNames = net.getLayerNames();
-
-        // Get the names of the output layers in names
-        names.resize(outLayers.size());
-        for (size_t i = 0; i < outLayers.size(); ++i)
-            names[i] = layersNames[outLayers[i] - 1];
-    }
-    return names;
-}
-\end{lstlisting}
-
-drawPred lager en bounding box rundt objektene som detekteres av modellen.
-
-\begin{lstlisting}[language=C++, caption=main.cpp]
-// Draw the predicted bounding box
-void drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame)
-{
-    // Draw a rectangle displaying the bounding box
-    rectangle(frame, Point(left, top), Point(right, bottom), Scalar(255, 178, 50), 3);
-
-    // Get the label for the class name and its confidence
-    string label = format("%.1f", conf * 100);
-    if (!classes.empty())
-    {
-        CV_Assert(classId < (int)classes.size());
-        label = classes[classId] + " " + label + "\%";
-    }
-
-    // Display the label at the top of the bounding box
-    int baseLine;
-    Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
-    top = max(top, labelSize.height);
-    rectangle(frame,
-    		   Point(left, top - round(1.5*labelSize.height)),
-		   Point(left + round(1.5*labelSize.width),
-		   top + baseLine),
-		   Scalar(255, 255, 255),
-		   FILLED);
-    putText(frame, label, Point(left, top), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0,0,0),1);
-
-    objectLabel = label;
-}
-\end{lstlisting}
-
-postprocess henter alle instanser av fiskene i et bilde som er over en non-maxima suppression confidence boundary. Deretter sjekker den om objektet er en torsk eller sei, og teller mengden torsk og sei i bildet.
-
-\begin{lstlisting}[language=C++, caption=main.cpp]
-// Remove the bounding boxes with low confidence using non-maxima suppression
-void postprocess(Mat& frame, const vector<Mat>& outs)
-{
-    vector<int> classIds;
-    vector<float> confidences;
-    vector<Rect> boxes;
-
-    codQuantity = 0;
-    saitheQuantity = 0;
-
-    for (size_t i = 0; i < outs.size(); ++i)
-    {
-        // Scan through all the bounding boxes output from the network and keep only the
-        // ones with high confidence scores. Assign the box's class label as the class
-        // with the highest score for the box.
-        float* data = (float*)outs[i].data;
-        for (int j = 0; j < outs[i].rows; ++j, data += outs[i].cols)
-        {
-            Mat scores = outs[i].row(j).colRange(5, outs[i].cols);
-            Point classIdPoint;
-            double confidence;
-            // Get the value and location of the maximum score
-            minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-
-            if (confidence > confThreshold)
-            {
-                if (classes[classIdPoint.x] == "atlantic cod") {
-                    codQuantity++;
-                }
-                else if (classes[classIdPoint.x] == "saithe")
-                {
-                    saitheQuantity++;
-                }
-
-                int centerX = (int)(data[0] * frame.cols);
-                int centerY = (int)(data[1] * frame.rows);
-                int width = (int)(data[2] * frame.cols);
-                int height = (int)(data[3] * frame.rows);
-                int left = centerX - width / 2;
-                int top = centerY - height / 2;
-
-                classIds.push_back(classIdPoint.x);
-                confidences.push_back((float)confidence);
-                boxes.push_back(Rect(left, top, width, height));
-            }
-        }
-    }
-
-    // Perform non maximum suppression to eliminate redundant overlapping boxes with
-    // lower confidences
-    vector<int> indices;
-    NMSBoxes(boxes, confidences, confThreshold, nmsThreshold, indices);
-    for (size_t i = 0; i < indices.size(); ++i)
-    {
-        int idx = indices[i];
-        Rect box = boxes[idx];
-        drawPred(classIds[idx], confidences[idx], box.x, box.y,
-                 box.x + box.width, box.y + box.height, frame);
-    }
-}
-\end{lstlisting}
-
-main er programmets entry point. Det er her dataprogrammet starter. Den åpner en logg, log.csv, og så åpner den en videostrøm. Deretter laster den inn YOLOv4 modellen.
-
-\begin{lstlisting}[language=C++, caption=main.cpp]
-int main(int argumentQuantity, char *arguments[])
-{
-    // Configuration for log file
-    string filename = "log.csv";
-    bool newFile = true;
-
-    // Check if log file exists
-    ifstream ifile(filename);
-    if (ifile)
-    {
-        newFile = false;
-    }
-
-    // Open log file
-    ofstream logFile;
-    logFile.open(filename, std::ios_base::app);
-
-    // Write what you will find in the log file on the first line
-    // if it does not already exist
-    if (newFile)
-    {
-        logFile << "atlantic_cod_quantity,saithe_quantity,datetime" << endl;
-    }
-
-    // Open video file
-    VideoCapture video;
-
-    // Print usage as a warning
-    clog << "Usage: ./OBJECT_DETECTOR <videoPath>" << endl;
-
-    // Use webcam or filepath from command line
-    if (argumentQuantity > 1)
-    {
-        string videoPath = arguments[1];
-        video = VideoCapture(videoPath);
-    }
-    else
-    {
-        clog << "No video path given. Using camera 0" << endl;
-        video = VideoCapture(0);
-    }
-
-    if (video.isOpened() == false)
-    {
-        cerr << "Failed to open video stream" << endl;
-        return -1;
-    }
-
-    // Frame matrix
-    Mat frame;
-
-    // Initialize the parameters
-    int inpWidth = 416;  // Width of network's input image
-    int inpHeight = 416; // Height of network's input image
-
-    // Give the configuration and weight files for the model
-    String modelConfiguration = "data/models/yolov-obj.cfg";
-    String modelWeights = "data/models/yolo.weights";
-
-    // Check if model exists in data folder
-    ifile = ifstream(modelConfiguration);
-    if (!ifile)
-    {
-        cerr << "YOLOv4 model could not be found." << endl;
-        return -1;
-    }
-
-    // Load the network
-    Net net = readNetFromDarknet(modelConfiguration, modelWeights);
-
-    // Load names of classes
-    string classesFile = "data/models/obj.names";
-    ifstream ifs(classesFile.c_str());
-    string line;
-    while (getline(ifs, line)) classes.push_back(line);
-
-    // Configure user interface
-    namedWindow(WINDOW_TITLE, WINDOW_AUTOSIZE);
-\end{lstlisting}
-
-Den neste kodesnutten er programmets main loop. Denne koden repeteres til videoen har gått tomt for bilder, eller at brukeren trykker på ESC på tastaturet. For hvert bilde i videostrømmen så lagres antall torsk og sei observert til log.csv, med mindre det er ingen torsk eller sei som blir oppdaget.
-
-\begin{lstlisting}[language=C++, caption=main.cpp]
-    // Main loop
-    bool isAlive = true;
-    const int ESCAPE_KEYCODE = 27;
-    const int DELAY_MILLISECONDS = 1;
-
-    int key;
-
-    while(isAlive)
-    {
-        key = waitKey(DELAY_MILLISECONDS);
-
-        if (key == ESCAPE_KEYCODE)
-        {
-            isAlive = false;
-            break;
-        }
-
-        double timer = (double)getTickCount();
-
-        video >> frame;
-
-        if (frame.empty())
-        {
-            isAlive = false;
-            break;
-        }
-
-        // Create a 4D blob from a frame.
-        Mat blob;
-        blobFromImage(frame, 
-        		blob,
-        		1/255.0,
-        		Size(inpWidth, inpHeight),
-        		Scalar(0,0,0),
-        		true,
-        		false);
-
-        //Sets the input to the network
-        net.setInput(blob);
-
-        // Runs the forward pass to get output of the output layers
-        vector<Mat> outs;
-        net.forward(outs, getOutputsNames(net));
-
-        // Remove the bounding boxes with low confidence
-        postprocess(frame, outs);
-
-        // Put efficiency information.
-        // The function getPerfProfile returns the overall time for inference(t)
-        // and the timings for each of the layers(in layersTimes)
-        vector<double> layersTimes;
-        double freq = getTickFrequency() / 1000;
-        double t = net.getPerfProfile(layersTimes) / freq;
-        string label = format("Inference time for a frame : %.2f ms", t);
-        putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
-
-        float fps = getTickFrequency() / ((double)getTickCount() - timer);
-
-        putText(frame,
-        		    "FPS: " + std::to_string(int(fps)),
-		    Point(100,50),
-		    FONT_HERSHEY_SIMPLEX, 0.75,
-		    Scalar(50,170,50), 2);
-        putText(frame,
-        		    "Atlantic cod quantity: " + std::to_string(codQuantity),
-		    Point(100,100),
-		    FONT_HERSHEY_SIMPLEX,
-		    0.75,
-		    Scalar(50,170,50),
-		    2);
-        putText(frame,
-        		    "Saithe quantity: " + std::to_string(saitheQuantity),
-		    Point(100,130),
-		    FONT_HERSHEY_SIMPLEX,
-		    0.75,
-		    Scalar(50,170,50),
-		    2);
-
-        //videoWrite.write(frame);
-        imshow(WINDOW_TITLE, frame);
-
-        // Get the time
-        auto end = std::chrono::system_clock::now();
-        std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-
-        // Remove the newline after time which is typically included from the C library call
-        char *time = ctime(&end_time);
-        if (time[strlen(time)-1] == '\n') time[strlen(time)-1] = '\0';
-
-        // Log cod and saithe quantities to csv file
-        if (codQuantity > 0 || saitheQuantity > 0)
-        {
-            logFile << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
-            cout << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
-        }
-    }
-
-    logFile.close();
-
-    video.release();
-    //videoWrite.release();
-
-    destroyAllWindows();
-
-    return 0;
-}
-\end{lstlisting}
+Den siste kodesnutten er programmets main loop. Denne koden repeteres til videoen har gått tomt for bilder, eller at brukeren trykker på ESC på tastaturet. For hvert bilde i videostrømmen så lagres antall torsk og sei observert til log.csv, med mindre det er ingen torsk eller sei som blir oppdaget. Se listing \ref{lst:mainloop}.
 
 %\subsection{COCO Detection Evaluation} % For analyse kapittelet?
 
