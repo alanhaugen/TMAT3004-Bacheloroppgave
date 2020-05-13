@@ -10,7 +10,7 @@
 %Du skal også si noe om hvorfor du har gjort din undersøkelse på den måten du gjorde – og da peke på styrker og svakheter. I tillegg skal du drøfte etiske aspekter ved prosjektet. På den måten viser du at du har kommet frem til resultatene på en pålitelig og troverdig måte, men også at du er reflektert og kritisk overfor arbeidet du har gjort.
 
 %Husk også at du her, slik som i teorikapitlet, bare skal skrive om det metodiske som er relevant for din studie.
-\section{Metode}
+\section{Material og metode}
 
 \begin{figure}[h!]
 \begin{center} 
@@ -85,12 +85,12 @@ Klassekode & Klassenavn    & Norsk klassenavn \\
 
 `Labels` mappen inneholdt bounding box data for bildene. Det var en eller flere linjer per `.txt` fil. Hver linje representerer en bounding box. Representasjonen er i `xmin', `ymin', `xmax', og `ymax' formatet. Se tabell \ref{tab:bbox}.
 
-Filene som ble brukt til trening og validering ble definert i data\/fish\_train.txt og data\/fish\_test.txt. Se tabell \ref{tab:fish}.
+Filene som ble brukt til trening og validering ble definert i data/fish\_train.txt og data/fish\_test.txt. Se tabell \ref{tab:fish}.
 
 \begin{table}[b]
 \bigskip
 \centering
-\caption{Label data for bilde data\/train\/atlantic\_cod\/fish\_9440.png, lagt i fil data\/labels\/fish\_9440.txt}
+\caption{Label data for bilde data/train/atlantic\_cod/fish\_9440.png, lagt i fil data/labels/fish\_9440.txt}
 \label{tab:bbox} 
 \begin{tabular}[t]{lcccc}
 \toprule
@@ -105,7 +105,7 @@ Klassekode    & xmin      & ymin    & xmax     & ymax \\
 \begin{table}[b]
 \bigskip
 \centering
-\caption{Eksempel på filnavn i data\/fish\_train.txt og data\/fish\_test.txt}
+\caption{Eksempel på filnavn i data/fish\_train.txt og data/fish\_test.txt}
 \label{tab:fish} 
 \begin{tabular}[t]{c}
 \toprule
@@ -149,7 +149,7 @@ mogrify -format jpg *.png
 
 Nettverket ble først trent opp på et utvalg av treningsdataen, for å teste nettverket. 208 bilder med 4582 instanser av torsk ble grunnlaget for de første RetinaNet og YOLOv4 modellene. Dette steget gjøres som en sanity check før en begynner på trening som kan ta mange timer.
 
-RetinaNet modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned fra the model zoo, den heter COCO-Detection\/retinanet\_R\_50\_FPN\_3x.yam. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
+RetinaNet modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned fra the model zoo, den heter COCO-Detection/retinanet\_R\_50\_FPN\_3x.yam. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
 
 \subsubsection{RetinaNet konfigurasjon og trening}
 
@@ -320,7 +320,7 @@ git clone https://github.com/AlexeyAB/darknet
 cd darknet
 \end{verbatim}
 
-Omgjør linjene GPU=0, CUDNN=0, CUDNN\_HALF=0 og OPENCV=0 og til GPU=1, CUDNN=1, CUDNN\_HALF=1 og OPENCV=1 i Makefile.
+Omgjør linjene GPU=0, CUDNN=0, CUDNN\_HALF=0 og OPENCV=0 til GPU=1, CUDNN=1, CUDNN\_HALF=1 og OPENCV=1 i Makefile.
 
 \begin{lstlisting}[language={}, caption=De første linjene i Makefile]
 GPU=1
@@ -373,7 +373,7 @@ YOLOv4 må konfigureres.
 cp cfg/yolov4-custom.cfg yolo-obj.cfg
 \end{verbatim}
 
-Det kun en klasse i testutvalget. Følgende endringer ble gjort i yolo-obj.cfg filen.
+Det er kun en klasse i testutvalget. Følgende endringer ble gjort i yolo-obj.cfg filen.
 
 \begin{itemize}
   \item linjen batch ble satt til batch=64
@@ -402,7 +402,7 @@ darknet.exe detector train obj.data yolo-obj.cfg yolov4.conv.137 -map
 Treningen kan ta flere dager. Etter treningen så ble den beste modellen lastet ned.
 
 \begin{verbatim}
-scp awh@public-ip:/yolo/backup/YOLOv4_best.weights YOLOv4.weights
+scp awh@public-ip:/yolo/backup/yolo-obj_final.weights yolo.weights
 \end{verbatim}
 
 Modellen ble brukt i OpenCV programmet beskrevet i del \ref{part:opencv}. 
