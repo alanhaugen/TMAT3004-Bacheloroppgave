@@ -27,7 +27,7 @@
 
 Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to modeller, en RetinaNet modell og en YOLOv4 modell. RetinaNet hadde forhåndstrente vekter fra en modell trent på COCO datasettet til Microsoft, og YOLOv4 hadde fohåndstrente vekter fra en modell darknet modell, modellene ble ikke trent fra scratch. \cite{Lin m.fl. 2015 s. 1} %You should design a model which achieves 85 \% validation accuracy on the given dataset.
 
-Microsoft Azure plattformen ble anvendt til å trene modellene. Microsoft tilbyr NVidia Titan GPU-er i skyen. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid.
+Microsoft Azure plattformen ble anvendt til å trene modellene. Microsoft tilbyr NVidia Titan GPU-er i skyen. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid. \cite{Dean m.fl. 2012 s. 1}
 
 Det tok ca. 2 dager å trene YOLOv4 modellen på nettskyen Azure med maskinstørrelsen Standard NC6 Promo (6 vcpu-er, 56 GiB dataminne). Trening av RetinaNet tok mye mindre tid, men inferens av RetinaNet tok over seks timer for 7 minutter video. YOLOv4 kan gjøre inferens på noen millisekunder per bilde, der RetinaNet bruker titals sekunder selv på kraftig maskinvare.% Se figur retinanet vs YOLOv4 resultater
 
@@ -126,7 +126,7 @@ Det ble trent opp to nettverk. Den ene, RetinaNet, er en del av detectron2 fra F
 
 \subsubsection{Dataaugmentering}
 
-Dataen må først normaliseres på en standard måte, for eksempel ved å subtrahere gjennomsnittet over dataen, for så å skalere alle bildene slik at de får samme størrelse. Det er også mulig å gjøre flere andre endringer. Støy kan legges til bildene, samt å snu dem horisontalt eller vertikalt for å skape nye bilder å trene nettverket på.
+Dataen må først normaliseres på en standard måte, for eksempel ved å subtrahere gjennomsnittet over dataen, for så å skalere alle bildene slik at de får samme størrelse. Det er også mulig å gjøre flere andre endringer. Støy kan legges til bildene, samt å snu dem horisontalt eller vertikalt for å skape nye bilder å trene nettverket på. \cite{Cadieu m.fl. 2014 s. 15}
 
 Det ble ikke gjort endringer på standardmåten detectron2 og darknet gjør dataaugmentering.
 
@@ -149,34 +149,112 @@ mogrify -format jpg *.png
 
 Nettverket ble først trent opp på et utvalg av treningsdataen, for å teste nettverket. 208 bilder med 4582 instanser av torsk ble grunnlaget for de første RetinaNet og YOLOv4 modellene. Dette steget gjøres som en sanity check før en begynner på trening som kan ta mange timer.
 
-RetinaNet modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned fra the model zoo, den heter COCO-Detection/retinanet\_R\_50\_FPN\_3x.yam. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
-
 \subsubsection{Heterogene maskiner}
 
 %Alle datamaskiner er i dag heterogene. De består av en CPU og en GPU, en Central Processing Unit og en Graphics Processing Unit. GPU-en kommer fra dataspillindustrien. Den første personlige datamaskinen, Apple ][, som var en kopi av spillmaskinen Atari 2600, hadde ikke en GPU. Etter Star Fox fra Argonaut Software, 1993, som var et spill som inneholdt den første GPU-en, så begynte flere maskiner å inkludere GPU-er.\footnote{Google viser sin respekt til den første GPU-en SuperFX som var i StarFox. Skriv ``Do a barrel roll'', en kjent replikk fra spillet, inn i google og se nettsiden rulle rundt y-aksen} På personlige datamaskiner og mobiltelefoner så har GPU-en gjort at maskinene bruker mindre strøm, som har ført til bedre batterilevetid. Datamaskiner, slik forbrukere typisk forstår dem, er inspirert av Xerox Alto, sekretærens datamaskin. I dag programmerer mange mennesker maskiner ved å ta i bruk grafiske brukergrensesnitt, og gjør arbeidet som tidligere var gjort av sekretærer. Alt fra regneark, skrive på maskin, telefonsamtaler osv. gjøres pliktoppfyllende på et digitalt skrivebord. Hver av disse maskinene, telefon, skrivemaskin, kalkulator, er ikke lenger på pulten til dagens sekretærer, de har blitt ikoner i et grafisk brukergrensesnitt. Dette hadde ikke vært mulig uten Atari og deres innovasjoner som gjorde sanntids-grafikk på billig maskinvare mulig.
 
-Alle datamaskiner er i dag heterogene. De består av en CPU og en GPU, en Central Processing Unit og en Graphics Processing Unit. En programmerer CPU-en med språk slik som Python, C, C++, osv. Til å begynne med så var grafikkprosessorer fixed-function, et bestemt API tillot maskinvareakselerasjon av enkelte grafikkinstrukser. \cite{Dean m.fl. 2012}
+Alle datamaskiner er i dag heterogene. De består av en CPU og en GPU, en Central Processing Unit og en Graphics Processing Unit. En programmerer CPU-en med språk slik som Python, C, C++, osv. Til å begynne med så var grafikkprosessorer fixed-function, et bestemt API tillot maskinvareakselerasjon av enkelte grafikkinstrukser. \cite{Buck 2006 s. 5}
 
-I 2009 introduserte NVidia den første generelt programmerbare GPU-en, deres nye grafikkprosessorer kunne programmeres i CUDA, et språk som ligner på C. Dette gjorde det mulig å gjøre andre ting enn grafikk på grafikkprosessorer. Grafikkprosessorer er spesielt flinke til oppgaver som er ``massively parallell''. %Forskere begynte å simulere proteiner og celler på GPU-en, det finnes for eksempel et prosjekt som heter Folding@home, der forbrukere kan låne bort GPU-en sin til forskning. Proteiner som fører til sykdommer slik som COVID-19 og parkinsons sykdom blir forsøkt forstått ved å gjøre simulasjoner på maskinene hjemme hos folk, forskningen krever enorme mengder datakraft.
+I 2006 introduserte NVidia den første generelt programmerbare GPU-en, deres nye grafikkprosessorer kunne programmeres i CUDA, et språk som ligner på C. Dette gjorde det mulig å gjøre andre ting enn grafikk på grafikkprosessorer. Grafikkprosessorer er spesielt flinke til oppgaver som er ``massively parallell''. \cite{Buck 2006 s. 1} %Forskere begynte å simulere proteiner og celler på GPU-en, det finnes for eksempel et prosjekt som heter Folding@home, der forbrukere kan låne bort GPU-en sin til forskning. Proteiner som fører til sykdommer slik som COVID-19 og parkinsons sykdom blir forsøkt forstått ved å gjøre simulasjoner på maskinene hjemme hos folk, forskningen krever enorme mengder datakraft.
 
-Det er ikke tilfeldig at det var i 2012 at deep learning tok av. Alex sitt team anvendte CUDA til å gjøre maskinlæring på en GPU istedet for en CPU, slik det hadde blitt gjort tidligere. Dessuten hadde ikke-lineær aktivering blitt oppfunnet \cite{LeCun m.fl. 1998 s. 3}. Resultatene har ført til en revolusjon innenfor kunstig intelligens. Batch normalization har også forbedret resultatene \cite{Ioffe og Szegedy 2015 s. 1}. Se figur \ref{fig:comparison}.
+Det er ikke tilfeldig at det var i 2012 at deep learning tok av. Alex sitt team anvendte CUDA til å gjøre maskinlæring på en GPU istedet for en CPU, slik det hadde blitt gjort tidligere \cite{Krizhevsky m.fl. 2012}. De anvendte en ikke-lineær aktiveringsfunksjon, noe som hadde blitt oppfunnet relativt nylig \cite{LeCun m.fl. 1998 s. 3}. Resultatene har ført til en revolusjon innenfor kunstig intelligens. Batch normalization har også forbedret resultatene. Se figur \ref{fig:comparison}. \cite{Ioffe og Szegedy 2015 s. 1}
 
 I dette forsøket så anvendes GPU-en til å gjøre maskinlæring og trene deep learning modeller.
 
 \begin{figure} 
 \begin{center} 
 \includegraphics[scale=1.0]{figures/comparison}
-\caption{\small \sl Figuren viser AlexNet på venstre side, og nye fremskritt de siste 10 årene på høyre side som har gjort deep learning populært \cite{Karpathy 2014} \label{fig:comparison}}
+\caption{\small \sl Figuren viser AlexNet på venstre side, og nye fremskritt på høyre side som har gjort deep learning populært \cite{Karpathy 2014} \label{fig:comparison}}
 \end{center} 
 \end{figure} 
 
 \subsubsection{Azure nettsky}
 
-Det er mulig å leie maskinvare på skyen. 
+En nettsky med en GPU ble leid til å trene modellene i dette forsøket. Satya Mallick presenterer hvordan en lager en virtuell maskin på nettskytjenesten Azure fra Microsoft. Følgende er fra kurset Deep Learning with PyTorch. You can create Virtual Machines from the Azure Portal. Getting started with Deep Learning is super-easy on Azure. Azure provides special instances with almost all the popular deep learning libraries pre-installed on their Data Science Virtual Machines. This gets rid of all the setup time involved in setting up a system with all the NVIDIA drivers and other deep learning libraries. They come pre-installed with JupyterHub, so you can get started with running Notebooks in no time! \cite{Mallick m.fl. 2020}
+
+Please follow the steps given below to create a Data Science Virtual Machine instance using Ubuntu 18.04.
+
+Before proceeding, it is worth noting that the instance should be shut down when you are not using them. Since the GPU instances are expensive, it may use up your credits very fast. So, remember to shut down the instance after using it.
+
+1. Login to the Azure portal using \url{portal.azure.com}. You should see a dashboard similar to this:
+
+2. Search for Data Science Virtual Machine and choose the one with 18.04 as shown.
+
+3. Once you select the VM image, you can click on Create.
+
+4. Create New Resource Group as shown
+
+5. You can provide any name of your choice. This can be reused when you create more VMs later.
+
+6. Provide a name for your machine
+
+7. Select the Region.
+A few important points to note about regions:
+
+1. All types of instances are not available in all regions. Generally, regions in the US and Europe have instances of all types. So, it is advisable to select US/Europe regions even if you are not from these regions.
+
+2. An example where you may want to switch regions is that you may not find the required instance in that particular region at any given time. For example, I was able to select NC6\_Promo instance from US East. But when I checked later, there were no available instances of type NC6\_Promo in US East, so I had to choose US West 2.
+
+3. Pricing varies among different regions. I have generally found US East, US West 2, and US North Central to be cheaper.
+
+Here, we have selected US East region.
+
+8. Change the type of Instance
+We want to use a GPU instance. Low-cost GPU instances are named NCx\_Promo where x can be 6, 12 etc. We will select NC6\_Promo. 
+
+Note that if you do not find NC6\_Promo in the selected region then you should try changing the region until you find the desired instance type.
+
+Let us change the instance type.
+
+9. Clear default filters
+10. Add Filter for GPU instances
+We will apply the filter of GPU family of instances as shown in the 3 screenshots below.
+
+11. Select the NC6\_Promo instance
+You can see the information about the instance, for example it is from the GPU family and has 6 vCPUs, 56GB of RAM, storage of 380GB and the price is 289 dollar.
+
+12. Check the updated instance
+Check if the instance has changed according to your selection.
+
+13. Set up username and Password
+For logging into the system, you can use ssh. But for using jupyter Notebooks directly, you need to set a username and password. These credentials can be used while logging in to the system as well as accessing jupyter notebooks as we will see later.
+
+14. Select Disks
+We do not have to change anything here. If you want to add separate disks, then you have to edit this step accordingly.
+
+15. Set up Networking
+We just keep the defaults.
+
+16. Configure Management options
+You need to specify management options here. Create a new storage account and click next as shown below.
+
+17. Advanced options
+We will keep the default options.
+
+18. Add tags
+You can add tags to your instances. It is a good practice since you may forget the purpose of each instance when you are dealing with multiple instances. We will add a Name tag so that we know this instance by a name!
+
+19. Finish Configuration
+We are done with the configuration steps and now we can create the instance. Click on Create
+
+This might take some time. . . ( 5 to 10 minutes )
+
+20. Check your instance
+Once the deployment is done,  you can check out your brand new instance. Click on Go to Resource. ( You can also click on the Home button on top left ).
+
+You can see that your instance is created and it has been assigned a public IP address which you can use to login.
+
+\subsubsection{SSH login}
+
+Login med ssh
+
+\subsubsection{Anaconda programvareutgivelse}
 
 \subsubsection{RetinaNet konfigurasjon og trening}
 
 RetinaNet er implementert i detectron2, som bruker deep learning rammeverket PyTorch. Grensesnittet er programmeringsspråket Python. Detectron2 er utgitt under en Apache 2.0 lisens, det vil si at den kan brukes til hva enn en vil på en hvilken som helst måte, gratis, så lenge man aksepterer at facebook ikke blir ansvarlig for arbeidet som gjøres, og så lenge man ikke krediterer arbeidet en gjør til facebook \cite{The Apache Software Foundation 2004}. Detectron2 installeringsinstrukser er tilgjengelig her: \url{https://detectron2.readthedocs.io/}
+
+RetinaNet modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned fra the model zoo, den heter COCO-Detection/retinanet\_R\_50\_FPN\_3x.yam. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
 
 Et utvalg av programkoden som har blitt skrevet for denne oppgaven har blitt lagt ved i vedlegg \ref{appendix:code}.
 
@@ -313,13 +391,13 @@ For hver linje i fish\_train.txt og fish\_test.txt så ble filendingene omgjort 
 Nettverket ble trent med følgende kommando på ubuntu linux maskinen på Azure.
 
 \begin{verbatim}
-./darknet detector train obj.data yolo-obj.cfg yolov4.conv.137 -map
+./darknet detector train obj.data yolo-obj.cfg yolov4.conv.137
 \end{verbatim}
 
 Om en bruker Windows brukes følgende kommando.
 
 \begin{verbatim}
-darknet.exe detector train obj.data yolo-obj.cfg yolov4.conv.137 -map
+darknet.exe detector train obj.data yolo-obj.cfg yolov4.conv.137
 \end{verbatim}
 
 Treningen kan ta flere dager. Etter treningen så ble den beste modellen lastet ned.
@@ -365,6 +443,29 @@ Learning rate var 0.001, learning rate scheduler ble satt med momentum 0.949 og 
 
 Når modellen har blitt trent ferdig bør den forbedres. Den mest effektive måten å forbedre en deep learning modell er å endre learning rate i konfigurasjonen, og så trene modellen på nytt. Det kan også hjelpe å bruke en ny modell, vanligvis så er en modell med flere convolutional lag bedre. Dype nevrale nettverk blir stadig dypere ettersom forskere utvikler nye modeller \cite{Szegedy m.fl. s. 1}. Det er også mulig å trene modellen over flere epoker eller iterasjoner. YOLO modellen ble oppgradert til YOLOv4. RetinaNet modellen ble mye bedre når den ble trent over flere iterasjoner. Endringene ble gjort underveis i prosjektet. 
 
+During training, you will see varying indicators of error, and you should stop when no longer decreases 0.XXXXXXX avg:
+Region Avg IOU: 0.798363, Class: 0.893232, Obj: 0.700808, No Obj: 0.004567, Avg Recall: 1.000000, count: 8 Region Avg IOU: 0.800677, Class: 0.892181, Obj: 0.701590, No Obj: 0.004574, Avg Recall: 1.000000, count: 8
+
+9002: 0.211667, 0.60730 avg, 0.001000 rate, 3.868000 seconds, 576128 images Loaded: 0.000000 seconds
+
+9002 - iteration number (number of batch)
+0.60730 avg - average loss (error) - the lower, the better
+When you see that average loss 0.xxxxxx avg no longer decreases at many iterations then you should stop training. The final avgerage loss can be from 0.05 (for a small model and easy dataset) to 3.0 (for a big model and a difficult dataset).
+
+Or if you train with flag -map then you will see mAP indicator Last accuracy mAP@0.5 = 18.50% in the console - this indicator is better than Loss, so train while mAP increases.
+
+Once training is stopped, you should take some of last .weights-files from backup and choose the best of them:
+For example, you stopped training after 9000 iterations, but the best result can give one of previous weights (7000, 8000, 9000). It can happen due to overfitting. Overfitting - is case when you can detect objects on images from training-dataset, but can't detect objects on any others images. You should get weights from Early Stopping Point.
+
+\begin{figure}[h!]
+\begin{center} 
+\includegraphics[scale=1.0]{figures/early_stopping_point}
+\caption{\small \sl Early Stopping Point. \label{fig:early_stopping_point}}
+\end{center}
+\end{figure}
+
+Choose weights-file with the highest mAP (mean average precision) or IoU (intersect over union)
+
 %Lowering learning rate helps
 %Adding a convolutional layer helps
 %Increasing epochs helps when learning rate is low
@@ -374,7 +475,7 @@ Når modellen har blitt trent ferdig bør den forbedres. Den mest effektive måt
 
 RetinaNet, introdusert av facebook-ansatte i 2017 i Focal Loss for Dense Object Detection på arXiv, ble ansett som den beste objektdeteksjonsmodellen da dette dokumentet ble skrevet. Det var en forbedring av R-CNN. \cite{Lin m.fl. 2017}
 
-You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig NVidia GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon m.fl. 2020}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLO like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2020}. Se figur \ref{fig:yolo_inference}. %Min erfaring er at den er rundt 10 ganger raskere, men mye mindre nøyaktig (må gjøre et eksperiment her). 
+You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig NVidia GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon 2018}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLO like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2016}. Se figur \ref{fig:yolo_inference}. %Min erfaring er at den er rundt 10 ganger raskere, men mye mindre nøyaktig (må gjøre et eksperiment her). 
 
 \subsubsection{RetinaNet}
 
@@ -439,7 +540,7 @@ Det er også mulig å kompilere OpenCV med hjelp fra QtCreator. QtCreator open s
 
 Anaconda individual edition med python 2 ble brukt. Det ble laget en cmake CMakeLists.txt fil for prosjektet. Se listing \ref{lst:cmake} i vedlegg \ref{appendix:code}. Denne burde muligens endres om andre ønsker å kompilere prosjektet, merk at anaconda ble installert til hjemmemappen til brukeren. Prosjektet består av to programmer. OBJECT\_DETECTOR gjør fiskedeteksjon. Se figur \ref{fig:yolo_inference}. DATASET\_TOOL ble brukt til å lage label data ut av videoer. Se figur \ref{fig:dataset_tool}.
 
-main.cpp er kildekoden til OBJECT\_DETECTOR. Først lastes bibliotekene inn. Se listing \ref{lst:header}
+main.cpp er kildekoden til OBJECT\_DETECTOR. Først lastes bibliotekene inn. Se listing \ref{lst:header}.
 
 getOutputsNames henter ut label navn fra det ytterste laget i modellen. Se figur \ref{fig:deep} og listing \ref{lst:getOutputsNames}.
 
@@ -447,7 +548,7 @@ drawPred lager en bounding box rundt objektene som detekteres av modellen. Se li
 
 postprocess henter alle instanser av fiskene i et bilde som er over en non-maxima suppression confidence boundary. Deretter sjekker den om objektet er en torsk eller sei, og teller mengden torsk og sei i bildet. Se listing \ref{lst:postprocess}.
 
-main er programmets entry point. Det er her dataprogrammet starter. Den åpner en logg, log.csv, og så åpner den en videostrøm. Deretter laster den inn YOLOv4 modellen. Se listing \ref{lst:main}
+main er programmets entry point. Det er her dataprogrammet starter. Den åpner en logg, log.csv, og så åpner den en videostrøm. Deretter laster den inn YOLOv4 modellen. Se listing \ref{lst:main}.
 
 Den siste kodesnutten er programmets main loop. Denne koden repeteres til videoen har gått tomt for bilder, eller at brukeren trykker på ESC på tastaturet. For hvert bilde i videostrømmen så lagres antall torsk og sei observert til log.csv, med mindre det er ingen torsk eller sei som blir oppdaget. Se listing \ref{lst:mainloop}.
 

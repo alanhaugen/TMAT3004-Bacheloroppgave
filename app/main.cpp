@@ -134,14 +134,6 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
 
             if (confidence > confThreshold)
             {
-                if (classes[classIdPoint.x] == "atlantic cod") {
-                    codQuantity++;
-                }
-                else if (classes[classIdPoint.x] == "saithe")
-                {
-                    saitheQuantity++;
-                }
-
                 int centerX = (int)(data[0] * frame.cols);
                 int centerY = (int)(data[1] * frame.rows);
                 int width = (int)(data[2] * frame.cols);
@@ -177,6 +169,15 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
         Rect box = boxes[idx];
         drawPred(classIds[idx], confidences[idx], box.x, box.y,
                  box.x + box.width, box.y + box.height, frame);
+
+        // Count fish
+        if (classes[classIds[idx]] == "atlantic cod") {
+            codQuantity++;
+        }
+        else if (classes[classIds[idx]] == "saithe")
+        {
+            saitheQuantity++;
+        }
     }
 
     //isTracking = true;
