@@ -11,11 +11,15 @@
 \section{Kildekode}
 \label{appendix:code}
 
-\begin{lstlisting}[language=Python, caption=Her lastes bibliotekene inn i train.py for detectron2,label={lst:load}]
+\begin{verbatim}
+train.py
+\end{verbatim}
+
+%\begin{listing}[H]
+%\label{lst:load}
+\begin{minted}{python}
 import torch
 import detectron2
-#import onnx
-#from detectron2 import export
 from detectron2.utils.logger import setup_logger
 setup_logger()
 
@@ -53,11 +57,16 @@ from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 
 # build_detection_test_loader, used to create test loader for evaluation
 from detectron2.data import build_detection_test_loader
-
-\end{lstlisting}
+\end{minted}
+%\caption{train.py, først lastes biblioteker inn}
+%\end{listing}
 
 %\begin{lstlisting}[language=Python, caption=Treningen og testingen, samt operativssystemet konfigureres]
-\begin{lstlisting}[language=Python, caption=Konfigurasjon i train.py,label={lst:config}]
+%\begin{lstlisting}[language=Python, caption=Konfigurasjon i train.py,label={lst:config}]
+%\begin{listing}[H]
+%\label{lst:config}
+
+\begin{minted}{python}
 data_root = 'data'
 train_txt = 'fish_train.txt'
 test_txt  = 'fish_test.txt'
@@ -76,9 +85,6 @@ def count_lines(fname):
     return i + 1
 
 train_img_count = count_lines(os.path.join(data_root, train_txt))
-
-# Register train and test data
-# dataset can be registered only once with one name
 
 # register train data
 DatasetCatalog.register(name=train_data_name,
@@ -109,11 +115,56 @@ cfg.DATASETS.TEST = ()
 cfg.DATALOADER.NUM_WORKERS = 4
 
 # Update model URL in detectron2 config file
-cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/retinanet_R_50_FPN_3x.yaml")
-model_final_f10217.pkl"
-\end{lstlisting}
+cfg.MODEL.WEIGHTS=model_zoo.get_checkpoint_url("COCO-Detection/retinanet_R_50_FPN_3x.yaml")
+\end{minted}
+%\caption{train.py, begynnelsen av konfigurasjonen}
+%\end{listing}
 
-\begin{lstlisting}[language=Python, caption=Inferens RetinaNet i inference.py,label={lst:inferens_retinanet}]
+\begin{minted}{python}
+# batch size
+cfg.SOLVER.IMS_PER_BATCH = 4
+
+# choose a good learning rate
+cfg.SOLVER.BASE_LR = 0.001
+
+# We need to specify the number of iteration for training in
+# detectron2, not the number of epochs.
+# lets convert number of epoch to number or iteration (max iteration)
+
+epoch = 1000
+max_iter = int(epoch * train_img_count / cfg.SOLVER.IMS_PER_BATCH)
+max_iter = 500
+
+cfg.SOLVER.MAX_ITER = max_iter
+
+# number of output class
+cfg.MODEL.RETINANET.NUM_CLASSES = len(thing_classes)
+
+# update create ouptput directory
+cfg.OUTPUT_DIR = output_dir
+os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
+\end{minted}
+
+\begin{minted}{python}
+# Create a trainer instance with the configuration.
+trainer = DefaultTrainer(cfg) 
+
+# if rseume=False, because we don't have trained model yet. It will
+# download model from model url and load it
+trainer.resume_or_load(resume=False)
+
+# start training
+trainer.train()
+\end{minted}
+
+\clearpage
+\begin{verbatim}
+inference.py
+\end{verbatim}
+
+%\begin{listing}[H]
+%\label{lst:inferens_retinanet}
+\begin{minted}{python}
 def video_read_write(video_path):
     """
     Read video frames one-by-one, flip it, and write in the other video.
@@ -139,7 +190,6 @@ def video_read_write(video_path):
         if ret:
             outputs = predictor(frame)
 
-            #print(outputs)
             v = Visualizer(frame[:, :, ::-1],
                            metadata=test_metadata, 
                            scale=0.8
@@ -198,9 +248,18 @@ inference_on_dataset(trainer.model, val_loader, evaluator)
 
 # Run inference on video
 video_read_write('in.mp4')
-\end{lstlisting}
+\end{minted}
+%\caption{inference.py}
+%\end{listing}
 
-\begin{lstlisting}[language=, caption=CMakeLists.txt,label={lst:cmake}]
+\clearpage
+\begin{verbatim}
+CMakeLists.txt
+\end{verbatim}
+
+%\begin{listing}[H]
+%\label{lst:cmake}
+\begin{minted}{cmake}
 cmake_minimum_required(VERSION 2.8.12)
 
 PROJECT(app)
@@ -249,9 +308,17 @@ add_executable(DATASET_TOOL datasettool.cpp)
 target_include_directories(DATASET_TOOL PRIVATE ${PYTHON2_INCLUDE_DIRS}\
 	 ${PYTHON2_NUMPY_INCLUDE_DIRS})
 target_link_libraries(DATASET_TOOL PRIVATE ${OpenCV_LIBS} Python2::Python )
-\end{lstlisting}
+\end{minted}
+%\end{listing}
 
-\begin{lstlisting}[language=C++, caption=main.cpp,label={lst:header}]
+\clearpage
+\begin{verbatim}
+main.cpp
+\end{verbatim}
+
+%\begin{listing}[H]
+\label{lst:header}
+\begin{minted}{C++}
 #include <opencv2/opencv.hpp>
 #include <opencv2/dnn.hpp>
 //#include <opencv2/tracking.hpp>
@@ -279,9 +346,12 @@ int codQuantity, saitheQuantity;
 string objectLabel;
 
 const char *WINDOW_TITLE = "Press ESC to quit";
-\end{lstlisting}
+\end{minted}
+%\end{listing}
 
-\begin{lstlisting}[language=C++, caption=main.cpp,label={lst:getOutputsNames}]
+%\begin{listing}[H]
+%\label{lst:getOutputsNames}
+\begin{minted}{C++}
 // Get the names of the output layers
 auto getOutputsNames(const Net& net)
 {
@@ -301,11 +371,21 @@ auto getOutputsNames(const Net& net)
     }
     return names;
 }
-\end{lstlisting}
+\end{minted}
+%\end{listing}
 
-\begin{lstlisting}[language=C++, caption=main.cpp,label={lst:drawPred}]
+%\begin{listing}[H]
+%\label{lst:drawPred}
+\begin{minted}{C++}
 // Draw the predicted bounding box
-void drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame)
+void drawPred(
+	int classId,
+	float conf,
+	int left,
+	int top,
+	int right,
+	int bottom,
+	Mat& frame)
 {
     // Draw a rectangle displaying the bounding box
     rectangle(frame, Point(left, top), Point(right, bottom), Scalar(255, 178, 50), 3);
@@ -332,9 +412,12 @@ void drawPred(int classId, float conf, int left, int top, int right, int bottom,
 
     objectLabel = label;
 }
-\end{lstlisting}
+\end{minted}
+%\end{listing}
 
-\begin{lstlisting}[language=C++, caption=main.cpp,label={lst:postprocess}]
+%\begin{listing}[H]
+%\label{lst:postprocess}
+\begin{minted}{C++}
 // Remove the bounding boxes with low confidence using non-maxima suppression
 void postprocess(Mat& frame, const vector<Mat>& outs)
 {
@@ -361,14 +444,6 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
 
             if (confidence > confThreshold)
             {
-                if (classes[classIdPoint.x] == "atlantic cod") {
-                    codQuantity++;
-                }
-                else if (classes[classIdPoint.x] == "saithe")
-                {
-                    saitheQuantity++;
-                }
-
                 int centerX = (int)(data[0] * frame.cols);
                 int centerY = (int)(data[1] * frame.rows);
                 int width = (int)(data[2] * frame.cols);
@@ -393,11 +468,23 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
         Rect box = boxes[idx];
         drawPred(classIds[idx], confidences[idx], box.x, box.y,
                  box.x + box.width, box.y + box.height, frame);
+                 
+                 // Count fish
+                 if (classes[classIds[idx]] == "atlantic cod") {
+                     codQuantity++;
+                 }
+                 else if (classes[classIds[idx]] == "saithe")
+                 {
+                     saitheQuantity++;
+                 }
     }
 }
-\end{lstlisting}
+\end{minted}
+%\end{listing}
 
-\begin{lstlisting}[language=C++, caption=main.cpp,label={lst:main}]
+%\begin{listing}[H]
+%\label{lst:main}
+\begin{minted}{C++}
 int main(int argumentQuantity, char *arguments[])
 {
     // Configuration for log file
@@ -476,9 +563,12 @@ int main(int argumentQuantity, char *arguments[])
 
     // Configure user interface
     namedWindow(WINDOW_TITLE, WINDOW_AUTOSIZE);
-\end{lstlisting}
+\end{minted}
+%\end{listing}
 
-\begin{lstlisting}[language=C++, caption=main.cpp,label={lst:mainloop}]
+%\begin{listing}[H]
+%\label{lst:mainloop}
+\begin{minted}{C++}
     // Main loop
     bool isAlive = true;
     const int ESCAPE_KEYCODE = 27;
@@ -557,32 +647,32 @@ int main(int argumentQuantity, char *arguments[])
 		    Scalar(50,170,50),
 		    2);
 
-        //videoWrite.write(frame);
         imshow(WINDOW_TITLE, frame);
 
         // Get the time
         auto end = std::chrono::system_clock::now();
         std::time_t end_time = std::chrono::system_clock::to_time_t(end);
 
-        // Remove the newline after time which is typically included from the C library call
+        // Remove the newline after time
+        // which is typically included from the C library call
         char *time = ctime(&end_time);
         if (time[strlen(time)-1] == '\n') time[strlen(time)-1] = '\0';
 
         // Log cod and saithe quantities to csv file
         if (codQuantity > 0 || saitheQuantity > 0)
         {
-            logFile << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
-            cout << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
+        logFile << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
+        cout << codQuantity << "," << saitheQuantity << ",\"" << time << "\"" << endl;
         }
     }
 
     logFile.close();
 
     video.release();
-    //videoWrite.release();
 
     destroyAllWindows();
 
     return 0;
 }
-\end{lstlisting}
+\end{minted}
+%\end{listing}

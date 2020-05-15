@@ -25,6 +25,7 @@ outputs
 *.swp
 
 # LaTeX
+report/_minted-main/*
 *pytxcode
 *.nav
 *.snm
