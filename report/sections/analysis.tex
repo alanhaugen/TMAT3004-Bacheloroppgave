@@ -42,6 +42,37 @@ In general, the precision and recall graphs confirm the classifi- cation accurac
 
 \begin{figure}[h!]
 \begin{center} 
+\includegraphics[scale=0.35]{figures/coco}
+\caption{\small \sl You have to evaluate your detection model on COCO detection evaluation metric. For your reference here is the coco evaluation metric chart. \label{fig:coco}}
+\end{center}
+\end{figure}
+
+The expected AP (primary challenge metric) is more than 0.5. \\
+Output following: \\
+ \\
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.285 \\
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.663 \\
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.200 \\
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.067 \\
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.217 \\
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.402 \\
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.038 \\
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.248 \\
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.433 \\
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.139 \\
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.352 \\
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.556 \\
+Evaluation results for bbox:  \\
+|   AP   |  AP50  |  AP75  |  APs  |  APm   |  APl   | \\
+|:------:|:------:|:------:|:-----:|:------:|:------:| \\
+| 28.494 | 66.262 | 20.016 | 6.654 | 21.663 | 40.239 | \\
+Per-category bbox AP:  \\
+| category     | AP     | category   | AP     | \\
+|:-------------|:-------|:-----------|:-------| \\
+| atlantic\_cod | 23.077 | saithe     | 33.910 |
+
+\begin{figure}[h!]
+\begin{center} 
 \includegraphics[scale=0.35]{figures/data_time_retinanet_1}
 \caption{\small \sl data time RetinaNet. \label{fig:data_time_retinanet}}
 \end{center}

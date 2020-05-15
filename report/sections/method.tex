@@ -29,7 +29,9 @@ Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to m
 
 Microsoft Azure-plattformen ble anvendt til å trene modellene. Microsoft tilbyr NVidia Titan GPU-er i skyen. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid. \cite{Dean m.fl. 2012 s. 1}
 
-Det tok ca. 2 dager å trene YOLOv4-modellen på nettskyen Azure med maskinstørrelsen Standard NC6 Promo (6 vcpu-er, 56 GiB dataminne). Trening av RetinaNet tok mye mindre tid, men inferens av RetinaNet tok over seks timer for 7 minutter video. YOLOv4 kan gjøre inferens på noen millisekunder per bilde, der RetinaNet bruker titalls sekunder selv på kraftig maskinvare.% Se figur retinanet vs YOLOv4 resultater
+RetinaNet, introdusert av Facebook-ansatte i 2017 i Focal Loss for Dense Object Detection på arXiv, ble ansett som den beste objektdeteksjonsmodellen da dette dokumentet ble skrevet. Det var en forbedring av R-CNN. \cite{Lin m.fl. 2017}
+
+You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig NVidia-GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon 2018}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLO like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2016}. Se figur \ref{fig:yolo_inference}. % Se figur retinanet vs YOLOv4 resultater
 
 Kildekoden for prosjektet kan lastes ned fra: \\ \url{https://github.com/alanhaugen/TMAT3004-Bacheloroppgave}.
 
@@ -157,26 +159,26 @@ Alle datamaskiner er i dag heterogene. De består av en CPU og en GPU, en Centra
 
 I 2006 introduserte NVidia den første generelt programmerbare GPU-en, deres nye grafikkprosessorer kunne programmeres i CUDA, et språk som ligner på C. Dette gjorde det mulig å gjøre andre ting enn grafikk på grafikkprosessorer. Grafikkprosessorer er spesielt flinke til oppgaver som er ``massively parallell''. \cite{Buck 2006 s. 1} %Forskere begynte å simulere proteiner og celler på GPU-en, det finnes for eksempel et prosjekt som heter Folding@home, der forbrukere kan låne bort GPU-en sin til forskning. Proteiner som fører til sykdommer slik som COVID-19 og parkinsons sykdom blir forsøkt forstått ved å gjøre simulasjoner på maskinene hjemme hos folk, forskningen krever enorme mengder datakraft.
 
-Det er ikke tilfeldig at det var i 2012 at deep learning tok av. Alex sitt team anvendte CUDA til å gjøre maskinlæring på en GPU istedet for en CPU, det hadde ikke blitt gjort tidligere \cite{Krizhevsky m.fl. 2012}. De anvendte en ikke-lineær aktiveringsfunksjon, noe som hadde blitt oppfunnet relativt nylig \cite{LeCun m.fl. 1998 s. 3}. Resultatene har ført til en revolusjon innenfor kunstig intelligens. Batch normalization har også forbedret resultatene. Se figur \ref{fig:comparison}. \cite{Ioffe og Szegedy 2015 s. 1}
-
-I dette forsøket ble en GPU anvendt til å gjøre maskinlæring og trene deep learning modeller.
-
-\begin{figure} 
+\begin{figure}[t]
 \begin{center} 
 \includegraphics[scale=1.0]{figures/comparison}
 \caption{\small \sl Figuren viser AlexNet på venstre side, og nye fremskritt på høyre side som har gjort deep learning populært. \cite{Karpathy 2014} \label{fig:comparison}}
 \end{center} 
 \end{figure} 
 
+Det er ikke tilfeldig at det var i 2012 at deep learning tok av. Alex sitt team anvendte CUDA til å gjøre maskinlæring på en GPU istedet for en CPU, det hadde ikke blitt gjort tidligere \cite{Krizhevsky m.fl. 2012}. De anvendte en ikke-lineær aktiveringsfunksjon, noe som hadde blitt oppfunnet relativt nylig \cite{LeCun m.fl. 1998 s. 3}. Resultatene har ført til en revolusjon innenfor kunstig intelligens. Batch normalization har også forbedret resultatene. Se figur \ref{fig:comparison}. \cite{Ioffe og Szegedy 2015 s. 1}
+
+I dette forsøket ble en GPU anvendt til å gjøre maskinlæring og trene deep learning modeller.
+
 \subsubsection{Maskinlæringsrammeverk}
 
 Det har blitt utviklet flere maskinlæringsrammeverk. Disse reduserer mye av kompleksiteten som går med på å lage nye modeller, og å trene modeller med ny data. Rammeverkene gjør at en får maskinvareakselerasjon av backpropagation og andre maskinlæringsutregninger uten at en trenger å lære seg CUDA. I dette forsøket ble detectron2 med rammeverket PyTorch og YOLO med rammeverket darknet anvendt til objektdeteksjon. Se figur \ref{fig:dl_libs}.
 
-\begin{figure} 
+\begin{figure}[t]
 \begin{center} 
 \includegraphics[scale=0.30]{figures/darknet-logo}
 \includegraphics[scale=0.30]{figures/Pytorch_logo}
-\caption{\small \sl Figuren viser logoene til darknet og PyTorch. Darknet er et populært rammeverk for maskinlæring skrevet i C \cite{Redmon 2016}. PyTorch er maskinlæringsrammeverk fra facebook, den anvendes av objektdeteksjonssystemet detectron2 \cite{Wu m.fl. 2020}. \label{fig:dl_libs}}
+\caption{\small \sl Figuren viser logoene til Darknet og PyTorch. Darknet er et populært rammeverk for maskinlæring skrevet i C \cite{Redmon 2016}. PyTorch er maskinlæringsrammeverk fra facebook, den anvendes av objektdeteksjonssystemet detectron2 \cite{Wu m.fl. 2020}. \label{fig:dl_libs}}
 \end{center} 
 \end{figure} 
 
@@ -430,9 +432,7 @@ Choose weights-file with the highest mAP (mean average precision) or IoU (inters
 
 \subsection{Inferens}
 
-RetinaNet, introdusert av Facebook-ansatte i 2017 i Focal Loss for Dense Object Detection på arXiv, ble ansett som den beste objektdeteksjonsmodellen da dette dokumentet ble skrevet. Det var en forbedring av R-CNN. \cite{Lin m.fl. 2017}
-
-You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig NVidia-GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon 2018}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLO like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2016}. Se figur \ref{fig:yolo_inference}. %Min erfaring er at den er rundt 10 ganger raskere, men mye mindre nøyaktig (må gjøre et eksperiment her). 
+Inferens er 
 
 \subsubsection{RetinaNet}
 
