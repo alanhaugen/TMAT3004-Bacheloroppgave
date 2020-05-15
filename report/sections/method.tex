@@ -192,7 +192,7 @@ Se vedlegg \ref{appendix:azure} for instrukser om hvordan man lager en Data Scie
 
 SSH ble anvendt til å logge inn i den GPU-akselererte nettskyinstansen. SSH er et dataprogram og protokoll som anvendes til å koble til eksterne maskiner. Den er først og fremst rettet mot unix maskiner, og har et tekstgrensesnitt \cite{Mallick m.fl. 2020}. På Windows så kan dataprogrammet PuTTY anvendes\footnote{\url{https://www.putty.org/}}.
 
-Etter at systemet på Azure er oppe så kan man logge inn, se vedlegg C for en guide til SSH.%Once your system is up, the first thing that comes to your mind is how do I get in? We will see the steps involved in logging in to your system using SSH.
+Etter at systemet på Azure er oppe så kan man logge inn, se vedlegg \ref{appendix:ssh} for en guide til SSH.%Once your system is up, the first thing that comes to your mind is how do I get in? We will see the steps involved in logging in to your system using SSH.
 
 Å leie en GPU kan bli dyrt. Ikke glem å stoppe den virtuelle maskinen når den ikke er i bruk. Dette kan gjøres fra portalen til Azure\footnote{\url{https://portal.azure.com}}.
 
@@ -203,11 +203,11 @@ Etter at systemet på Azure er oppe så kan man logge inn, se vedlegg C for en g
 
 Python er et programmeringsspråk som er populært blant forskere\footnote{\url{https://www.kaggle.com/learn/python}}. \cite{Morris 2020}
 
-Anaconda er en programvareutgivelse som gjør det enkelt å bruke Python.
+Anaconda er en programvareutgivelse som gjør det enkelt å bruke Python. Se vedlegg \ref{appendix:ssh} for en guide til SSH der Anaconda blir anvendt til å aktivere et Python 3 miljø.
 
 \subsubsection{RetinaNet konfigurasjon og trening}
 
-RetinaNet er implementert i detectron2, som bruker deep learning rammeverket PyTorch. Grensesnittet er programmeringsspråket Python 3.8. Detectron2 er utgitt under en Apache 2.0-lisens, det vil si at den kan brukes til hva enn en vil på en hvilken som helst måte, gratis, så lenge man aksepterer at Facebook ikke blir ansvarlig for arbeidet som gjøres, og så lenge man ikke krediterer arbeidet en gjør til Facebook \cite{The Apache Software Foundation 2004}. Detectron2 installeringsinstrukser er tilgjengelig på nettet.\footnote{\url{https://detectron2.readthedocs.io/}}
+RetinaNet er implementert i detectron2, som bruker deep learning rammeverket PyTorch. Grensesnittet er programmeringsspråket Python 3. Detectron2 er utgitt under en Apache 2.0-lisens, det vil si at den kan brukes til hva enn en vil på en hvilken som helst måte, gratis, så lenge man aksepterer at Facebook ikke blir ansvarlig for arbeidet som gjøres, og så lenge man ikke krediterer arbeidet en gjør til Facebook \cite{The Apache Software Foundation 2004}. Detectron2 installeringsinstrukser er tilgjengelig på nettet.\footnote{\url{https://detectron2.readthedocs.io/}}
 
 RetinaNet modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned med Detecton2 fra Detectron2 Model Zoo\footnote{\url{https://github.com/facebookresearch/detectron2/blob/master/MODEL_ZOO.md}}, den heter COCO-Detection/retinanet\_R\_50\_FPN\_3x.yam. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
 
@@ -402,19 +402,21 @@ Learning rate var 0,001, learning rate scheduler ble satt med momentum 0,949 og 
 
 Når modellen har blitt trent ferdig bør den forbedres. Den mest effektive måten å forbedre en deep learning-modell er å endre learning rate i konfigurasjonen, og så trene modellen på nytt. Det kan også hjelpe å bruke en ny modell, vanligvis så er en modell med flere konvolveringslag bedre. Dype nevrale nettverk blir stadig dypere ettersom forskere utvikler nye modeller \cite{Szegedy m.fl. s. 1}. Det er også mulig å trene modellen over flere epoker eller iterasjoner. YOLO-modellen ble oppgradert til YOLOv4. RetinaNet-modellen ble mye bedre når den ble trent over flere iterasjoner. Endringene ble gjort underveis i prosjektet. 
 
-During training, you will see varying indicators of error, and you should stop when no longer decreases 0.XXXXXXX avg:
-Region Avg IOU: 0.798363, Class: 0.893232, Obj: 0.700808, No Obj: 0.004567, Avg Recall: 1.000000, count: 8 Region Avg IOU: 0.800677, Class: 0.892181, Obj: 0.701590, No Obj: 0.004574, Avg Recall: 1.000000, count: 8
+Mens treningen pågår vises feilmeldinger og statusen til nettverket, treningen kan avsluttes når training loss ikke lenger avtar. 
 
-9002: 0.211667, 0.60730 avg, 0.001000 rate, 3.868000 seconds, 576128 images Loaded: 0.000000 seconds
+\begin{verbatim}
+v3 (iou loss, Normalizer: (iou: 0.07, cls: 1.00) Region 139 Avg
+(IOU: 0.366654, GIOU: 0.298158), Class: 0.464846,
+Obj: 0.560030, No Obj: 0.549277, .5R: 0.191489,
+.75R: 0.021277, count: 94, class_loss = 5464.241699,
+iou_loss = 69.363770, total_loss = 5533.605469 
+\end{verbatim}
 
-9002 - iteration number (number of batch)
-0.60730 avg - average loss (error) - the lower, the better
-When you see that average loss 0.xxxxxx avg no longer decreases at many iterations then you should stop training. The final avgerage loss can be from 0.05 (for a small model and easy dataset) to 3.0 (for a big model and a difficult dataset).
+Total loss kan gå fra 0,05 (for en liten modell og et enkelt datasett) til 3,0 (for en stor modell og et vanskelig datasett).
 
-Or if you train with flag -map then you will see mAP indicator Last accuracy mAP@0.5 = 18.50% in the console - this indicator is better than Loss, so train while mAP increases.
+Treningen med optionen -map vil føre til mAP (mean average precision) utregninger, da vil \texttt{Last accuracy mAP@0.5 = 18.50} og lignende dukke opp i konsollen. Det er en mye bedre indikator enn total loss på hvor bra modellen har blitt. Trening bør pågå så lenge mAP øker.% in the console - this indicator is better than Loss, so train while mAP increases.
 
-Once training is stopped, you should take some of last .weights-files from backup and choose the best of them:
-For example, you stopped training after 9000 iterations, but the best result can give one of previous weights (7000, 8000, 9000). It can happen due to overfitting. Overfitting - is case when you can detect objects on images from training-dataset, but can't detect objects on any others images. You should get weights from Early Stopping Point.
+Når treningen er ferdig så må den beste .weights-flien velges fra backup-mappen. Overfitting kan bli et problem. Dette kan skje når  can happen due to overfitting. Overfitting er når modellen kan detektere objektene i treningsdatasettet, men ikke i noen andre bilder. Derfor bør trening ikke foregå over flere iterasjoner enn der Early Stopping Point forekommer, se figur \ref{fig:early_stopping_point}.
 
 \begin{figure}[h!]
 \begin{center} 
@@ -423,7 +425,7 @@ For example, you stopped training after 9000 iterations, but the best result can
 \end{center}
 \end{figure}
 
-Choose weights-file with the highest mAP (mean average precision) or IoU (intersect over union)
+Velg alltid weights-filen med den høyeste mAP (mean average precision) skåren.
 
 %Lowering learning rate helps
 %Adding a convolutional layer helps
@@ -432,7 +434,7 @@ Choose weights-file with the highest mAP (mean average precision) or IoU (inters
 
 \subsection{Inferens}
 
-Inferens er 
+Inferens er når en trent modell er brukt til å forutsi hva en prøve inneholder. Inferens kalles også for en forward pass. En modell gjør ikke backpropagation når den gjør inferens, backpropagation gjøres for å regne ut nøyaktigheten til modellen og til å oppdatere vektene i modellen, noe som kun skjer under trening. 
 
 \subsubsection{RetinaNet}
 

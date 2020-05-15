@@ -15,6 +15,8 @@
 train.py
 \end{verbatim}
 
+
+\label{lst:load}
 %\begin{listing}[H]
 %\label{lst:load}
 \begin{minted}{python}
@@ -64,7 +66,7 @@ from detectron2.data import build_detection_test_loader
 %\begin{lstlisting}[language=Python, caption=Treningen og testingen, samt operativssystemet konfigureres]
 %\begin{lstlisting}[language=Python, caption=Konfigurasjon i train.py,label={lst:config}]
 %\begin{listing}[H]
-%\label{lst:config}
+\label{lst:config}
 
 \begin{minted}{python}
 data_root = 'data'
@@ -163,7 +165,7 @@ inference.py
 \end{verbatim}
 
 %\begin{listing}[H]
-%\label{lst:inferens_retinanet}
+\label{lst:inferens_retinanet}
 \begin{minted}{python}
 def video_read_write(video_path):
     """
@@ -258,7 +260,7 @@ CMakeLists.txt
 \end{verbatim}
 
 %\begin{listing}[H]
-%\label{lst:cmake}
+\label{lst:cmake}
 \begin{minted}{cmake}
 cmake_minimum_required(VERSION 2.8.12)
 
@@ -350,7 +352,7 @@ const char *WINDOW_TITLE = "Press ESC to quit";
 %\end{listing}
 
 %\begin{listing}[H]
-%\label{lst:getOutputsNames}
+\label{lst:getOutputsNames}
 \begin{minted}{C++}
 // Get the names of the output layers
 auto getOutputsNames(const Net& net)
@@ -375,7 +377,7 @@ auto getOutputsNames(const Net& net)
 %\end{listing}
 
 %\begin{listing}[H]
-%\label{lst:drawPred}
+\label{lst:drawPred}
 \begin{minted}{C++}
 // Draw the predicted bounding box
 void drawPred(
@@ -416,7 +418,7 @@ void drawPred(
 %\end{listing}
 
 %\begin{listing}[H]
-%\label{lst:postprocess}
+\label{lst:postprocess}
 \begin{minted}{C++}
 // Remove the bounding boxes with low confidence using non-maxima suppression
 void postprocess(Mat& frame, const vector<Mat>& outs)
@@ -567,7 +569,7 @@ int main(int argumentQuantity, char *arguments[])
 %\end{listing}
 
 %\begin{listing}[H]
-%\label{lst:mainloop}
+\label{lst:mainloop}
 \begin{minted}{C++}
     // Main loop
     bool isAlive = true;
