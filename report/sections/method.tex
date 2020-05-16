@@ -128,7 +128,7 @@ Det ble trent opp to nettverk. Den ene, RetinaNet, er en del av detectron2 fra F
 
 \subsubsection{Dataaugmentering}
 
-Dataen må først normaliseres på en standard måte, for eksempel ved å subtrahere gjennomsnittet over dataen, for så å skalere alle bildene slik at de får samme størrelse. Det er også mulig å gjøre flere andre endringer. Støy kan legges til bildene, samt å snu dem horisontalt eller vertikalt for å skape nye bilder å trene nettverket på. \cite{Cadieu m.fl. 2014 s. 15}
+Dataen må først normaliseres på en standard måte, for eksempel ved å subtrahere gjennomsnittet over dataen, for så å skalere alle bildene slik at de får samme størrelse. Dette gjør at nettverket kan trenes på sei og torsk dataen, til tross for ulike oppløsninger. Det er også mulig å gjøre flere andre endringer. Støy kan legges til bildene, samt å snu dem horisontalt eller vertikalt for å skape nye bilder å trene nettverket på. \cite{Cadieu m.fl. 2014 s. 15}
 
 Det ble ikke gjort endringer på standardmåten Detectron2 og Darknet gjør dataaugmentering.
 
@@ -186,13 +186,13 @@ Det har blitt utviklet flere maskinlæringsrammeverk. Disse reduserer mye av kom
 
 En virtuell maskin med en GPU ble leid fra nettskytjenesten Azure fra Microsoft til å trene modellene i dette forsøket. Satya Mallick presenterer hvordan en lager en virtuell maskin på nettskytjenesten Azure i kurset Deep Learning with PyTorch. Du kan lage virtuelle maskiner fra Azure Portal. Å begynne med Deep Learning er super enkelt med Azure. Azure gir deg virtuelle instanser med nesten alle de mest populære deep learning rammeverkene ferdiginstallert på deres Data Science Virtual Machines. Da slipper man å bruke tid på installering av NVidia drivere og andre deep learning biblioteker. Maskinene kommer også med JupyterHub ferdig installert, om du ønsker å anvende Jupyter Notebooks. \cite{Mallick m.fl. 2020}
 
-Se vedlegg \ref{appendix:azure} for instrukser om hvordan man lager en Data Science Virtual Machine instanse med Ubuntu Linux 18.04 på Azure.
+%Se vedlegg \ref{appendix:azure} for instrukser om hvordan man lager en Data Science Virtual Machine instanse med Ubuntu Linux 18.04 på Azure.
 
 \subsubsection{SSH login}
 
 SSH ble anvendt til å logge inn i den GPU-akselererte nettskyinstansen. SSH er et dataprogram og protokoll som anvendes til å koble til eksterne maskiner. Den er først og fremst rettet mot unix maskiner, og har et tekstgrensesnitt \cite{Mallick m.fl. 2020}. På Windows så kan dataprogrammet PuTTY anvendes\footnote{\url{https://www.putty.org/}}.
 
-Etter at systemet på Azure er oppe så kan man logge inn, se vedlegg \ref{appendix:ssh} for en guide til SSH.%Once your system is up, the first thing that comes to your mind is how do I get in? We will see the steps involved in logging in to your system using SSH.
+Etter at systemet på Azure er oppe så kan man logge inn.%, se vedlegg \ref{appendix:ssh} for en guide til SSH.%Once your system is up, the first thing that comes to your mind is how do I get in? We will see the steps involved in logging in to your system using SSH.
 
 Å leie en GPU kan bli dyrt. Ikke glem å stoppe den virtuelle maskinen når den ikke er i bruk. Dette kan gjøres fra portalen til Azure\footnote{\url{https://portal.azure.com}}.
 
@@ -203,7 +203,7 @@ Etter at systemet på Azure er oppe så kan man logge inn, se vedlegg \ref{appen
 
 Python er et programmeringsspråk som er populært blant forskere\footnote{\url{https://www.kaggle.com/learn/python}}. \cite{Morris 2020}
 
-Anaconda er en programvareutgivelse som gjør det enkelt å bruke Python. Se vedlegg \ref{appendix:ssh} for en guide til SSH der Anaconda blir anvendt til å aktivere et Python 3 miljø.
+Anaconda er en programvareutgivelse som gjør det enkelt å bruke Python. På en Azure Data Science Virtual Machine så kommer flere Anaconda miljøer ferdiginstallert. Anaconda PyTorch kan aktiveres med kommandoen \texttt{conda activate py37\_pytorch}. \cite{Mallick m.fl. 2020} %Se vedlegg \ref{appendix:ssh} for en guide til SSH der Anaconda blir anvendt til å aktivere et Python 3 miljø.
 
 \subsubsection{RetinaNet konfigurasjon og trening}
 
@@ -213,9 +213,9 @@ RetinaNet modellen ble trent med en learning rate på 0,001 over 500 iterasjoner
 
 Et utvalg av programkoden som har blitt skrevet for denne oppgaven har blitt lagt ved i vedlegg \ref{appendix:code}.
 
-Først må bibliotekene lastes inn. Se python koden i listing \ref{lst:load} i vedlegg \ref{appendix:code}.
+Først må bibliotekene lastes inn. Se python koden på side \pageref{lst:load} i vedlegg \ref{appendix:code}.
 
-Konfigurasjonen defineres i kodesnutt listing \ref{lst:config}.
+Konfigurasjonen defineres i kodesnutt koden på side \pageref{lst:config} i vedlegg \ref{appendix:code}.
 
 Konfigurasjonen av batch size, data path og learning rate er de viktigste variablene, det er det neste som settes i listingen under. 
 
@@ -246,7 +246,7 @@ os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 \end{minted}
 %\end{lstlisting}
 
-Neste kodesnutt er trening, listing \ref{lst:train}, resultatene finnes på tensorboard.
+Neste kodesnutt er trening, i vedlegg \ref{appendix:code} side \pageref{lst:train}, resultatene finnes på tensorboard.
 \footnote{\url{https://tensorboard.dev/experiment/aZzjBUzKTAy19KPsDZPJ2g}}
 
 %\begin{lstlisting}[language=Python, caption=Treningskode i train.py,label={lst:train}]
@@ -447,7 +447,7 @@ Inferens er når en trent modell er brukt til å forutsi hva en prøve inneholde
 
 Ettersom OpenCV kunne ikke laste inn en PyTorch modell da denne oppgaven ble skrevet, så ble inferens gjort med Python, og det ble ikke gjort et forsøk på å gjøre inference i sanntid på en videostrøm med RetinaNet. Se resultater i figur \ref{fig:retinenet_inference} og \ref{fig:inference}.
 
-Koden for inferens er i vedlegg A, listing \ref{lst:inferens_retinanet}.
+Koden for inferens er i vedlegg A, side \pageref{lst:inferens_retinanet}.
 
 \subsubsection{OpenCV-program} \label{part:opencv}
 
@@ -489,27 +489,27 @@ make install
 \begin{figure}
 \begin{center} 
 \includegraphics[scale=0.2]{figures/qtcreator}
-\caption{\small \sl QtCreator. \label{fig:qtcreator}} 
+\caption{\small \sl Figuren viser IDE-et QtCreator med main.cpp, OpenCV- og TMAT3004-prosjektene lastet inn. \label{fig:qtcreator}} 
 \end{center} 
 \end{figure} 
 
 Det er også mulig å kompilere OpenCV med hjelp fra QtCreator. QtCreator open source ble lastet ned fra \url{https://www.qt.io/download}. \texttt{CMakeLists.txt} i opencv-3.4/opencv ble åpnet i QtCreator. OPENCV\_EXTRA\_MODULES\_PATH ble satt til opencv\_contrib/modules på filsystemet. Dette kan gjøres fra Projects-modusen i QtCreator. Se sidepanelet i figur \ref{fig:qtcreator}.
 
-Anaconda individual edition med Python 2 ble brukt. Det ble laget en \texttt{CMakeLists.txt}-fil for prosjektet. Se listing \ref{lst:cmake} i vedlegg \ref{appendix:code}. Denne burde muligens endres om andre ønsker å kompilere prosjektet, merk at Anaconda ble installert til hjemmemappen til brukeren. Prosjektet består av to programmer. OBJECT\_DETECTOR gjør fiskedeteksjon. Se figur \ref{fig:yolo_inference}. DATASET\_TOOL ble brukt til å lage label-data ut av videoer. Se figur \ref{fig:dataset_tool}.
+Anaconda individual edition med Python 2 ble brukt. Det ble laget en \texttt{CMakeLists.txt}-fil for prosjektet. Se side \pageref{lst:cmake} i vedlegg \ref{appendix:code}. Denne burde muligens endres om andre ønsker å kompilere prosjektet, merk at Anaconda ble installert til hjemmemappen til brukeren. Prosjektet består av to programmer. OBJECT\_DETECTOR gjør fiskedeteksjon. Se figur \ref{fig:yolo_inference}. DATASET\_TOOL ble brukt til å lage label-data ut av videoer. Se figur \ref{fig:dataset_tool}.
 
 OBJECT\_DETECTOR gjør inferens med OpenCV-dnn modulen, den laster inn en YOLOv4-konfigurasjon, en modell, og en videostrøm. Videostrømmen kan komme fra et kamera koblet til maskinen eller en fil på filsystemet. Programmet analyserer videostrømmen og logger mengden torsk og sei som blir observert. Se figur \ref{fig:yolo_inference}.
 
-main.cpp er kildekoden til OBJECT\_DETECTOR. Først lastes bibliotekene inn. Se listing \ref{lst:header}.
+main.cpp er kildekoden til OBJECT\_DETECTOR. Først lastes bibliotekene inn. Se side \pageref{lst:header} i vedlegg \ref{appendix:code}.
 
-getOutputsNames henter ut label navn fra det ytterste laget, ``the fully connected layer'', i modellen. Det er her utmatningene fra modellen er. Se figur \ref{fig:deep} og listing \ref{lst:getOutputsNames}.
+getOutputsNames henter ut label navn fra det ytterste laget, ``the fully connected layer'', i modellen. Det er her utmatningene fra modellen er. Se figur \ref{fig:deep} og side \pageref{lst:getOutputsNames} i vedlegg \ref{appendix:code}.
 
-drawPred lager en bounding box rundt objektene som detekteres av modellen. Se listing \ref{lst:drawPred}.
+drawPred lager en bounding box rundt objektene som detekteres av modellen. Se side \pageref{lst:drawPred} i vedlegg \ref{appendix:code}.
 
-postprocess henter alle instanser av fiskene i et bilde som er over en non-maxima suppression confidence boundary. Deretter sjekker den om objektet er en torsk eller sei, og teller mengden torsk og sei i bildet. Se listing \ref{lst:postprocess}.
+postprocess henter alle instanser av fiskene i et bilde som er over en non-maxima suppression confidence boundary. Deretter sjekker den om objektet er en torsk eller sei, og teller mengden torsk og sei i bildet. Se side \pageref{lst:postprocess} i vedlegg \ref{appendix:code}.
 
-main er programmets entry point. Det er her dataprogrammet starter. Den åpner en logg, log.csv, og så åpner den en videostrøm. Deretter laster den inn YOLOv4 modellen. Se listing \ref{lst:main}.
+main er programmets entry point. Det er her dataprogrammet starter. Den åpner en logg, log.csv, og så åpner den en videostrøm. Deretter laster den inn YOLOv4 modellen. Se side \pageref{lst:main} i vedlegg \ref{appendix:code}.
 
-Den siste kodesnutten er programmets main loop. Denne koden repeteres til videoen har gått tomt for bilder, eller at brukeren trykker på ESC på tastaturet. For hvert bilde i videostrømmen så lagres antall torsk og sei observert og tidskode til log.csv, med mindre det er ingen torsk eller sei som blir oppdaget. Se listing \ref{lst:mainloop}.
+Den siste kodesnutten er programmets main loop. Denne koden repeteres til videoen har gått tomt for bilder, eller at brukeren trykker på ESC på tastaturet. For hvert bilde i videostrømmen så lagres antall torsk og sei observert og tidskode til log.csv, med mindre det er ingen torsk eller sei som blir oppdaget. Se side \pageref{lst:mainloop} i vedlegg \ref{appendix:code}.
 
 %\subsection{COCO Detection Evaluation} % For analyse kapittelet?
 
@@ -521,3 +521,5 @@ Den siste kodesnutten er programmets main loop. Denne koden repeteres til videoe
 \caption{\small \sl Figuren viser dataprogrammet labelme. \cite{Wada 2016} \label{fig:labelme}} 
 \end{center} 
 \end{figure} 
+
+Det ble laget label-data for segmentering i darapgrogrammet labelme. Se figur \ref{fig:labelme}. Det ble ikke gjort et forsøk på segmentering da objektdeteksjon ga bedre resultater enn forventet.
