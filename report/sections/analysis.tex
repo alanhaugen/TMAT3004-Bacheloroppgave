@@ -5,7 +5,7 @@
 %I empirisk baserte studier vil analysene handle om å beskrive og tolke. Mange vil ofte drøfte enkeltfunnene i dette kapitlet og ta for seg mer overordnede funn i drøftingskapitlet.
 %Et lurt tips for å finne ut hvordan du kan skrive ditt analysekapittel, er å se hvordan det er gjort i andre oppgaver på tilsvarende nivå fra samme felt.
 
-\section{Resultat}
+\section{Resultater}
 
 \begin{figure}[h!]
 \begin{center} 
@@ -27,7 +27,7 @@ Det som er lettere for mennesker å forstå er også lettere for maskiner å for
 
 %The precision of a classifier is a measure of correctly classified images out of all the images predicted to belong to a specific class. Mathematically,
 
-Presisjonen er et mål på hvor mange bounding boxes objektdeteksjonsystemet klarte å klassifisere riktig. Matematisk defineres dette slik:
+Presisjonen er et mål på hvor mange bounding boxes objektdeteksjonsystemet klarte å klassifisere riktig \cite{Siddiqui m.fl. 207 s. 383}. Matematisk defineres dette slik:
 
 \begin{equation}
 \text{Precision} = \frac{\text{True positives}}{\text{True positives} + \text{False positives}}
@@ -35,7 +35,7 @@ Presisjonen er et mål på hvor mange bounding boxes objektdeteksjonsystemet kla
 
 %Recall of a classifier on the other hand is a measure of correctly classified images out of all the images actually belonging to a spe- cific class. Mathematically:
 
-Recall er et mål på hvor mange objekter objektdetekteringssystemet klarte å klassifisere riktig. Matematisk defineres dette slik:
+Recall er et mål på hvor mange objekter objektdetekteringssystemet klarte å klassifisere riktig \cite{Siddiqui m.fl. 207 s. 383}. Matematisk defineres dette slik:
 
 \begin{equation}
 \text{Recall} = \frac{\text{True positives}}{\text{True positives} + \text{False negatives}}
@@ -48,33 +48,67 @@ Recall er et mål på hvor mange objekter objektdetekteringssystemet klarte å k
 \begin{figure}[h!]
 \begin{center} 
 \includegraphics[scale=0.35]{figures/coco}
-\caption{\small \sl You have to evaluate your detection model on COCO detection evaluation metric. For your reference here is the coco evaluation metric chart. \label{fig:coco}}
+\caption{\small \sl Figuren viser evalueringskortet til COCO. En modell som har blitt trent med vekter fra COCO kan evalueres etter dette kortet. \label{fig:coco}}
 \end{center}
 \end{figure}
 
-AP (primary challenge metric) bør være mer enn 0.5. \\
-Utmatninger: \\
- \\
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.285 \\
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.663 \\
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.200 \\
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.067 \\
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.217 \\
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.402 \\
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.038 \\
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.248 \\
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.433 \\
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.139 \\
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.352 \\
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.556 \\
-Evaluation results for bbox:  \\
-|   AP   |  AP50  |  AP75  |  APs  |  APm   |  APl   | \\
-|:------:|:------:|:------:|:-----:|:------:|:------:| \\
-| 28.494 | 66.262 | 20.016 | 6.654 | 21.663 | 40.239 | \\
-Per-category bbox AP:  \\
-| category     | AP     | category   | AP     | \\
-|:-------------|:-------|:-----------|:-------| \\
-| atlantic\_cod | 23.077 | saithe     | 33.910 |
+AP står for ``Average Precision'', det er et mål på hvor nøyaktig en modell er.
+
+\begin{table}[]
+\bigskip
+\centering
+\label{tab:ap_retinanet} 
+\caption{AP (primary challenge metric) and Average Recall}
+\begin{tabular}[t]{lccc}
+\toprule
+ Average Precision  (AP) @ [ IoU=0.50:0.95 & area=   all & maxDets=100 ] &= 0.285 \\
+ Average Precision  (AP) @ [ IoU=0.50      & area=   all & maxDets=100 ] &= 0.663 \\
+ Average Precision  (AP) @ [ IoU=0.75      & area=   all & maxDets=100 ] &= 0.200 \\
+ Average Precision  (AP) @ [ IoU=0.50:0.95 & area= small & maxDets=100 ] &= 0.067 \\
+ Average Precision  (AP) @ [ IoU=0.50:0.95 & area=medium & maxDets=100 ] &= 0.217 \\
+ Average Precision  (AP) @ [ IoU=0.50:0.95 & area= large & maxDets=100 ] &= 0.402 \\
+\midrule
+ Average Recall     (AR) @ [ IoU=0.50:0.95 & area=   all & maxDets=  1 ] &= 0.038 \\
+ Average Recall     (AR) @ [ IoU=0.50:0.95 & area=   all & maxDets= 10 ] &= 0.248 \\
+ Average Recall     (AR) @ [ IoU=0.50:0.95 & area=   all & maxDets=100 ] &= 0.433 \\
+ Average Recall     (AR) @ [ IoU=0.50:0.95 & area= small & maxDets=100 ] &= 0.139 \\
+ Average Recall     (AR) @ [ IoU=0.50:0.95 & area=medium & maxDets=100 ] &= 0.352 \\
+ Average Recall     (AR) @ [ IoU=0.50:0.95 & area= large & maxDets=100 ] &= 0.556 \\
+ \bottomrule	
+ \end{tabular}
+\end{table}
+
+\begin{table}[]
+\bigskip
+\centering
+\caption{Evaluation results for bbox} 
+\label{tab:bbox_retinanet} 
+\begin{tabular}[t]{lccccc}
+\toprule
+   AP   &  AP50  &  AP75  &  APs  &  APm   &  APl    \\
+ \midrule
+ 28.494 & 66.262 & 20.016 & 6.654 & 21.663 & 40.239 \\
+ \bottomrule	
+ \end{tabular}
+\end{table}
+
+\begin{table}[]
+\bigskip
+\centering
+\label{tab:per-category_bbox_retinanet} 
+\caption{Per-category bbox AP} 
+\begin{tabular}[t]{lccc}
+\toprule
+ category     & AP     & category   & AP      \\
+ \midrule
+ atlantic\_cod & 23.077 & saithe     & 33.910 \\
+ \bottomrule	
+\end{tabular}
+\end{table}
+
+\subsubsection{COCO deteksjonsevaluering} 
+
+Resultatene i tabell \ref{tab:ap_retinanet} kan sammenlignes med evalueringskortet i \ref{fig:coco}. Resultatene bør være bedre enn COCO evalueringskortet. AP (primary challenge metric) bør være mer enn 0.5. RetinaNet modellen har en AP lik 0.285. Se tabell \ref{tab:ap_retinanet}. Det er veldig lavt. AP for torsk var 23,1 \%, og 33,9 \%. Dette er veldig lavt. Modellen bør forbedres og trenes på nytt. Se tabell \ref{tab:per-category_bbox_retinanet}.
 
 \begin{figure}[h!]
 \begin{center} 
@@ -132,9 +166,7 @@ Per-category bbox AP:  \\
 \end{center}
 \end{figure}
 
-RetinaNet resultatene for dette eksperimentet er også tilgjengelige på nettet. Se \\ \url{https://tensorboard.dev/experiment/2PxmdvA5QdavQC0YLABdgw}.
-
-\subsubsection{COCO deteksjonsevaluering} 
+RetinaNet resultatene for dette eksperimentet er også tilgjengelige på nettet.\footnote{\url{https://tensorboard.dev/experiment/2PxmdvA5QdavQC0YLABdgw}}
 
 \subsection{YOLO}
 
@@ -144,6 +176,8 @@ RetinaNet resultatene for dette eksperimentet er også tilgjengelige på nettet.
 \caption{\small \sl Precision, recall og IoU. \cite{Bochkovskiy 2020} \label{fig:precision}}
 \end{center}
 \end{figure}
+
+We used the metric of mean Average Precision (mAP), which is the average of the maximum precisions at different recall values, to evaluate the model performance. When tested on individual source of dataset, the model achieved best results on Wells Dam dataset with 0.5575 mAP (Table 2). Wells Dam dataset’s better performance than the other two datasets were as expected, considering its high resolution and three full color channels. However, the mAP metric on Wells Dam dataset is lower than our expectation. Fig. 2 F reveals that most of the false detection in Wells Dam dataset are at the side of fish ladder window, where only partial of the fish bodies are visible and difficult for even human annotators to correctly label. These hard cases are sometimes more numerous than fish passing through the white plate, which greatly reduced the overall mAP score on the Wells Dam dataset. \cite{Xu og Matzner 2018}
 
 IoU (intersect over union) - average instersect over union of objects and detections for a certain threshold = 0.24
 

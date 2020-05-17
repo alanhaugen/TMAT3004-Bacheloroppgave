@@ -25,15 +25,15 @@
 
 %Hensikten med kapitlet Materialer og metoder er at andre skal kunne utføre det samme arbeidet på samme måte. Da må alle nødvendige opplysninger være med.
 
-Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to modeller, en RetinaNet-modell og en YOLOv4-modell. RetinaNet hadde forhåndstrente vekter fra en modell trent på COCO-datasettet til Microsoft, og YOLOv4 hadde fohåndstrente vekter fra en darknet-modell, modellene ble ikke trent fra scratch. \cite{Lin m.fl. 2015 s. 1} %You should design a model which achieves 85 \% validation accuracy on the given dataset.
+Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to modeller, en RetinaNet-modell og en YOLOv4-modell. RetinaNet hadde forhåndstrente vekter fra en modell trent på COCO-datasettet til Microsoft \cite{Lin m.fl. 2015 s. 1}. YOLOv4 hadde fohåndstrente vekter fra en darknet-modell, modellene ble ikke trent fra scratch. %You should design a model which achieves 85 \% validation accuracy on the given dataset.
 
-Microsoft Azure-plattformen ble anvendt til å trene modellene. Microsoft tilbyr NVidia Titan GPU-er i skyen. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid. \cite{Dean m.fl. 2012 s. 1}
+Microsoft Azure-plattformen ble anvendt til å trene modellene. Microsoft tilbyr NVidia Titan GPU-er i skyen. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid \cite{Dean m.fl. 2012 s. 1}.
 
 RetinaNet, introdusert av Facebook-ansatte i 2017 i Focal Loss for Dense Object Detection på arXiv, ble ansett som den beste objektdeteksjonsmodellen da dette dokumentet ble skrevet. Det var en forbedring av R-CNN. \cite{Lin m.fl. 2017}
 
 You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig NVidia-GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon 2018}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLO like bra som Focal Loss, det er RetinaNet, men omtrent fire ganger raskere. Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2016}. Se figur \ref{fig:yolo_inference}. % Se figur retinanet vs YOLOv4 resultater
 
-Kildekoden for prosjektet kan lastes ned fra: \\ \url{https://github.com/alanhaugen/TMAT3004-Bacheloroppgave}.
+Kildekoden for prosjektet kan lastes ned fra GitHub\footnote{\url{https://github.com/alanhaugen/TMAT3004-Bacheloroppgave}}.
 
 \subsection{Å forstå problemet}
 
@@ -50,7 +50,7 @@ Det neste steget var å få tak i data. Datasettet som ble laget for dette prosj
 \includegraphics[scale=0.05,angle=-90,origin=c]{figures/camera_1}
 \includegraphics[scale=0.05,angle=-90,origin=c]{figures/camera_2}
 \includegraphics[scale=0.05]{figures/camera_3}
-\caption{\small \sl Figuren viser kamerautstyret som ble anvendt til å lage seidataen. Nofima anskaffet et undervannskamera av typen Steinsvik Orbit-3300 som styres via et MB-3000 kontrollpanel. Foto: Nofima. \label{fig:nofima}} 
+\caption{\small \sl Figuren viser kamerautstyret som ble anvendt til å lage seidataen. Nofima anskaffet et undervannskamera av typen Steinsvik Orbit-3300 som styres via et MB-3000 kontrollpanel. Foto: Nofima. \cite{Lindberg 2020} \label{fig:nofima}} 
 \end{center} 
 \end{figure} 
 
@@ -168,7 +168,7 @@ I 2006 introduserte NVidia den første generelt programmerbare GPU-en, deres nye
 
 Det er ikke tilfeldig at det var i 2012 at deep learning tok av. Alex sitt team anvendte CUDA til å gjøre maskinlæring på en GPU istedet for en CPU, det hadde ikke blitt gjort tidligere \cite{Krizhevsky m.fl. 2012}. De anvendte en ikke-lineær aktiveringsfunksjon, noe som hadde blitt oppfunnet relativt nylig \cite{LeCun m.fl. 1998 s. 3}. Resultatene har ført til en revolusjon innenfor kunstig intelligens. Batch normalization har også forbedret resultatene. Se figur \ref{fig:comparison}. \cite{Ioffe og Szegedy 2015 s. 1}
 
-I dette forsøket ble en GPU anvendt til å gjøre maskinlæring og trene deep learning modeller.
+I dette forsøket ble en GPU anvendt til å gjøre maskinlæring, å trene deep learning modeller.
 
 \subsubsection{Maskinlæringsrammeverk}
 
@@ -246,8 +246,7 @@ os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 \end{minted}
 %\end{lstlisting}
 
-Neste kodesnutt er trening, i vedlegg \ref{appendix:code} side \pageref{lst:train}, resultatene finnes på tensorboard.
-\footnote{\url{https://tensorboard.dev/experiment/aZzjBUzKTAy19KPsDZPJ2g}}
+Neste kodesnutt er trening, i vedlegg \ref{appendix:code} side \pageref{lst:train}, resultatene finnes på tensorboard.\footnote{\url{https://tensorboard.dev/experiment/aZzjBUzKTAy19KPsDZPJ2g}}
 
 %\begin{lstlisting}[language=Python, caption=Treningskode i train.py,label={lst:train}]
 \begin{minted}{python}
@@ -350,13 +349,13 @@ For hver linje i \texttt{fish\_train.txt} og \texttt{fish\_test.txt} så ble fil
 Nettverket ble trent med følgende kommando på Ubuntu linux-maskinen på Azure.
 
 \begin{verbatim}
-./darknet detector train obj.data yolo-obj.cfg yolov4.conv.137
+./darknet detector train obj.data yolo-obj.cfg yolov4.conv.137 -map
 \end{verbatim}
 
 Om en bruker Windows brukes følgende kommando:
 
 \begin{verbatim}
-darknet.exe detector train obj.data yolo-obj.cfg yolov4.conv.137
+darknet.exe detector train obj.data yolo-obj.cfg yolov4.conv.137 -map
 \end{verbatim}
 
 Treningen kan ta flere dager. Etter treningen så ble den beste modellen lastet ned.
@@ -402,7 +401,9 @@ Learning rate var 0,001, learning rate scheduler ble satt med momentum 0,949 og 
 
 Når modellen har blitt trent ferdig bør den forbedres. Den mest effektive måten å forbedre en deep learning-modell er å endre learning rate i konfigurasjonen, og så trene modellen på nytt. Det kan også hjelpe å bruke en ny modell, vanligvis så er en modell med flere konvolveringslag bedre. Dype nevrale nettverk blir stadig dypere ettersom forskere utvikler nye modeller \cite{Szegedy m.fl. s. 1}. Det er også mulig å trene modellen over flere epoker eller iterasjoner. YOLO-modellen ble oppgradert til YOLOv4. RetinaNet-modellen ble mye bedre når den ble trent over flere iterasjoner. Endringene ble gjort underveis i prosjektet. 
 
-Mens treningen pågår vises feilmeldinger og statusen til nettverket, treningen kan avsluttes når training loss ikke lenger avtar. 
+\subsubsection{YOLOv4}
+
+Mens treningen pågår vises feilmeldinger og statusen til nettverket, treningen kan avsluttes når training loss ikke lenger avtar. Se et eksempel på Darknet utmatninger under:
 
 \begin{verbatim}
 v3 (iou loss, Normalizer: (iou: 0.07, cls: 1.00) Region 139 Avg
@@ -412,16 +413,16 @@ Obj: 0.560030, No Obj: 0.549277, .5R: 0.191489,
 iou_loss = 69.363770, total_loss = 5533.605469 
 \end{verbatim}
 
-Total loss kan gå fra 0,05 (for en liten modell og et enkelt datasett) til 3,0 (for en stor modell og et vanskelig datasett).
+Total loss kan gå fra 0,05 (for en liten modell og et enkelt datasett) til 3,0 (for en stor modell og et vanskelig datasett). \cite{Bochkovskiy 2020}
 
-Treningen med optionen -map vil føre til mAP (mean average precision) utregninger, da vil \texttt{Last accuracy mAP@0.5 = 18.50} og lignende dukke opp i konsollen. Det er en mye bedre indikator enn total loss på hvor bra modellen har blitt. Trening bør pågå så lenge mAP øker.% in the console - this indicator is better than Loss, so train while mAP increases.
+Treningen med optionen -map vil føre til mAP (mean average precision) utregninger, da vil \texttt{Last accuracy mAP@0.5 = 18.50} og lignende dukke opp i konsollen. Det er en mye bedre indikator enn total loss på hvor bra modellen har blitt. Trening bør pågå så lenge mAP øker. \cite{Bochkovskiy 2020}% in the console - this indicator is better than Loss, so train while mAP increases.
 
-Når treningen er ferdig så må den beste .weights-flien velges fra backup-mappen. Overfitting kan bli et problem. Dette kan skje når  can happen due to overfitting. Overfitting er når modellen kan detektere objektene i treningsdatasettet, men ikke i noen andre bilder. Derfor bør trening ikke foregå over flere iterasjoner enn der Early Stopping Point forekommer, se figur \ref{fig:early_stopping_point}.
+Når treningen er ferdig så må den beste .weights-flien velges fra backup-mappen. Overfitting kan bli et problem. Dette kan skje når  can happen due to overfitting. Overfitting er når modellen kan detektere objektene i treningsdatasettet, men ikke i noen andre bilder. Derfor bør trening ikke foregå over flere iterasjoner enn der Early Stopping Point forekommer, se figur \ref{fig:early_stopping_point}. \cite{Bochkovskiy 2020}
 
 \begin{figure}[h!]
 \begin{center} 
 \includegraphics[scale=1.0]{figures/early_stopping_point}
-\caption{\small \sl Early Stopping Point. \label{fig:early_stopping_point}}
+\caption{\small \sl Figuren viser ``Early stopping point''. Trening av en modell bør avsluttes når ``Early stopping point'' er nådd. \cite{Bochkovskiy 2020} \label{fig:early_stopping_point}}
 \end{center}
 \end{figure}
 
@@ -440,12 +441,12 @@ Inferens er når en trent modell er brukt til å forutsi hva en prøve inneholde
 
 \begin{figure}
 \begin{center} 
-\includegraphics[scale=0.35]{figures/retinanet_cod}
+\includegraphics[scale=0.25]{figures/retina-inference-3}
 \caption{\small \sl Figuren viser objektdeteksjon av torsk i lagringsmerd med RetinaNet. \label{fig:retinenet_inference}} 
 \end{center} 
 \end{figure} 
 
-Ettersom OpenCV kunne ikke laste inn en PyTorch modell da denne oppgaven ble skrevet, så ble inferens gjort med Python, og det ble ikke gjort et forsøk på å gjøre inference i sanntid på en videostrøm med RetinaNet. Se resultater i figur \ref{fig:retinenet_inference} og \ref{fig:inference}.
+Ettersom OpenCV ikke kunne laste inn en PyTorch modell da denne oppgaven ble skrevet, så ble inferens gjort med Python, og det ble ikke gjort et forsøk på å gjøre inference i sanntid på en videostrøm med RetinaNet. Se resultater i figur \ref{fig:retinenet_inference} og \ref{fig:inference}.
 
 Koden for inferens er i vedlegg A, side \pageref{lst:inferens_retinanet}.
 

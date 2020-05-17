@@ -12,8 +12,8 @@
 \input{titlepage}
 \newpage
 \include{abstract}
-\newpage
-\input{sections/abbreviations}
+%\newpage
+%\input{sections/abbreviations}
 \newpage
 \include{thanks}
 \newpage
@@ -31,7 +31,7 @@
 %\include{sections/end}
 
 \begin{thebibliography}{9}
-
+\addcontentsline{toc}{section}{Referanser}
 % 137 ABCDEFGHIJKLMNOPQRSTUVXYZ
 
 \bibitem{Angell og Ekanger 2017} 
@@ -69,15 +69,15 @@ Cadieu C. F., Hong H., Yamins D. L. K., Pinto N., Ardila D., Solomon E. A., Maja
 \textit{Deep Neural Networks Rival the Representation of Primate IT Cortex for Core Visual Object Recognition}. 
 PLOS Computational Biology, 2014.
 
-\bibitem{Canziani m.fl 2017} 
-Canziani A., Culurciello E., og Paszke A. 
-\textit{An Analysis of Deep Neural Network Models for Practical Applications}. 
-Weldon School of Biomedical Engineering Purdue University, Faculty of Mathematics, Informatics and Mechanics University of Warsaw, 2017.
-
 \bibitem{Christensen 2019} 
 Christensen T. B. 
 \textit{Fôrer villfisk med lusegift og medisiner}. 
 Naturvernforbundet, \url{https://naturvernforbundet.no/naturogmiljo/forer-villfisk-med-lusegift-og-medisiner-article39320-1024.html}, 2019. (hentet 24. April 2020)
+
+\bibitem{Canziani m.fl 2017} 
+Canziani A., Culurciello E., og Paszke A. 
+\textit{An Analysis of Deep Neural Network Models for Practical Applications}. 
+Weldon School of Biomedical Engineering Purdue University, Faculty of Mathematics, Informatics and Mechanics University of Warsaw, 2017.
 
 \bibitem{deepfish} 
 Cui S., Zhou Y., Wang Y., og Zhai L. 
@@ -174,6 +174,11 @@ LeCun Y., Bottou L., Bengio Y., og Haner P.
 \textit{Gradient-Based Learning Applied to Document Recognition}. 
 IEEE, 1998.
 
+\bibitem{flow} 
+Lin C.E. 
+\textit{Introduction to Motion Estimation with Optical Flow}. 
+nanonets \url{https://nanonets.com/blog/optical-flow/}, 2019. (hentet 16. mai 2020)
+
 \bibitem{coco} 
 Lin T.Y., Maire M., Belongie S., Bourdev L., Girshick R., Hays J., Perona P., Ramanan D., Zitnick C. L., og Dollár P. 
 \textit{Microsoft COCO: Common Objects in Context}. 
@@ -183,6 +188,11 @@ Microsoft, 2015.
 Lin T.Y., Goyal P., Girshick R., He K., Dollár P.
 \textit{Focal Loss for Dense Object Detection}
 Facebook AI Research, 2018.
+
+\bibitem{kato} 
+Lindberg S.K. 
+\textit{Video av torsk og sei fra Havbruksstasjonen i Tromsø}. 
+Nofima, 2020.
 
 \bibitem{Mallick m.fl. 2020} 
 Mallick S., Gupta V., Murzova A., Petrovicheva A., Serebryakov G., Semkin P., Chandra P., Belousov S., Khanova T., og Koriukina V.
@@ -239,20 +249,20 @@ Salman A, Siddiqui S. A. , Shafait F., Mian A., Shortis M. R., Khurshid K., Ulge
 \textit{Automatic fish detection in underwater videos by a deep neural network-based hybrid motion learning system}. 
 ICES Journal of Marine Science, 2019.
 
+\bibitem{Debt} 
+Sculley D., Holt G., Golovin D., Davydov E., Phillips T., Ebner D., Chaudhary V., Young M., Crespo J.F., og Dennison D. 
+\textit{Hidden Technical Debt in Machine Learning Systems}. 
+Google Inc., 2015.
+
 \bibitem{entropy} 
 Shannon C. E. 
 \textit{A Mathematical Theory of Communication}. 
 Bell Labs, 1948.
 
-\bibitem{Szegedy m.fl. 2014} 
-Szegedy C., Liu W., Jia Y., Sermanet P., Reed S., Anguelov D., Erhan D., Vanhoucke V., og Rabinovich A. 
-\textit{Going deeper with convolutions}. 
-Google Inc., University of Michigan, University of North Carolina, Chapel Hill, arXiv, 2014.
-
-\bibitem{Debt} 
-Sculley D., Holt G., Golovin D., Davydov E., Phillips T., Ebner D., Chaudhary V., Young M., Crespo J.F., og Dennison D. 
-\textit{Hidden Technical Debt in Machine Learning Systems}. 
-Google Inc., 2015.
+\bibitem{texton_forests} 
+Shotton J., Johnson M., og Cipolla R. 
+\textit{Semantic Texton Forests for Image Categorization and Segmentation}. 
+Toshiba Corporate R\&D Center Kawasaki, Japan, Department of Engineering University of Cambridge, UK, 2008.
 
 \bibitem{autofish} 
 Siddiqui S. A., Shafait F., Mian A. S., og Shortis M. R. 
@@ -264,15 +274,15 @@ Simonyan K., og Zisserman A.
 \textit{Very Deep Convolutional Networks for Large-Scale Image Recognition}. 
 Visual Geometry Group, Department of Engineering Science, University of Oxford, 2015.
 
-\bibitem{texton_forests} 
-Shotton J., Johnson M., og Cipolla R. 
-\textit{Semantic Texton Forests for Image Categorization and Segmentation}. 
-Toshiba Corporate R\&D Center Kawasaki, Japan, Department of Engineering University of Cambridge, UK, 2008.
-
 \bibitem{Spruill 2011} 
 Spruill V.
 \textit{Environmental Impacts of Open-Ocean Aquaculture}. 
 Ocean Conservancy \url{https://issuu.com/oceanconservancy/docs/oc_rfts_v11_single}, 2011. (hentet 6. Mai 2020)
+
+\bibitem{Szegedy m.fl. 2014} 
+Szegedy C., Liu W., Jia Y., Sermanet P., Reed S., Anguelov D., Erhan D., Vanhoucke V., og Rabinovich A. 
+\textit{Going deeper with convolutions}. 
+Google Inc., University of Michigan, University of North Carolina, Chapel Hill, arXiv, 2014.
 
 \bibitem{Saether 2017} 
 Sæther B.S. 
@@ -289,15 +299,15 @@ Trana K., Klausen D. H., og Bolstad J.
 \textit{Denne torsken er full av fôr fra oppdrettsnæringa}. 
 NRK, \url{https://www.nrk.no/trondelag/fiskere-har-solgt-torsk-som-er-full-av-lakselusmiddel-_-vet-ikke-om-det-er-farlig-1.14742706}, 2019. (hentet 24. April 2020)
 
-\bibitem{Wu2020} 
-Wu Y., Kirillov A., Massa F., Lo W.Y., og Girshick R.
-\textit{Detectron2}. 
-Github \url{https://github.com/facebookresearch/detectron2}, 2020. (hentet 6. Mai 2020)
-
 \bibitem{KentaroWada2020} 
 Wada K.
 \textit{labelme: Image Polygonal Annotation with Python}. 
 Github \url{https://github.com/wkentaro/labelme}, 2016. (hentet 6. Mai 2020)
+
+\bibitem{Wu2020} 
+Wu Y., Kirillov A., Massa F., Lo W.Y., og Girshick R.
+\textit{Detectron2}. 
+Github \url{https://github.com/facebookresearch/detectron2}, 2020. (hentet 6. Mai 2020)
 
 \bibitem{underwater} 
 Xu W., og Matzner S. 
