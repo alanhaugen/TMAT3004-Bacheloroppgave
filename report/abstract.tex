@@ -17,25 +17,29 @@
 
 % Bruk en an inngang til avsnittet, du skal gi et sammendrag av hva BO oppgaven var, hvordan den ble løst og hva resultatet ble.
 
-Denne bacheloroppgaven handler om å bruke maskinsyn til å telle villfisk som beiter under oppdrettsmerder. Prosjektet var en del av Sameksistensprosjektet til Nofima. Objektdetekteringen baserer seg på dype nevrale nettverk og er i stand til å klassifisere og telle forskjellige fiskearter.
+Denne bacheloroppgaven handler om å bruke maskinsyn til å telle villfisk som beiter under oppdrettsmerder. Forsøket ble gjort som en del av Sameksistensprosjektet til Nofima. Objektdetekteringen baserer seg på dype nevrale nettverk og er i stand til å klassifisere og telle forskjellige fiskearter.
+
+Kunstige nevrale nettverk kalles for modeller. Maskinlæring har blitt et populært paradigme innenfor informatikk. Modeller lærer fra data. YOLOv4 og RetinaNet er objektdetekteringsmodeller.
 
 %hvordan du gjorde det
-YOLOv4 og RetinaNet anvendes for fiskedeteksjon. Begge modellene bruker CNN-konsepter hentet fra forhåndstrente nettverk. Det ble utviklet et datasett basert på video fra og ved lagringsmerder av fisk. Gjennomsnittlig presisjon, AP, for RetinaNet modellen var 23 \% for torsk og 34 \% for sei. En gjennomsnittlig objektdeteksjonspresisjon, mAP, lik 72 \% ble oppnådd for YOLOv4 modellen.
+YOLOv4 og RetinaNet ble anvendt til fiskedeteksjon. Begge modellene brukte CNN-konsepter hentet fra forhåndstrente nettverk. Det ble utviklet et datasett basert på video fra og ved lagringsmerder av fisk. RetinaNet hadde 66,3 \% gjennomsnittlig nøyaktighet (AP50). Gjennomsnittlig presisjon (AP) for RetinaNet-modellen var 23 \% for torsk og 34 \% for sei. En gjennomsnittlig objektdeteksjonspresisjon (mAP) lik 73 \% ble oppnådd for YOLOv4-modellen.
 
 %hva du fant ut
-Arbeidet i denne bacheloroppgaven viser at viser at maskinsyn kan anvendes til å løse oppgaver innenfor akvakultur. Teknologien som presenteres i dette dokumentet kan anvendes til å finne omfanget av torsk og sei som beiter rundt oppdrettsanlegg.%, og kan muligens anvendes til å detektere rømninger fra merder samt utvikles videre til å detektere lakselus på fisk i merdene.
+Dette forsøket viser at maskinsyn kan anvendes til å løse oppgaver innenfor akvakultur. Maskinsyn kan anvendes til å finne omfanget av torsk og sei som beiter rundt oppdrettsanlegg.%, og kan muligens anvendes til å detektere rømninger fra merder samt utvikles videre til å detektere lakselus på fisk i merdene.
 
-Kildekoden for prosjektet kan lastes ned fra: \\ \url{https://github.com/alanhaugen/TMAT3004-Bacheloroppgave}.
+Skriptene til å reprodusere forsøket er offentlig tilgjengelig fra: \\ \url{https://github.com/alanhaugen/TMAT3004-Bacheloroppgave}.
 
 \section*{Abstract}
 
-This bachelor thesis is about counting  of wild fish feeding in the vicinity of fish farms by using computer vision. This bachelor thesis was a part of Nofima's Coexistence project. The fish detection is based on deep neural networks and can detect and count atlantic cod and saithe.
+This bachelor thesis describes a method for detecting and counting the wild fish feeding in the vicinity of fish farms by using computer vision. The work was done as a part of Nofima's Coexistence project. The fish detection is based on deep neural networks and can detect and count Atlantic cod and saithe.
 
-The networks YOLOv4 and RetinaNet were used for fish detection. Both the models used CNN concepts from pre-trained networks. A dataset based on videos of fish from and around fish farms was generated. The average precision, AP, for the RetinaNet model was 23 \% for atlantic cod and 34 \% for saithe. A mean average precision, mAP, of 72 \% was achieved for the YOLOv4 model.
+Artificial neural networks are called models. Machine learning has become a popular new programming paradigm. Models learn from data. YOLOv4 and RetinaNet are examples of object detection models.
 
-The project proves that computer vision is a viable technology for solving problems within the aquaculture industry. The technology presented here can be used to find the amount of atlantic cod and saithe grazing around fish farms.
+The networks YOLOv4 and RetinaNet were used for fish detection. Both of the models used CNN concepts from pre-trained networks. A dataset based on videos of fish from and around fish farms was generated. The average precision (AP) for the RetinaNet model was 23 \% for Atlantic cod and 34 \% for saithe. A mean average precision (mAP) of 73 \% was achieved for the YOLOv4 model.
 
-The source code developed for the project can be downloaded from here: \\ \url{https://github.com/alanhaugen/TMAT3004-Bacheloroppgave}.
+The study demonstrates that computer vision is a viable technology for solving problems within the aquaculture industry. Computer vision can be used to find the amount of Atlantic cod and saithe grazing in the vicinity of fish farms.
+
+Scripts to reproduce this study are made publicly available at: \\ \url{https://github.com/alanhaugen/TMAT3004-Bacheloroppgave}.
 
 %Det er et ønske å kartlegge hvor mange villfisk som trekker til oppdrettsanlegg, og under hvilke forhold. Sjømatdivisjonen og Akvadivisjonen ved Nofima har en strategisk internsatsing å samle kunnskap om sameksistens mellom ulike marine næringer og interesser, deriblant hvordan man kan unngå konflikter mellom ulike interesser.
 

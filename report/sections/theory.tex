@@ -7,37 +7,287 @@
 
 %NVIDIA’s platforms and application frameworks enable developers to build a wide array of AI applications. Consider potential algorithmic bias when choosing or creating the models being deployed. Work with the model’s developer to ensure that it meets the requirements for the relevant industry and use case; that the necessary instruction and documentation are provided to understand error rates, confidence intervals, and results; and that the model is being used under the conditions and in the manner intended.
 
-\section{Teori}
+\section{Teori} 
+
+%bakgrunnen for valg av tema
+%problemstillingen eller hypotesene du skal undersøke
+%På slutten av introduksjonen kan du også si noe om hvordan du har tenkt å strukturere resten av oppgaven, som en kort leserguide.
+
+%Et tips er å begynne å skrive på innledningen tidlig, slik at den kan gi retning for det videre arbeidet ditt. Så går du heller over innledningen igjen på slutten for å skrive den helt ferdig. Da får du en innledning som har god sammenheng med resten av teksten.
+
+\subsection{Bakgrunn}
+\label{part:background}
+%\begin{figure}
+%\begin{center} 
+%\includegraphics[scale=0.2]{figures/forsprengt}
+%\caption{\small \sl Figuren viser et eksempel av fôrsprengt fisk. Det lukter ekkelt og det er forferdelig å sløye en fôrsprengt fisk, ifølge flere fiskere som har vært i kontakt med NRK. Foto: Arnold Jensen. \cite{Trana m.fl. 2019} \label{fig:forsprengt}} 
+%\end{center} 
+%\end{figure} 
+
+Kystfiskere hevder villfisken får i seg så mye laksefôr at fiskeplassene blir ødelagt. Fisker Tor Inge Larsen i Brønnøysund sa til NRK i 2018 at han fortviler over det han mener er dårligere kvalitet hos fisken han fanger. Han sa han kan knapt huske sist han fikk en sei om bord i båten uten at den hadde pellets fra lakseoppdrett i magen. Han hevder fiskerne har blitt frastjålet fiskeområder på høylys dag, og mener fiskefeltene nært Brønnøysund på Sør-Helgeland i Nordland har fått betydelig lavere kvalitet på grunn av oppdrettsanleggene. \cite{Olsen m.fl. 2018}
+
+Kommunikasjonsdirektør Are Kvistad i Sjømat Norge er litt overrasket over utspillet fra fiskeren på Helgeland. Han mener laksepellets ikke utgjør noen fare for villfisk. «Det er et fiskefôr som blir sjekket av myndighetene, og er et trygt og næringsrikt fôr som også er trygt for villfisk», sa Kvistad til NRK i 2018. Kvistad mente det også er i oppdretternes interesse, både økonomisk og utslippsmessig, å redusere fôringen av oppdrettslaksen slik at den kun får den maten den trenger. \cite{Olsen m.fl. 2018}
+
+%Hvis jeg kan foreslå en mulig forbedring så kan første del av avsnitt 1.1 skrives litt mer sammenfattet, for eksempel med et par avsnitt om hvilke grupper som er negative til «pelletsfisk», og et par avsnitt om hvem som er positive eller likegyldig til det. Her kan du også vise til en spørreundersøkelse som er gjort på sameksistensprosjektet. Den er ikke publisert enda, men forskerne har skrevet en bloggartikkel om den https://blogg.forskning.no/fra-fjord-til-bord/hvem-bryr-seg-om-pelletssei/1648846.
+
+Men ikke alle er negative til «pelletsfisk». Nofima gjorde en undersøkelse i 2020 som viser hvilke grupper som er negative, positive eller likegyldig til fisken. Nofima-forskerne Anette Hustad og Ragnhild Svalheim oppdaget at de fleste er nøytrale til påstander om at pelletssei smaker eller lukter annerledes enn annen sei. \cite{Hustad og Svalheim 2020}
+
+\begin{figure} 
+\begin{center} 
+\includegraphics[scale=0.2]{figures/oppdrettfor}
+\caption{\small \sl Figuren viser et eksempel av «pellets-fisken». Det lukter ekkelt og det er forferdelig å sløye en fôrsprengt fisk, ifølge flere fiskere som har vært i kontakt med NRK \cite{Trana m.fl. 2019}. Seien har vært under merdene, da blir den full av pellets. Fôrsprengt fisk er unaturlig, hode blir for liten og kroppen for stor. Dette har pågått i mange år. Likevel blir fisken omsatt, fiskere får levert slik fisk til enkelte fiskebruk. \cite{Angell og Ekanger 2017} \label{fig:oppdrettfor}} 
+\end{center} 
+\end{figure} 
+
+Det er forsket relativt lite på hvordan oppdrett påvirker villfisk, men seniorrådgiver Bjørn-Steinar Sæther fra Nofima ga ut en artikkel i 2017 der han viste at seien som hadde spist oppdrettsfôr får en litt bløtere og noe mer spaltet muskel enn annen sei. Ellers var kvaliteten fortsatt stort sett innenfor kategorien god kvalitet. \cite{Saether 2017}
+
+%Det kan også være greit å legge mer vekt på at oppdrettsnæringen er interessert i å kartlegge hvor mye fôr som spises av villfisk. Det er viktig for dem å ha kontroll på fôrmengden som går til spille siden det er en stor kostnad som har økt mye de siste årene (se f. eks. https://www.fhf.no/nyheter/nyhetsarkiv/kostnadene-for-norsk-lakseoppdrett-fortsetter-aa-oeke-ogsaa-i-2019/). Man kan derfor si at dette prosjektet vil være positivt for både fiskere og oppdrettere.
+
+Oppdrettsnæringen er også interessert i å kartlegge hvor mye fôr som spises av villfisk. I 2019 avsluttet FHF, Fiskeri- og havbruksnæringens forskningsfinansiering, et prosjekt ledet av Audun Iversen fra Nofima der de så på kostnadsutvikling og forståelse av drivkrefter i norsk lakseoppdrett. For oppdrettsnæringen er å ha kontroll på fôrmengde som går til spille viktig, fôrpellets er en stor kostnad som har økt mye de siste årene. De ønsker ikke å fôre oppdrettsfisken mer enn nødvendig. Om problemet løses så vil det bli mindre oppdrettsfôr til villfisken. \cite{Baevre-Jensen 2019}
+
+%Johnny Eliassen som er bosatt på Reinøya i Troms, Karlsøy kommune, fortalte til NRK at han hadde tidligere engasjert seg i saken for å hindre at kystområdet ble lokasjon for oppdrettsanlegg. Det ble allikevel åpnet et oppdrettsanlegg mai 2017 i fjorden på Reinøya, og det hevder de lokale fiskerne at de har merket. De har fisket «pelletstorsk»,  torsk med magen full av pellets, selv over en kilometer unna anlegget. Oppdrettere reklamerer oppdrettsfisk som den absolutte beste fisken. Eliassen kunne ikke tenke seg er at det virkelig er tilfelle, for lukten og konsistensen på fisken gjør den uspiselig i hans øyne. \cite{Jakobsen 2017}
+
+%Vinteren 2018 rømte 52 000 laks fra Marine Harvests oppdrettsanlegg i Nærøy kommune i Trøndelag. Ifølge Namdalsavisa inneholdt laksen medisiner mot innvollsorm. Mattilsynet gikk ut og sa at det var trygt å spise fisken, men at den ikke kunne omsettes videre. \cite{nrk 2018}
+
+%Den rømte laksen hadde blitt gitt medisinfôr med praziquantel og skulle være i karantene i 14 dager. For fiskere, slik som Arnold Jensen, er denne informasjonen skremmende. Jensen er medlem av Naturvernforbundets fiske- og oppdrettsutvalg. Han ønsker at mattryggheten til villfisk som beiter ved oppdrettsanleggene skal kontrolleres. Se figur \ref{fig:oppdrettfor} og \ref{fig:forsprengt}. \cite{Christensen 2019}
+
+I 2019 kom «pellets-fisken» i medienes søkelys igjen, denne gangen var det fiskere i Lyngen kommune i Troms som slo alarm. Villfisk som hadde spist oppdrettsfôr som inneholdt medisin ble omsatt av fiskere i fjorden. Oppdrettsfisken var i karantene i denne perioden. Fiskerne ønsket svar på om villfisken kan være farlig for forbrukere. \cite{Trana m.fl. 2019}
+
+%\begin{figure} 
+%\begin{center} 
+%\includegraphics[scale=0.7]{figures/oppdrett}
+%\caption{\small \sl Figuren viser et oppdrettsanlegg. Fôret oppdrettsfisken mates med spises også av villfisk. Oppdrettsbransjen er i konflikt med fiskere som mener oppdrettsnæringen ødelegger fiskeplasser i fjordene med anlegg og reduserer kvaliteten til villfisk som spiser fôrpellets under merdene. \cite{Olsen m.fl. 2018} \label{fig:anlegg}} 
+%\end{center} 
+%\end{figure} 
+
+Sjømatdivisjonen og Akvadivisjonen ved Nofima har en strategisk internsatsing som går ut på å samle kunnskap om sameksistens mellom ulike marine næringer og interesser, deriblant om hvordan man kan unngå konflikter mellom ulike interesser. Se figur \ref{fig:anlegg}. \cite{Robertsen 2020}
+
+En av problemstillingene er sameksistens mellom fiskeri- og oppdrettsnæringene, og hvordan oppdrettsanlegg påvirker de nærliggende fiskeplassene. I den forbindelse er det interessant å kartlegge omfanget av hvitfisk som beiter på fôr fra oppdrettsanlegg. Dette er en problemstilling som har vært i fokus hos media etter at flere fiskere har fanget fôrsprengt torsk og sei i fjorder hvor det finnes oppdrettsanlegg. Det hevdes at denne fisken er av betydelig dårligere kvalitet og den kan ha fått i seg medisiner gjennom fôret som gjør at den kan være farlig å spise. \cite{Olsen 2019}
+
+Det behøves kunnskap om hvor mange villfisk som trekker til oppdrettsanlegg, og under hvilke forhold, slik at man kan komme nærmere en løsning som kan dempe konflikten mellom disse to næringene. 
+
+Målet med dette prosjektet var å utvikle et system som kan telle antall villfisk av ulike arter basert på en videostrøm fra et undervannskamera. Det er ønskelig å kunne vise resultatet som en fordeling av observasjoner over tid for hver art.
+
+\subsection{Kunstig intelligens}
+\label{part:ai}
+
+Kunstig intelligens (KI) er blitt et stort forskningsfelt med mange praktiske anvendelser og aktive forskningsprosjekter. Intelligent programvare automatiserer trivielt og repetitivt arbeid, forstår tale og kjenner igjen objekter i bilder, kan diagnosere pasienter innenfor medisin og hjelper forskere med grunnforskning. KI kan også finne mønstre i store datamengder som det er vanskelig for mennesker å få øye på. \cite{Goodfellow m.fl. 2016 s. 1}
+
+\begin{figure} 
+\begin{center} 
+\includegraphics[scale=0.7]{figures/ai}
+\caption{\small \sl Figuren viser et Venn diagram som viser at deep learning er en form for representativ læring, og det er igjen en form for maskinlæring. Maskinlæring er anvendt i mange, men ikke alle, de forskjellige metodene innenfor kunstig intelligens. Hver del av Venn diagrammet gir et eksempel av anvendelsen til teknologien. \cite{Goodfellow m.fl. 2016 s. 9} \label{fig:ai}} 
+\end{center} 
+\end{figure} 
+
+\begin{figure} 
+\begin{center} 
+\includegraphics[scale=0.65]{figures/deep}
+\caption{\small \sl Figuren viser en deep learning modell. Det er vanskelig for en datamaskin å forstå sensorisk rådata er. Å lage en funksjon som tar inn piksler og gir ut en objektidentitet er svært komplisert. Å utlede en slik funksjon virker nærmest umulig om en takler problemet direkte. Deep learning løser vanskelighetene ved dele opp den kompliserte funksjonenen til en samling sammenkoblede funksjoner. Disse funksjonene kalles ofte for kunstige nevroner, kerneler, perceptrons eller filtere. Utmatningene fra kernelene i ett lag blir innmatningene til neste lag i modellen. Innmatningen til modellen, slik som et bilde, kalles for det synlige laget, ettersom den består av informasjon som vi mennesker kan forstå. Dette laget er etterfulgt av en serie med skjulte lag, «hidden layers», hvert lag henter ut mer og mer abstrakte konsepter, «features», fra bildet. Disse lagene kalles for «hidden» ettersom verdiene i disse lagene ikke finnes i innmatningen til nettverket; modellen må selv bestemme hvilke konsepter som er nyttige for å beskrive sammenhengen i det synlige laget. Hvert lag danner forskjellig innsikt. Det første laget kan for eksempel lett gjenkjenne kantene i et bilde ved å sammenligne kontraster i bildet. Denne informasjonen sendes til det neste laget, et lag som finner kanter. Gitt det andre skjulte lagets beskrivelse av bildet, et bilde beskrevet med kanter, så kan objektdeteksjon bli mulig ved å sammenligne en samling kanter, konturer, med deler av kjente objekter. \cite{Goodfellow m.fl. 2016 s. 6} \label{fig:deep}} 
+\end{center} 
+\end{figure} 
+
+Dette prosjektet beskriver maskiner som kan gi en tidsoversikt over torsk og sei fra en videostrøm. Den lærer konseptene en torsk eller sei består av, basert på data. Maskinlæring, å la en maskin lære fra data, er kun en av metodene innenfor kunstig intelligens. Se figur \ref{fig:ai}. \cite{Canziani m.fl. 2017 s. 1}
+
+I begynnelsen løste kunstig intelligens problemer som var vanskelige for mennesker å løse, men relativt trivielle for datamaskiner. Utfordringen med kunstig intelligens viste seg å være å løse problemer som var enkle for mennesker å utføre, men vanskelige for mennesker å beskrive formelt. Problemer som vi løser intuitivt, som føles automatiske ut, slik som å forstå ordene til andre mennesker, ansiktene deres, og å kjenne igjen det en har sett tidligere i bilder. \cite{Goodfellow m.fl. 2016 s. 1}
+
+Løsningen er å la datamaskiner lære fra erfaringer og forstå verden ved å forstå konsepter, som kan igjen bli forstått med enda enklere konsepter. Denne erfaringskunnskapen gjør datamaskinene selv, uten at et menneske formelt beskriver kunnskapen til maskinen. Erfaringene kan beskrives med en graf. Se figur \ref{fig:deep}. Ettersom denne grafen kan bestå av mange lag, den er dyp, så kalles denne formen for maskinlæring «deep learning» \cite{Goodfellow m.fl. 2016 s. 1}.
+
+%"Deep Learning" is a general term that usually refers to the use of neural networks with multiple layers that synthesize the way the human brain learns and makes decisions. A convolutional neural network is a kind of neural network that extracts features from matrices of numeric values (often images) by convolving multiple filters over the matrix values to apply weights and identify patterns, such as edges, corners, and so on in an image. The numeric representations of these patterns are then passed to a fully-connected neural network layer to map the features to specific classes. https://notebooks.azure.com/graememalcolmoutlook/projects/mlprimers/html/05a%20-%20Image%20Classification%20with%20a%20CNN%20(PyTorch).ipynb
+
+%The diﬃculties faced by systems relying on hard-coded knowledge suggestthat AI systems need the ability to acquire their own knowledge, by extracting2
+%CHAPTER 1. INTRODUCTIONpatterns from raw data. This capability is known asmachine learning. Theintroduction of machine learning enabled computers to tackle problems involvingknowledge of the real world and make decisions that appear subjective. A simplemachine learning algorithm calledlogistic regressioncan determine whether torecommend cesarean delivery (Mor-Yosef et al., 1990). A simple machine learningalgorithm called naive Bayes can separate legitimate e-mail from spam e-mail \cite{Goodfellow m.fl. 2020 s. 3}
+
+%The performance of these simple machine learning algorithms depends heavilyon therepresentationof the data they are given. For example, when logisticregression is used to recommend cesarean delivery, the AI system does not examinethe patient directly. Instead, the doctor tells the system several pieces of relevantinformation, such as the presence or absence of a uterine scar. Each piece ofinformation included in the representation of the patient is known as afeature.Logistic regression learns how each of these features of the patient correlates withvarious outcomes. However, it cannot inﬂuence how features are deﬁned in anyway. If logistic regression were given an MRI scan of the patient, rather thanthe doctor’s formalized report, it would not be able to make useful predictions.Individual pixels in an MRI scan have negligible correlation with any complicationsthat might occur during delivery. \cite{Goodfellow m.fl. 2020 s. 3}
+
+%This dependence on representations is a general phenomenon that appearsthroughout computer science and even daily life. In computer science, operationssuch as searching a collection of data can proceed exponentially faster if the collec-tion is structured and indexed intelligently. People can easily perform arithmeticon Arabic numerals but ﬁnd arithmetic on Roman numerals much more timeconsuming. It is not surprising that the choice of representation has an enormouseﬀect on the performance of machine learning algorithms. For a simple visualexample, see ﬁgure 1.1.
+
+%Many artiﬁcial intelligence tasks can be solved by designing the right set offeatures to extract for that task, then providing these features to a simple machinelearning algorithm. For example, a useful feature for speaker identiﬁcation fromsound is an estimate of the size of the speaker’s vocal tract. This feature gives astrong clue as to whether the speaker is a man, woman, or child.
+
+%For many tasks, however, it is diﬃcult to know what features should beextracted. For example, suppose that we would like to write a program to detectcars in photographs. We know that cars have wheels, so we might like to use thepresence of a wheel as a feature. Unfortunately, it is diﬃcult to describe exactlywhat a wheel looks like in terms of pixel values. A wheel has a simple geometricshape, but its image may be complicated by shadows falling on the wheel, the sunglaring oﬀ the metal parts of the wheel, the fender of the car or an object in the foreground obscuring part of the wheel, and so on.
+
+%One solution to this problem is to use machine learning to discover not onlythe mapping from representation to output but also the representation itself.This approach is known asrepresentation learning. Learned representationsoften result in much better performance than can be obtained with hand-designedrepresentations. They also enable AI systems to rapidly adapt to new tasks, withminimal human intervention. A representation learning algorithm can discover agood set of features for a simple task in minutes, or for a complex task in hours tomonths. Manually designing features for a complex task requires a great deal ofhuman time and eﬀort; it can take decades for an entire community of researchers.
+
+%The quintessential example of a representation learning algorithm is theau-toencoder. An autoencoder is the combination of anencoderfunction, whichconverts the input data into a diﬀerent representation, and adecoderfunction,which converts the new representation back into the original format. Autoencodersare trained to preserve as much information as possible when an input is runthrough the encoder and then the decoder, but they are also trained to make thenew representation have various nice properties. Diﬀerent kinds of autoencodersaim to achieve diﬀerent kinds of properties.
+
+%A major source of diﬃculty in many real-world artiﬁcial intelligence applicationsis that many of the factors of variation inﬂuence every single piece of data we areable to observe. The individual pixels in an image of a red car might be very closeto black at night. The shape of the car’s silhouette depends on the viewing angle.Most applications require us to disentangle the factors of variation and discard theones that we do not care about.
+
+%Deep learningsolves this central problem in representation learning by intro-ducing representations that are expressed in terms of other, simpler representations.Deep learning enables the computer to build complex concepts out of simpler con-cepts. Figure 1.2 shows how a deep learning system can represent the concept ofan image of a person by combining simpler concepts, such as corners and contours,which are in turn deﬁned in terms of edges.
+
+%The quintessential example of a deep learning model is the feedforward deepnetwork, ormultilayer perceptron(MLP). A multilayer perceptron is just amathematical function mapping some set of input values to output values. Thefunction is formed by composing many simpler functions. We can think of eachapplication of a diﬀerent mathematical function as providing a new representationof the input.
+
+%Programvaren implementeres i C++ ved hjelp av OpenCV-biblioteket. Det kan også være aktuelt å lage et grafisk grensesnitt hvor tellingene fra hver art kan vises i sanntid, men dette er avhengig av om prosjektets omfang tillater det. \cite{opencv.org 2020}
+
+%\subsection{Maskinsyn}
+
+%\begin{figure} 
+%\begin{center} 
+%\includegraphics[scale=0.7]{figures/digits}
+%\caption{\small \sl Figuren viser tallene 504192. \cite{Nielsen 2019} \label{fig:digits}} 
+%\end{center} 
+%\end{figure} 
+
+%Menneskets evne til å se er en av de mest fasinerende mirakelene i naturen. Folk flest kan uten anstrengelse gjenkjenne tallene 504192 i figur \ref{fig:digits}. At dette er lett er et under, og ikke minst misledende. In each hemisphere of our brain, humans have a primary visual cortex, also known as V1, containing 140 million neurons, with tens of billions of connections between them. And yet human vision involves not just V1, but an entire series of visual cortices - V2, V3, V4, and V5 - doing progressively more complex image processing. We carry in our heads a supercomputer, tuned by evolution over hundreds of millions of years, and superbly adapted to understand the visual world. Recognizing handwritten digits isn't easy. Rather, we humans are stupendously, astoundingly good at making sense of what our eyes show us. But nearly all that work is done unconsciously. And so we don't usually appreciate how tough a problem our visual systems solve.
+
+%The difficulty of visual pattern recognition becomes apparent if you attempt to write a computer program to recognize digits like those above. What seems easy when we do it ourselves suddenly becomes extremely difficult. Simple intuitions about how we recognize shapes - "a 9 has a loop at the top, and a vertical stroke in the bottom right" - turn out to be not so simple to express algorithmically. When you try to make such rules precise, you quickly get lost in a morass of exceptions and caveats and special cases. It seems hopeless.
+
+%Neural networks approach the problem in a different way. The idea is to take a large number of handwritten digits, known as training examples
+
+\subsubsection{Objektdeteksjon}
+
+Objektdeteksjon handler om to ting. Områder av bilde som kan inneholde en klasse må genereres, og så må disse delene av et bilde klassifiseres basert på det visuelle innholdet i bildeområdet, et bildeområde kalles for en $patch$ innenfor maskinsyn \cite{LeCun m.fl. 1998 s. 23}. Områdene der det kan være objekter kalles for ankre. Med andre ord, målet for modellen er å se på en del av et bilde og finne ut hvilket objekt som finnes i dette området. Nettverket kan kun finne de objektene som den har blitt trent til å gjenkjenne.
+
+\subsubsection{Dataaugmentering}
+
+Dataen som skal brukes til å trene en maskinlæringsmodell må først normaliseres på en standard måte, for eksempel ved å subtrahere gjennomsnittet over dataen, for så å skalere alle bildene slik at de får samme størrelse. Dette gjør at nettverket kan trenes på data med ulike oppløsninger. Det er også mulig å gjøre flere andre endringer. Støy kan legges til bildene, samt å snu dem horisontalt eller vertikalt for å skape nye bilder å trene nettverket på. \cite{Cadieu m.fl. 2014 s. 15}
+
+\subsubsection{Heterogene maskiner}
+
+%Alle datamaskiner er i dag heterogene. De består av en CPU og en GPU, en Central Processing Unit og en Graphics Processing Unit. GPU-en kommer fra dataspillindustrien. Den første personlige datamaskinen, Apple ][, som var en kopi av spillmaskinen Atari 2600, hadde ikke en GPU. Etter Star Fox fra Argonaut Software, 1993, som var et spill som inneholdt den første GPU-en, så begynte flere maskiner å inkludere GPU-er.\footnote{Google viser sin respekt til den første GPU-en SuperFX som var i StarFox. Skriv «Do a barrel roll», en kjent replikk fra spillet, inn i google og se nettsiden rulle rundt y-aksen} På personlige datamaskiner og mobiltelefoner så har GPU-en gjort at maskinene bruker mindre strøm, som har ført til bedre batterilevetid. Datamaskiner, slik forbrukere typisk forstår dem, er inspirert av Xerox Alto, sekretærens datamaskin. I dag programmerer mange mennesker maskiner ved å ta i bruk grafiske brukergrensesnitt, og gjør arbeidet som tidligere var gjort av sekretærer. Alt fra regneark, skrive på maskin, telefonsamtaler osv. gjøres pliktoppfyllende på et digitalt skrivebord. Hver av disse maskinene, telefon, skrivemaskin, kalkulator, er ikke lenger på pulten til dagens sekretærer, de har blitt ikoner i et grafisk brukergrensesnitt. Dette hadde ikke vært mulig uten Atari og deres innovasjoner som gjorde sanntids-grafikk på billig maskinvare mulig.
+
+Alle datamaskiner er i dag heterogene. De består av en CPU og en GPU, en Central Processing Unit og en Graphics Processing Unit. En programmerer CPU-en med språk slik som Python, C, C++, osv. Til å begynne med så var grafikkprosessorer fixed-function, et bestemt API tillot maskinvareakselerasjon av enkelte grafikkinstrukser. \cite{Buck 2006 s. 5}
+
+I 2006 introduserte Nvidia den første generelt programmerbare GPU-en, deres nye grafikkprosessorer kunne programmeres i CUDA, et språk som ligner på C. Dette gjorde det mulig å gjøre andre ting enn grafikk på grafikkprosessorer. Grafikkprosessorer er spesielt flinke til oppgaver som er «massively parallell». \cite{Buck 2006 s. 1} %Forskere begynte å simulere proteiner og celler på GPU-en, det finnes for eksempel et prosjekt som heter Folding@home, der forbrukere kan låne bort GPU-en sin til forskning. Proteiner som fører til sykdommer slik som COVID-19 og parkinsons sykdom blir forsøkt forstått ved å gjøre simulasjoner på maskinene hjemme hos folk, forskningen krever enorme mengder datakraft.
+
+\begin{figure}[t]
+\begin{center} 
+\includegraphics[scale=1.0]{figures/comparison}
+\caption{\small \sl Figuren viser AlexNet på venstre side, og nye fremskritt på høyre side som har gjort deep learning populært. \cite{Karpathy 2014} \label{fig:comparison}}
+\end{center} 
+\end{figure} 
+
+Det er ikke tilfeldig at det var i 2012 at deep learning tok av. Alex sitt team anvendte CUDA til å gjøre maskinlæring på en GPU istedet for en CPU, det hadde ikke blitt gjort tidligere \cite{Krizhevsky m.fl. 2012}. De anvendte en ikke-lineær aktiveringsfunksjon, noe som hadde blitt oppfunnet relativt nylig \cite{LeCun m.fl. 1998 s. 3}. Resultatene har ført til en revolusjon innenfor kunstig intelligens. Batch normalization har også forbedret resultatene. Se figur \ref{fig:comparison}. \cite{Ioffe og Szegedy 2015 s. 1}
+
+I dette forsøket ble en GPU anvendt til å gjøre maskinlæring, å trene deep learning-modeller.
+
+\subsubsection{Maskinlæringsrammeverk}
+
+Det har blitt utviklet flere maskinlæringsrammeverk. Disse reduserer mye av kompleksiteten som går med på å lage nye modeller, og å trene modeller med ny data. Rammeverkene gjør at en får maskinvareakselerasjon av backpropagation og andre maskinlæringsutregninger uten at en trenger å lære seg CUDA. I dette forsøket ble Detectron2 med rammeverket PyTorch og YOLO med rammeverket Darknet anvendt til objektdeteksjon. Se figur \ref{fig:dl_libs}.
+
+\begin{figure}[t]
+\begin{center} 
+\includegraphics[scale=0.30]{figures/darknet-logo}
+\includegraphics[scale=0.30]{figures/Pytorch_logo}
+\caption{\small \sl Figuren viser logoene til Darknet og PyTorch. Darknet er et populært rammeverk for maskinlæring skrevet i C \cite{Redmon 2016}. PyTorch er maskinlæringsrammeverk fra facebook, den anvendes av objektdeteksjonssystemet detectron2 \cite{Wu m.fl. 2020}. \label{fig:dl_libs}}
+\end{center} 
+\end{figure} 
+
+\subsubsection{Azure nettsky}
+
+En virtuell maskin med en GPU ble leid fra nettskytjenesten Azure fra Microsoft til å trene modellene i dette forsøket. Satya Mallick presenterer hvordan en lager en virtuell maskin på nettskytjenesten Azure i kurset Deep Learning with PyTorch. Du kan lage virtuelle maskiner fra Azure Portal. Å begynne med Deep Learning er superenkelt med Azure. Azure gir deg virtuelle instanser med nesten alle de mest populære deep learning-rammeverkene ferdiginstallert på deres Data Science Virtual Machines. Da slipper man å bruke tid på installering av Nvidia-drivere og andre deep learning-biblioteker. Maskinene kommer også med JupyterHub ferdig installert, om en ønsker å anvende Jupyter Notebooks. \cite{Mallick m.fl. 2020}
+
+%Se vedlegg \ref{appendix:azure} for instrukser om hvordan man lager en Data Science Virtual Machine instanse med Ubuntu Linux 18.04 på Azure.
+
+\subsubsection{SSH login}
+
+SSH ble anvendt til å logge inn i den GPU-akselererte nettskyinstansen. SSH er et dataprogram og protokoll som anvendes til å koble til eksterne maskiner. Den er først og fremst rettet mot Unix-maskiner, og har et tekstgrensesnitt \cite{Mallick m.fl. 2020}. På Windows så kan dataprogrammet PuTTY anvendes\footnote{\url{https://www.putty.org/}}.
+
+Etter at systemet på Azure er oppe så kan man logge inn.%, se vedlegg \ref{appendix:ssh} for en guide til SSH.%Once your system is up, the first thing that comes to your mind is how do I get in? We will see the steps involved in logging in to your system using SSH.
+
+Å leie en GPU kan bli dyrt. Ikke glem å stoppe den virtuelle maskinen når den ikke er i bruk. Dette kan gjøres fra portalen til Azure\footnote{\url{https://portal.azure.com}}.
+
+%1. Get IP address
+%Go to dashboard and click on the test-machine you created.
+
+\subsubsection{Anaconda programvareutgivelse}
+
+Python er et programmeringsspråk som er populært blant forskere\footnote{\url{https://www.kaggle.com/learn/python}}. \cite{Morris 2020}
+
+Anaconda er en programvareutgivelse som gjør det enkelt å bruke Python. Anaconda er også veldig nyttig for å unngå pakkekonflikter. På en Azure Data Science Virtual Machine så kommer flere Anaconda-miljøer ferdiginstallert. Anaconda PyTorch kan aktiveres med kommandoen \texttt{conda activate py37\_pytorch}. \cite{Mallick m.fl. 2020} %Se vedlegg \ref{appendix:ssh} for en guide til SSH der Anaconda blir anvendt til å aktivere et Python 3 miljø.
+
+\subsubsection{Label-data}
+
+Label-data er informasjon som beskriver rådataen i et datasett. En modell må ha label-data for å forstå informasjonen i treningssettet. Å lage label-data er en vesentlig og tidskrevende del av treningen. Innholdet i rådataen bestemmer hva slags label-data som må lages. Å lage label-data kan gjøres manuelt eller automatisk av en maskin. Det kan gjøres in-house, eller bli gjort av forskjellige bedrifter. Om det er veldig mye data som må få label-data så kan prosessen bli svært tidskrevende og dyrt. \cite{Kaller 2019}
+
+
+\subsubsection{RetinaNet}
+
+RetinaNet, introdusert av Facebook-ansatte i 2017 i Focal Loss for Dense Object Detection på arXiv, ble ansett som den beste objektdeteksjonsmodellen da dette dokumentet ble skrevet. Det var en forbedring av R-CNN. \cite{Lin m.fl. 2017}
+
+RetinaNet er implementert i Detectron2, som bruker deep learning-rammeverket PyTorch. Grensesnittet er programmeringsspråket Python 3. Detectron2 er utgitt under en Apache 2.0-lisens, det vil si at den kan brukes til hva enn en vil på en hvilken som helst måte, gratis, så lenge man aksepterer at Facebook ikke blir ansvarlig for arbeidet som gjøres, og så lenge man ikke krediterer arbeidet en gjør til Facebook \cite{The Apache Software Foundation 2004}. Detectron2 installeringsinstrukser er tilgjengelig på nettet.\footnote{\url{https://detectron2.readthedocs.io/}}
+
+\subsubsection{YOLO}
+
+You only look once (YOLO) er en state-of-the-art, real-time objektdeteksjonssystem. På en Pascal Titan X, en mektig Nvidia-GPU, så prosesserer den bilder ved 30 FPS og har en mAP på 57.9 \% på COCO test-dev \cite{Redmon 2018}. På min Macbook Pro fra 2017 så drar den 1 FPS på CPU-en på datasettet presentert i denne oppgaven. Ifølge Redmon så er YOLO like bra som Focal Loss, det vil si RetinaNet, men omtrent fire ganger raskere. Redmon mener en kan lett endre størrelsen på YOLO modellen, den vil bli tregere men enda mer nøyaktig \cite{Redmon 2016}%. Se figur \ref{fig:yolo_inference}. % Se figur retinanet vs YOLOv4 resultater
+
+\subsubsection{OpenCV}
+
+OpenCV (Open Source Computer Vision Library) er et et programvarebibliotek for maskinsyn og maskinlæring med åpen kildekode. OpenCV ble laget for å levere en kjent infrastruktur for maskinsynprogrammer og OpenCV-teamet ønsker å gjøre maskinsensorikk mer utbredt i kommersielle produkter. OpenCV er et produkt gitt ut under BSD-lisensen, det gjør biblioteket tilgjengelig for bedrifter som ønsker å anvende kildekoden \cite{OpenCV Team 2020}.
+
+OpenCV har grensesnitt for C++, Python, Java og MATLAB og støtter Windows, Linux, Android og macOS. OpenCV-teamet forsøker først og fremst å levere sanntids maskinsyn for dataprogrammer og drar nytte av prosessorteknologi slik som MMX- og SSE-instruksjoner når de er tilgjengelige. Støtte for CUDA og OpenCL var under utvikling, men var enda ikke tilgjengelig da denne oppgaven ble skrevet. Det hadde gjort dataprogrammet mye raskere siden den ville dratt nytte av GPU-en og ikke bare CPU-en på maskinen. OpenCV er skrevet i C++ og virker uten navnekonflikter med STL namespaces. \cite{OpenCV Team 2020}
+
+\subsection{Tidligere arbeid}
+
+\label{part:prev_work}
+Noen forskere har allerede rukket å anvende «deep learning» til å klassifisere fisk fra undervannsvideo. I 2016 presenterte CVG Jena Fulda teamet resultater av klassifisering av fisk på SeaCLEF-datasettet. De anvendte «convolutional» nevrale nettverk, nettverk for bildeklassifisering, og klarte å gjøre objektdeteksjon samt å klassifisere forskjellige fiskearter. De testet bakgrunnssubtraksjon, en teknikk som var typisk for deteksjon av objekter i undervannsbilder på den tiden. De fant ut at å bruke bakgrunnssubtraksjon fungerte dårligere enn «object proposal classification» (OPC) for deteksjon av fisk. \cite{Rodner m.fl. 2016}
+
+%En interessant referanse som kan tas med under tidligere arbeid er Deep Vision-systemet som har vært testet av Havforskningsinstituttet: https://www.tu.no/artikler/na-kan-maskinen-skille-mellom-makrell-og-sild/464208?utm_source=newsletter-tudaily&utm_medium=email&utm_campaign=newsletter-2019-05-06.
+
+Også i Norge så har det blitt gjort forsøk på maskinsyn og maskinlæring innenfor havforskning. Havforskningsinstituttet testet ut Deep Vision, et kamerasystem fra Scantrol Deep Vision AS, i 2017, 2018 og senest igjen i 2019. Kamerasystemet ble festet ved inngangen til en trål for å måle mengde og artsbestemme fisk uten å hente den om bord og ta livet av den. Poenget med maskinlæringen var å automatisere artsbestemmelsen. Artsbestemmelsen ble gjort tidligere ved at forskere tolker hvert bilde kameraene tar manuelt. Modellen til Scantrol Deep Vision kunne gjenkjenne artene sild, kolmule, makrell og lysprikkfisk. Forsøkene viste at omtrent 90 prosent av fisken ble riktig identifisert av systemet. \cite{Fenstad 2019}
+
+Det norske kompaniet Skala Maskon har også sett på maskinsyn, de har utviklet en vaksineringsmaskin som bruker maskinsyn for å finne punktet hvor vaksinen skal settes på hver fisk. De bruker programvare fra Scorpion Vision. Skala Maskons fullautomatiske vaksinemaskin drives av en enkelt operatør og kan vaksinere og sortere opp til 40 000 smolt i timen. Maskinene kan vaksinere singel, dobbel, trippel og intramuskulære doser samtidig. \cite{Falstad 2016}
+
+Siddiqui sitt team presenterte i 2017 klassifisering av forskjellige fiskearter i undervannsvideoer der de brukte en modell med vekter fra forhåndstrente dype nettverk. Det er et eksempel på såkalt «transfer learning». Dette automatiske systemet kunne med høy nøyaktighet detektere, tracke og klassifisere fisk og andre marine arter i undervannsvideoer uten menneskelig overvåkning. De oppdaget at typiske maskinsynteknikker fungerer dårlig på undervannsbilder. Bakgrunnen er kompleks og både fasongen og teksturen på de forskjellige fiskeartene kan være svært like. Datadrevne programmer, slik som nevrale nettverk, krever enorme mengder kategorisert data, ellers har de en tendens til å overtilpasse treningsdataen og feiler når den blir gitt testdata som den ikke har sett før, det vil si data som ble utelatt ved treningen. I artikkelen deres  «Automatic fish species classification in underwater videos» presenteres state-of-the-art maskinsynsmetoder for fine-grained klassifisering av fiskearter basert på deep learning teknikker. Konvolveringsnettverk, nettverkene som anvendes til bildeklassifisering, ble forhåndstrent på et mye større og mer generelt datasett. Ved å forhåndstrene nettverket på et generelt datasett så kan man bruke mindre treningsdata. SVM ble brukt til å trene nettverket og de oppnådde en nøyaktighet på 94.3 \%. De tropiske fiskeartene ble tatt fra undervannsvideoer fra kysten av vest-Australia. Forskerne mener automatiske klassifiseringssystemer kan brukes til å identifisere fisk fra undervannsvideoer, og at det er et billig alternativ til manuell identifikasjon av fisk. \cite{Siddiqui m.fl. 2017}
+
+\begin{figure}
+\begin{center} 
+\includegraphics[scale=0.45]{figures/optical_flow}
+\caption{\small \sl Figuren viser semantisk segmentering generert fra optical flow. Optical flow er bevegelsene av objektene mellom bildene i en film. \cite{Lin 2019}
+\label{fig:optical_flow}} 
+\end{center} 
+\end{figure} 
+
+I 2018 presenterte Xu og Matzner forskning på deteksjon, tracking og klassifisering av fisk i undervannsvideoer. Undervannsvideoer anvendes til å studere økosystemene i havene og i elver, først og fremst for å drive med miljøforskning. Å observere mengden av liv, samt vanene til fiskene i forskjellige miljø, er eksempler på miljøforskning. Optisk video gir detaljert informasjon som mennesker kan forstå. Mennesker kan naturlig forstå verden visuelt, men manuell analyse av video tar tid. Å automatisere arbeidet er nødvendig om en har store datamengder, og en ønsker å få arbeidet fullført på en gitt tid på en effektiv måte. Dette kan være nødvendig om en skal gjøre gode avgjørelser som påvirker de marine økosystemene. Maskinsyn og maskinlæring har vist seg å være effektive metoder for å automatisere overvåking. Undervannsbilder er kjent for å være spesielt utfordrende å håndtere. Mengden lys under vann varierer over tid, og mengden lys påvirkes også av avstand fra lyskilder. Det er lite kontrast under vann og bakgrunnen er ofte svært avansert, den består av blant annet flytende vegetasjon. Videre påvirkes bildene av turbiditet. \cite{Xu og Matzner 2018}
+
+%Skala Maskon (https://www.skalamaskon.no/) har utviklet en vaksineringsmaskin som bruker maskinsyn for å finne punktet hvor vaksinen skal settes på hver fisk. De bruker programvare fra Scorpion Vision (http://www.scorpionvision.com/).
+
+Salman sitt team viste i 2019 at de kunne estimere biomasse automatisk ved å bruke undervannsvideoer og dype nevrale nettverk.  Et slikt system må takle varierende lysstyrke, vinkelen fiskene sees fra, forskjellige havbunnsstrukturer, bevegelser i vegetasjon i bakgrunnen og forskjellige former og teksturer mellom fiskearter. De anvendte en Region-Based Convolutional Neural Network, et R-CNN, som er en state-of-the-art maskinlæringsteknikk, et alternativ til YOLO. Teknologien anvendes til objektdeteksjon, den gir informasjon om hvor i et bilde forskjellige objekter er samt hvor mange det er av de forskjellige objektene. De trente et nettverk og anvendte bakgrunnssubtraksjon og optical flow, sammen med råbilde ga dette områder der fisk skulle detekteres. Optical flow er bevegelsen av objektene mellom fortløpende bilder i en sekvens, det kommer av de relative bevegelsene mellom objektet og kameraet. Det brukes til bildesegmentering \cite{Lin 2019}. Se figur \ref{fig:optical_flow}. De brukte to datasett, et fra Fish4Knowledge sitt Complex Scenes-datasett, den består av undervannsvideoer, og LifeCLEF 2015-datasettet. Resultatene de fikk var så gode at de anbefaler teknikkene som de har anvendt for fiskedeteksjon til andre med lignende problemer. \cite{Salman m.fl. 2019}
+
+\begin{figure}
+\begin{center} 
+\includegraphics[scale=0.45]{figures/auv}
+\caption{\small \sl Figuren viser roboten til Cui sitt team. Den kan detektere fisk og skal brukes til havforskning. \cite{Cui m.fl. 2020} \label{fig:auv}} 
+\end{center} 
+\end{figure} 
+
+I 2020 så skrev Cui sitt team «Fish Detection Using Deep Learning». De jobber på en robot som kan utforske havet, se figur \ref{fig:auv}. I artikkelen deres dokumenterer de hvordan en lager en modell, et nevralt nettverk, som kan utføre fiskedeteksjon. De anvendte «data augmentation»-teknikker. De brukte også Dropout-algoritmen for å hindre at modellen ble overtilpasset, kjent som «overfitting»-problemet. De endret også på loss-funksjonen ettersom nettverket ble trent. Ved å bruke disse teknikkene så klarte de å redusere treningstiden og training loss. Systemet de lagde var optimalisert for et innebygd system, altså en svakere datamaskin, en AUV-robot. \cite{Cui m.fl. 2020}
+
+%\subsection{Perceptron}
+
+%\subsection{Sigmoid neurons}
+
+
+
 
 %Deep learning and unsupervised feature learning have shown great promise in many practical ap- plications. State-of-the-art performance has been reported in several domains, ranging from speech recognition [1, 2], visual object recognition [3, 4], to text processing [5, 6].
 
 %It has also been observed that increasing the scale of deep learning, with respect to the number of training examples, the number of model parameters, or both, can drastically improve ultimate classification accuracy [3, 4, 7]. These results have led to a surge of interest in scaling up the training and inference algorithms used for these models [8] and in improving applicable optimization procedures [7, 9]. The use of GPUs [1, 2, 3, 8] is a significant advance in recent years that makes the training of modestly sized deep networks practical. A known limitation of the GPU approach is that the training speed-up is small when the model does not fit in GPU memory (typically less than 6 gigabytes). To use a GPU effectively, researchers often reduce the size of the data or parameters so that CPU-to-GPU transfers are not a significant bottleneck. While data and parameter reduction work well for small problems (e.g. acoustic modeling for speech recognition), they are less attractive for problems with a large number of examples and dimensions (e.g., high-resolution images).
 
-\subsection{Maskinlæring}
+%\subsection{Maskinlæring}
 
 %Over the last several years􏰈 machine learning techniques􏰈 particularly when applied to neural networks􏰈 have played an increasingly imp ortant role in the design of pattern recognition systems􏰇 In fact􏰈 it could be argued that the availability of learning techniques has b een a crucial fac􏰗 tor in the recent success of pattern recognition applications such as continuous speech recognition and handwriting recognition.
 
-\subsubsection{Data is king}
-\subsubsection{Datainnsamling}
-\subsection{Modell}
-\subsubsection{Den biologiske inspirasjonen}
-\subsubsection{Bias}
-\subsection{Algoritme}
-\subsection{Objektdeteksjon}
+%\subsubsection{Data is king}
+%\subsubsection{Datainnsamling}
+%\subsection{Modell}
+%\subsubsection{Den biologiske inspirasjonen}
+%\subsubsection{Bias}
+%\subsection{Algoritme}
+%\subsection{Objektdeteksjon}
 
 %Our core visual processing module is a Convolutional Neural Network (CNN) [29, 26], which has emerged as a powerful model for visual recognition tasks [38]. The first application of these models to dense predic- tion tasks was introduced in R-CNN [15], where each re- gion of interest was processed independently. Further work has focused on processing all regions with only single for- ward pass of the CNN [18, 14], and on eliminating explicit region proposal methods by directly predicting the bound- ing boxes either in the image coordinate system [45, 10], or in a fully convolutional [31] and hence position-invariant settings [39, 37, 36]. Most related to our approach is the work of Ren et al. [37] who develop a region proposal net- work (RPN) that regresses from anchors to regions of in- terest. However, they adopt a 4-step optimization process, while our approach does not require training pipelines. Ad- ditionally, we replace their RoI pooling mechanism with a differentiable, spatial soft attention mechanism [20, 17]. In particular, this change allows us to backpropagate through the region proposal network and train the whole model jointly.
 
-\subsection{Trening}
-\subsection{Evaluering}
-\subsubsection{Nøyaktighet} % error rate
-\subsubsection{Presisjon} 
-\subsubsection{Konfidensintervall} % confidence interval
-\subsection{Inferens}
-\subsubsection{Ground truth} %(grunnfestet sanhet?)
-\subsubsection{Bilder per sekund} %FPS (bilder per sekund)
-\subsubsection{State-of-the-art maskinsyn} % (topp moderne)
-\subsubsection{Real-time} %(sanntid)
-\subsection{Segmentering}
+%\subsection{Trening}
+%\subsection{Evaluering}
+%\subsubsection{Nøyaktighet} % error rate
+%\subsubsection{Presisjon} 
+%\subsubsection{Konfidensintervall} % confidence interval
+%\subsection{Inferens}
+%\subsubsection{Ground truth} %(grunnfestet sanhet?)
+%\subsubsection{Bilder per sekund} %FPS (bilder per sekund)
+%\subsubsection{State-of-the-art maskinsyn} % (topp moderne)
+%\subsubsection{Real-time} %(sanntid)
+%\subsection{Segmentering}
 
 %Machine Learning: Learning from data
 %
