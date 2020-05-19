@@ -27,12 +27,12 @@ Kildekoden kan lastes ned fra GitHub.\footnote{\url{https://github.com/alanhauge
 
 \subsection{Å forstå problemet}
 
-Mengden av to fiskeslag, torsk og sei, skulle telles med maskinsyn. Det er to klasser. Bilder av hver fisk med korrekt label-data ble samlet og modellene RetinaNet og YOLOv4 ble valgt, de er store nettverk som kan forstå og trenes på bilder.
+Mengden av to fiskeslag, torsk og sei, skulle telles med maskinsyn. Det er to klasser. Modellene RetinaNet og YOLOv4 ble valgt, de er store nettverk som kan forstå og trenes på bilder.
 
 \subsection{Få tak i data}
 \label{part:data}
 
-Datasettet bestod av bilder fra en lagringsmerd av torsk, og bilder av sei fra Havbruksstasjonen i Tromsø. Se figur \ref{fig:data} og \ref{fig:nofima}. Opptakene av fiskene ble laget av Nofima og ble omgjort til bilder. Label-data ble lagt inn manuelt. Se figur \ref{fig:dataset_tool}. Dataen av torsk var fargebilder, så de bestod av tre kanaler, og hadde størrelsen 1920 $\times$ 1080. Bildene av sei var gråtoner, kun en kanal, og hadde størrelsen 640 $\times$ 480. %You need to achieve 85 \% accuracy for validation data to successfully complete this assignment. Check it out here.
+Datasettet bestod av bilder fra en lagringsmerd av torsk, og bilder av sei fra Havbruksstasjonen i Tromsø. Se figur \ref{fig:data} og \ref{fig:nofima}. Opptakene av fiskene ble laget av Nofima og ble omgjort til bilder. Label-data ble lagt inn manuelt. Se figur \ref{fig:dataset_tool}. Dataen av torsk var fargebilder, så de bestod av tre kanaler (rødt, grønt og blått) og hadde størrelsen 1920 $\times$ 1080. Bildene av sei var gråtoner, kun en kanal, og hadde størrelsen 640 $\times$ 480. %You need to achieve 85 \% accuracy for validation data to successfully complete this assignment. Check it out here.
 
 \begin{figure}[h!]
 \begin{center} 
@@ -51,15 +51,15 @@ Datasettet bestod av bilder fra en lagringsmerd av torsk, og bilder av sei fra H
 \includegraphics[scale=0.05,angle=-90,origin=c]{figures/camera_1}
 \includegraphics[scale=0.05,angle=-90,origin=c]{figures/camera_2}
 \includegraphics[scale=0.05]{figures/camera_3}
-\caption{\small \sl Figuren viser kamerautstyret som ble anvendt til å lage seidataen. Nofima anskaffet et undervannskamera av typen Steinsvik Orbit-3300 som styres via et MB-3000 kontrollpanel. Foto: Nofima. \cite{Lindberg og Evensen 2020} \label{fig:nofima}} 
+\caption{\small \sl Figuren viser kamerautstyret som ble anvendt til å lage sei-datasettet (film av sei under vann). Nofima anskaffet et undervannskamera av typen Steinsvik Orbit-3300 som styres via et MB-3000 kontrollpanel. Foto: Nofima. \cite{Lindberg og Evensen 2020} \label{fig:nofima}} 
 \end{center} 
 \end{figure} 
 
-Datasettet bestod av 208 bilder av torsk, med til sammen 4582 instanser av torsk i bildene. Det var 604 bilder av sei med 5525 instanser av fisken i bildene. Bildene av torsk og sei ble satt i hver sin mappe. De ble splittet etter forholdet 80/20, 80 \% av dataen var for trening, og 20 \% for validering.
+Datasettet bestod av 208 bilder av torsk, med til sammen 4582 instanser av torsk i bildene. Det var 604 bilder av sei med 5525 instanser av fisken i bildene. Bildene av torsk og sei ble satt i hver sin mappe. De ble delt etter forholdet 80/20, 80 \% av dataen var for trening, og 20 \% for validering.
 
 \subsubsection{Utforsk og forstå dataen}
 
-Det er viktig å se på dataen før en begynner å trene et nettverk. Det er viktig å se etter bias i bildene. Det er lurt å gå igjennom hvert eneste bilde, og se om det er noe en kan lære. Torsk- og seibildene kunne bli augmentert, de kunne blant annet bli snudd horisontalt. Det gir dobbelt så mye treningsdata. Vær obs på at ikke alle treningssett tillater dette, for eksempel et datasett med lego. Lego har brikker som er speilbilder av hverandre. Da kan ikke bildene bli snudd horisontalt ettersom det vil gjøre at nettverket ikke kan se forskjell på alle brikkene.
+Det er viktig å se på dataen før en begynner å trene et nettverk. Det er viktig å se etter bias i bildene. Det er lurt å gå igjennom hvert eneste bilde, og se om det er noe en kan lære. Torsk- og seibildene kunne bli augmentert, de kunne blant annet bli snudd horisontalt. Det gir dobbelt så mye treningsdata. Vær obs på at ikke alle treningssett tillater dette, for eksempel et datasett med lego. Lego har brikker som er speilbilder av hverandre. Da kan ikke bildene bli snudd horisontalt ettersom det vil gjøre at nettverket ikke kan se forskjell på alle brikkene. En fisk er fortsatt samme type fisk speilvendt.
 
 Det var to klasser i datasettet, torsk og sei. Se figur \ref{fig:tree} og tabell \ref{tab:classes}.
 
@@ -220,7 +220,7 @@ trainer.train()
 
 \subsubsection{YOLOv4 trening}
 
-Alexey Bochkovskiy sin fork av Darknet ble anvendt, det er en versjon av Joseph Redmon sin Darknet: Open Source Neural Networks in C med Windows- og Linux-støtte. Den støtter nyere versjoner av OpenCV og det som var den nyeste versjonen av YOLO da denne rapporten ble skrevet, YOLOv4, som ble utgitt 23. April 2020 \cite{Bochkovskiy m.fl. 2020}. En god guide til Darknet og YOLO finnes på githuben til Alexey. \cite{Bochkovskiy 2020}
+Alexey Bochkovskiy sin variant av Darknet ble anvendt, det er en versjon av Joseph Redmon sin Darknet: Open Source Neural Networks in C med Windows- og Linux-støtte. Den støtter nyere versjoner av OpenCV og det som var den nyeste versjonen av YOLO da denne rapporten ble skrevet, YOLOv4, som ble utgitt 23. April 2020 \cite{Bochkovskiy m.fl. 2020}. En god guide til Darknet og YOLO finnes på githuben til Alexey. \cite{Bochkovskiy 2020}
 
 %cuDDN ble installert etter Nvidia sine instrukser. \footnote{\url{https://docs.Nvidia.com/deeplearning/sdk/cudnn-install/index.html#installlinux-tar}}
 
@@ -413,16 +413,9 @@ make
 make install
 \end{verbatim}
 
-\begin{figure}
-\begin{center} 
-\includegraphics[scale=0.2]{figures/qtcreator}
-\caption{\small \sl Figuren viser IDE-et QtCreator med main.cpp hvor OpenCV- og TMAT3004-prosjektene er lastet inn.  \label{fig:qtcreator}} 
-\end{center} 
-\end{figure} 
+Det er også mulig å kompilere OpenCV med hjelp fra QtCreator. QtCreator open source ble lastet ned fra \url{https://www.qt.io/download}. \texttt{CMakeLists.txt} i opencv-3.4/opencv ble åpnet i QtCreator. OPENCV\_EXTRA\_MODULES\_PATH ble satt til opencv\_contrib/modules på filsystemet. Dette kan gjøres fra Projects-modusen i QtCreator.
 
-Det er også mulig å kompilere OpenCV med hjelp fra QtCreator. QtCreator open source ble lastet ned fra \url{https://www.qt.io/download}. \texttt{CMakeLists.txt} i opencv-3.4/opencv ble åpnet i QtCreator. OPENCV\_EXTRA\_MODULES\_PATH ble satt til opencv\_contrib/modules på filsystemet. Dette kan gjøres fra Projects-modusen i QtCreator. Se sidepanelet i figur \ref{fig:qtcreator}.
-
-Anaconda individual edition med Python 2 ble brukt. Det ble laget en \texttt{CMakeLists.txt}-fil for prosjektet. Se side \pageref{lst:cmake} i vedlegg \ref{appendix:code}. Denne burde muligens endres om andre ønsker å kompilere prosjektet, merk at Anaconda ble installert til hjemmemappen til brukeren. Prosjektet består av to programmer. OBJECT\_DETECTOR gjør fiskedeteksjon. Se figur \ref{fig:yolo_inference}. DATASET\_TOOL ble brukt til å lage label-data ut av videoer. Se figur \ref{fig:dataset_tool}.
+Anaconda individual edition med Python 2 ble brukt. Det ble laget en \texttt{CMakeLists.txt}-fil for prosjektet. Denne burde muligens endres om andre ønsker å kompilere prosjektet, merk at Anaconda ble installert til hjemmemappen til brukeren. Prosjektet består av to programmer. OBJECT\_DETECTOR gjør fiskedeteksjon. Se figur \ref{fig:yolo_inference}. DATASET\_TOOL ble brukt til å lage label-data ut av videoer. Se figur \ref{fig:dataset_tool}.
 
 OBJECT\_DETECTOR gjør inferens med OpenCV dnn-modulen, den laster inn en YOLOv4-konfigurasjon, en modell, og en videostrøm. Videostrømmen kan komme fra et kamera koblet til maskinen eller en fil på filsystemet. Programmet analyserer videostrømmen og logger mengden torsk og sei som blir observert. Se figur \ref{fig:yolo_inference}.
 
@@ -447,6 +440,6 @@ Det ble laget label-data for segmentering i datapgrogrammet labelme \cite{Wada 
 \begin{figure}[h!]
 \begin{center} 
 \includegraphics[scale=0.25]{figures/labelme}
-\caption{\small \sl Figuren viser dataprogrammet labelme \cite{Wada 2016}. Råbildet er fra en levendelagringsmerd med torsk \cite{Nofima 2020}. \label{fig:labelme}} 
+\caption{\small \sl Figuren viser dataprogrammet labelme \cite{Wada 2016}. Råbildet er fra en levendelagringsmerd med torsk \cite{Nofima 2020}. Denne label-dataen kan anvendes til segmentering.\label{fig:labelme}} 
 \end{center} 
 \end{figure} 
