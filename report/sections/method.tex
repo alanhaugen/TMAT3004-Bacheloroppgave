@@ -19,38 +19,20 @@
 
 %Hensikten med kapitlet Materialer og metoder er at andre skal kunne utføre det samme arbeidet på samme måte. Da må alle nødvendige opplysninger være med.
 
-Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to modeller, en RetinaNet-modell og en YOLOv4-modell. RetinaNet hadde forhåndstrente vekter fra en modell trent på COCO-datasettet til Microsoft \cite{Lin m.fl. 2015 s. 1}. YOLOv4 hadde fohåndstrente vekter fra en «Darknet-modell», modellene ble ikke trent fra scratch. %You should design a model which achieves 85 \% validation accuracy on the given dataset.
+Trening av kunstige nevrale nettverk gjøres i seks steg. Det ble trent opp to modeller, en RetinaNet-modell og en YOLOv4-modell. RetinaNet hadde forhåndstrente vekter fra en modell trent på COCO-datasettet til Microsoft \cite{Lin m.fl. 2015 s. 1}. YOLOv4 hadde forhåndstrente vekter fra en «Darknet-modell», modellene ble ikke trent fra scratch. %You should design a model which achieves 85 \% validation accuracy on the given dataset.
 
 Microsoft Azure-plattformen ble anvendt til å trene modellene. Microsoft tilbyr Nvidia Titan GPU-er i skyen. Å anvende GPU-er når en trener kunstige nevrale nettverk gjør at treningen tar mindre tid \cite{Dean m.fl. 2012 s. 1}.
 
-Kildekoden kan lastes ned fra GitHub\footnote{\url{https://github.com/alanhaugen/TMAT3004-Bacheloroppgave}}.
-
-\begin{figure}[h!]
-\begin{center} 
-\includegraphics[scale=0.35]{figures/dataset_tool_2}
-\caption{\small \sl Figuren viser et dataprogram som ble utviklet for å lage label-data basert på opptakene fra Nofima. Dataprogrammet laster inn hvert femtiende bilde fra en video av en lagringsmerd av torsk. Denne videoen er 7 minutter lang. På figuren vises bilde nummer 3040. En modell som kan detektere objekter krever å bli trent på bilder av det den skal kjenne igjen, bilder med label-data. Label-data består av klassenummer, og koordinatene `xmin', `ymin', `xmax', og `ymax', som skaper et rektangel rundt objektene som finnes i bildet, for hvert objekt som finnes i treningsdataen. Med dette dataprogrammet så er å lage slik informasjon fra et bilde enkelt, brukeren trenger kun å lage et rektangel rundt hver torsk. Klassenummeret for torsk, her 0, og posisjonene av rektangelet, `xmin', `ymin', `xmax', og `ymax', kjent som objektets ground truth bounding box, lagres til en tekstfil. Rådataen, bilder uten rektanglene eller den røde teksten som er øverst i venstre hjørne, lagres også automatisk til en mappe. \label{fig:dataset_tool}} 
-\end{center} 
-\end{figure} 
+Kildekoden kan lastes ned fra GitHub.\footnote{\url{https://github.com/alanhaugen/TMAT3004-Bacheloroppgave}}
 
 \subsection{Å forstå problemet}
 
-Før en begynner så er det viktig å være sikker på at man forstår problemet en skal løse. I denne oppgaven så skulle mengden av to fiskeslag, torsk og sei, telles med maskinsyn. Det er to klasser. For å løse denne oppgaven kreves bilder av hver fisk med korrekt label-data og et rimelig stort nettverk som kan forstå og trenes på bilder.
+Mengden av to fiskeslag, torsk og sei, skulle telles med maskinsyn. Det er to klasser. Bilder av hver fisk med korrekt label-data ble samlet og modellene RetinaNet og YOLOv4 ble valgt, de er store nettverk som kan forstå og trenes på bilder.
 
 \subsection{Få tak i data}
 \label{part:data}
 
-Det neste steget var å få tak i data. Datasettet som ble laget for dette prosjektet bestod av bilder fra en lagringsmerd av torsk, og bilder av sei fra Havbruksstasjonen i Tromsø. Se figur \ref{fig:data} og \ref{fig:nofima}. Opptakene av fiskene ble laget av Nofima og ble omgjort til bilder. Label-data lagt inn manuelt. Se figur \ref{fig:dataset_tool}. Dataen av torsk var fargebilder, så de bestod av tre kanaler, og hadde størrelsen 1920 $\times$ 1080. Bildene av sei var gråtoner, kun en kanal, og hadde størrelsen 640 $\times$ 480. %You need to achieve 85 \% accuracy for validation data to successfully complete this assignment. Check it out here.
-
-\begin{figure}[h!]
-\begin{center} 
-\includegraphics[scale=0.05,angle=-90,origin=c]{figures/camera_1}
-\includegraphics[scale=0.05,angle=-90,origin=c]{figures/camera_2}
-\includegraphics[scale=0.05]{figures/camera_3}
-\caption{\small \sl Figuren viser kamerautstyret som ble anvendt til å lage seidataen. Nofima anskaffet et undervannskamera av typen Steinsvik Orbit-3300 som styres via et MB-3000 kontrollpanel. Foto: Nofima. \cite{Lindberg 2020} \label{fig:nofima}} 
-\end{center} 
-\end{figure} 
-
-Datasettet bestod av 208 bilder av torsk, med til sammen 4582 instanser av torsk i bildene. Det var 604 bilder av sei med 5525 instanser av fisken i bildene. Bildene av torsk og sei ble satt i hver sin mappe. De ble splittet etter forholdet 80/20, 80 \% av dataen var for trening, og 20 \% for validering.
+Datasettet bestod av bilder fra en lagringsmerd av torsk, og bilder av sei fra Havbruksstasjonen i Tromsø. Se figur \ref{fig:data} og \ref{fig:nofima}. Opptakene av fiskene ble laget av Nofima og ble omgjort til bilder. Label-data ble lagt inn manuelt. Se figur \ref{fig:dataset_tool}. Dataen av torsk var fargebilder, så de bestod av tre kanaler, og hadde størrelsen 1920 $\times$ 1080. Bildene av sei var gråtoner, kun en kanal, og hadde størrelsen 640 $\times$ 480. %You need to achieve 85 \% accuracy for validation data to successfully complete this assignment. Check it out here.
 
 \begin{figure}[h!]
 \begin{center} 
@@ -63,6 +45,17 @@ Datasettet bestod av 208 bilder av torsk, med til sammen 4582 instanser av torsk
 \caption{\small \sl Figuren viser eksempelbilder fra en video av en lagringsmerd med torsk. Disse bildene er en del av datasettet anvendt for deteksjon av torsk og sei. \cite{Nofima 2020} \label{fig:data}} 
 \end{center} 
 \end{figure} 
+
+\begin{figure}[h!]
+\begin{center} 
+\includegraphics[scale=0.05,angle=-90,origin=c]{figures/camera_1}
+\includegraphics[scale=0.05,angle=-90,origin=c]{figures/camera_2}
+\includegraphics[scale=0.05]{figures/camera_3}
+\caption{\small \sl Figuren viser kamerautstyret som ble anvendt til å lage seidataen. Nofima anskaffet et undervannskamera av typen Steinsvik Orbit-3300 som styres via et MB-3000 kontrollpanel. Foto: Nofima. \cite{Lindberg og Evensen 2020} \label{fig:nofima}} 
+\end{center} 
+\end{figure} 
+
+Datasettet bestod av 208 bilder av torsk, med til sammen 4582 instanser av torsk i bildene. Det var 604 bilder av sei med 5525 instanser av fisken i bildene. Bildene av torsk og sei ble satt i hver sin mappe. De ble splittet etter forholdet 80/20, 80 \% av dataen var for trening, og 20 \% for validering.
 
 \subsubsection{Utforsk og forstå dataen}
 
@@ -134,6 +127,17 @@ Da dataen hadde blitt organisert, og label-data nøye konstruert, så ble nettve
 
 Det ble trent opp to nettverk. Det ene, RetinaNet, er en del av Detectron2 fra Facebook. Den ble trent og konfigurert med PyTorch. Den andre modellen var YOLOv4, den trenes med deep learning-rammeverket Darknet. Konfigurasjon gjøres ved å endre på tekstfiler og kommandolinjeparameterene til rammeverket.
 
+\subsection{Lage label-data}
+
+\begin{figure}[h!]
+\begin{center} 
+\includegraphics[scale=0.35]{figures/dataset_tool_2}
+\caption{\small \sl Et dataprogram som ble utviklet for å lage label-data. Råbildene er basert på opptak fra Nofima \cite{Nofima 2020}. Figuren viser bilde nummer 3040. \label{fig:dataset_tool}} 
+\end{center} 
+\end{figure} 
+
+Dataprogrammet i figur \ref{fig:dataset_tool} laster inn hvert femtiende bilde fra en video av en lagringsmerd av torsk. Denne videoen er 7 minutter lang. En modell som kan detektere objekter krever å bli trent på bilder av det den skal kjenne igjen, bilder med label-data. Label-data består av klassenummer, og koordinatene `xmin', `ymin', `xmax', og `ymax', som skaper et rektangel rundt objektene som finnes i bildet, for hvert objekt som finnes i treningsdataen. Med dette dataprogrammet så er å lage slik informasjon fra et bilde enkelt, brukeren trenger kun å lage et rektangel rundt hver torsk. Klassenummeret for torsk, her 0, og posisjonene av rektangelet, `xmin', `ymin', `xmax', og `ymax', kjent som objektets ground truth bounding box, lagres til en tekstfil. Rådataen, bilder uten rektanglene eller den røde teksten som er øverst i venstre hjørne, lagres også automatisk til en mappe.
+
 \subsubsection{Dataaugmentering}
 
 Det ble ikke gjort endringer på standardmåten Detectron2 og Darknet gjør dataaugmentering.
@@ -160,7 +164,7 @@ Nettverket ble først trent opp på et utvalg av treningsdataen, for å teste ne
 \subsubsection{RetinaNet konfigurasjon og trening}
 \label{part:training}
 
-RetinaNet-modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned med Detectron2 fra Detectron2 Model Zoo\footnote{\url{https://github.com/facebookresearch/detectron2/blob/master/MODEL_ZOO.md}}, den heter COCO-Detection/retinanet\_R\_50\_FPN\_3x.yam. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
+RetinaNet-modellen ble trent med en learning rate på 0,001 over 500 iterasjoner. Modellen brukte vekter fra COCO, den ble lastet ned med Detectron2 fra Detectron2 Model Zoo, den heter COCO-Detection/retinanet\_R\_50\_FPN\_3x.yam. RetinaNet sin score threshold ble satt til 0,5. Batch size var 4.
 
 Et utvalg av programkoden som har blitt skrevet for denne oppgaven har blitt lagt ved i vedlegg \ref{appendix:code}.
 
@@ -247,7 +251,7 @@ Kompiler rammeverket.
 make
 \end{verbatim}
 
-Dette vil kompilere Darknet for GPU-en med OpenCV støtte.
+Dette vil kompilere Darknet for GPU-en med OpenCV-støtte.
 
 %For å aktivere GPU-støtte, som vil gjøre treningen mye raskere om en har en Nvidia GPU med nok minne, settes GPU = 1 i Makefile-en, deretter rekompileres rammeverket. Rammeverket rekompileres ved å skrive make clean etterfulgt av make.
 
@@ -290,8 +294,8 @@ Det er kun en klasse i testutvalget. Følgende endringer ble gjort i yolo-obj.cf
   \item linjen max\_batches ble satt til max\_batches = 6000
   \item linjen steps ble satt til steps=4800,5400
   \item størrelsen av nettverket ble satt til width=416 og height=416
-  \item linjen classes ble satt til classes=1 for hvert av de tre yolo lagene
-  \item linjen filters ble satt til filters=18 i hver av de tre konvolveringslagene, `\texttt{[convolutional]}', som kommer før `\texttt{[yolo]}'
+  \item linjen classes ble satt til classes=1 for hvert av de tre YOLO-lagene
+  \item linjen filters ble satt til filters=18 i hvert av de tre konvolveringslagene, `\texttt{[convolutional]}', som kommer før `\texttt{[yolo]}'
 \end{itemize}
 
 For hver linje i \texttt{fish\_train.txt} og \texttt{fish\_test.txt} så ble filendingene omgjort til `\texttt{.jpg}'.
@@ -335,7 +339,7 @@ python train.py
 YOLOv4 måtte bli konfigurert for to klasser, torsk og sei. Det ble gjort følgende endringer i yolo-obj.cfg-filen.
 
 \begin{itemize}
-  \item linjen classes ble satt til classes=2 for hver av de tre yolo lagene
+  \item linjen classes ble satt til classes=2 for hvert av de tre YOLO-lagene
   \item linjen filters ble satt til filters=21 i hver av de tre konvolveringslagene som kommer før YOLO-lagene
 \end{itemize}
 
@@ -343,40 +347,13 @@ Linjen classes = 1 ble omgjort til classes = 2 i obj.data.
 
 Filendingene i \texttt{fish\_train.txt} og \texttt{fish\_test.txt} var `\texttt{.jpg}', som før.
 
-Learning rate var 0,001, learning rate scheduler ble satt med momentum 0,949 og decay lik 0,0005.
+%Learning rate var 0,001, learning rate scheduler ble satt med momentum 0,949 og decay lik 0,0005.
 %Optimizers and learning rate schedulers [You can even get good results without a learning rate shceduler]
 %Regularization techniques like Data Augmentation, Dropout, BatchNorm
 
 \subsection{Forbedre modellen}
 
 Når modellen har blitt trent ferdig bør den forbedres. Den mest effektive måten å forbedre en deep learning-modell er å endre learning rate i konfigurasjonen, og så trene modellen på nytt. Det kan også hjelpe å bruke en ny modell, vanligvis så er en modell med flere konvolveringslag bedre. Dype nevrale nettverk blir stadig dypere ettersom forskere utvikler nye modeller \cite{Szegedy m.fl. s. 1}. Det er også mulig å trene modellen over flere epoker eller iterasjoner. YOLO-modellen ble oppgradert til YOLOv4. RetinaNet-modellen ble mye bedre når den ble trent over flere iterasjoner. Endringene ble gjort underveis i prosjektet. 
-
-\subsubsection{YOLOv4}
-
-Mens treningen pågår vises feilmeldinger og statusen til nettverket. Treningen kan avsluttes når training loss ikke lenger avtar. Se et eksempel på Darknet-utmatninger under:
-
-\begin{verbatim}
-v3 (iou loss, Normalizer: (iou: 0.07, cls: 1.00) Region 139 Avg
-(IOU: 0.366654, GIOU: 0.298158), Class: 0.464846,
-Obj: 0.560030, No Obj: 0.549277, .5R: 0.191489,
-.75R: 0.021277, count: 94, class_loss = 5464.241699,
-iou_loss = 69.363770, total_loss = 5533.605469 
-\end{verbatim}
-
-Total loss kan gå fra 0,05 (for en liten modell og et enkelt datasett) til 3,0 (for en stor modell og et vanskelig datasett). \cite{Bochkovskiy 2020}
-
-Treningen med optionen -map vil føre til mAP (mean average precision)-utregninger, da vil \texttt{Last accuracy mAP@0.5 = 18.50} og lignende dukke opp i konsollen. Det er en mye bedre indikator enn total loss på hvor bra modellen har blitt. Trening bør pågå så lenge mAP øker. \cite{Bochkovskiy 2020}% in the console - this indicator is better than Loss, so train while mAP increases.
-
-Når treningen er ferdig så må den beste .weights-flien velges fra backup-mappen. Overfitting kan bli et problem. Overfitting er når modellen kan detektere objektene i treningsdatasettet, men ikke i noen andre bilder. Derfor bør trening ikke foregå over flere iterasjoner enn der Early Stopping Point forekommer, se figur \ref{fig:early_stopping_point}. \cite{Bochkovskiy 2020}
-
-\begin{figure}[h!]
-\begin{center} 
-\includegraphics[scale=1.0]{figures/early_stopping_point}
-\caption{\small \sl Figuren viser «Early stopping point». Trening av en modell bør avsluttes når «Early stopping point» er nådd. \cite{Bochkovskiy 2020} \label{fig:early_stopping_point}}
-\end{center}
-\end{figure}
-
-Velg alltid weights-filen med den høyeste mAP skåren.
 
 %Lowering learning rate helps
 %Adding a convolutional layer helps
@@ -387,25 +364,19 @@ Velg alltid weights-filen med den høyeste mAP skåren.
 
 Inferens er når en trent modell er brukt til å forutsi hva en prøve inneholder. Inferens kalles også for en forward pass. En modell gjør ikke backpropagation når den gjør inferens, backpropagation gjøres for å regne ut nøyaktigheten til modellen og til å oppdatere vektene i modellen, noe som kun skjer under trening. 
 
-\begin{figure}[h!]
-\begin{center} 
-\includegraphics[scale=0.35]{figures/retinanet_inference_saithe}
-\caption{\small \sl Figuren viser inferens av sei med RetinaNet-modellen. Råbildet er fra Nofima \cite{Lindberg 2020}.\label{fig:retinanet_inference_saithe}}
-\end{center}
-\end{figure}
-
 \begin{figure}
 \begin{center} 
 %\includegraphics[scale=0.6]{figures/cover}
 \includegraphics[scale=0.25]{figures/retina-inference-1}
 \includegraphics[scale=0.25]{figures/retina-inference-3}
-\caption{\small \sl Figuren viser inferens med en RetinaNet model. Råbildet er fra en video av en lagringsmerd med torsk \cite{Nofima 2020}. Modellen ble trent som en del av dette bachelorprosjektet. \label{fig:inference}} 
+\includegraphics[scale=0.35]{figures/retinanet_inference_saithe}
+\caption{\small \sl Inferens med en RetinaNet-model. Råbildene er fra Nofima \cite{Nofima 2020}. \label{fig:inference}} 
 \end{center} 
 \end{figure} 
 
 \subsubsection{RetinaNet}
 
-Ettersom OpenCV ikke kunne laste inn en PyTorch-modell da denne oppgaven ble skrevet, så ble inferens gjort med Python, og det ble ikke gjort et forsøk på å gjøre inferens i sanntid på en videostrøm med RetinaNet. Se resultater i figur \ref{fig:retinenet_inference} og \ref{fig:inference}.
+Ettersom OpenCV ikke kunne laste inn en PyTorch-modell da denne oppgaven ble skrevet, så ble inferens gjort med Python, og det ble ikke gjort et forsøk på å gjøre inferens i sanntid på en videostrøm med RetinaNet. Se resultater i figur \ref{fig:inference}.
 
 Koden for inferens er i vedlegg A, side \pageref{lst:inferens_retinanet}.
 
@@ -416,11 +387,11 @@ Det ble skrevet et program i C++ som bruker OpenCV til fiskedeteksjon i sanntid 
 \begin{figure}
 \begin{center} 
 \includegraphics[scale=0.35]{figures/inference_yolo}
-\caption{\small \sl Figuren viser inferens med YOLOv4. Rundt fiskene så lager YOLOv4 bounding boxes der den tror det finnes fisk, og gir den en label basert på det den tror at det er. Her får alle fiskene labelen «atlantic cod», dette er fra en lagringsmerd med torsk. Ved siden av navnet av klassen så står det hvor sikker nettverket er på at den har funnet en torsk, presisjonen av inferensen. I grønn tekst, øverst til venstre, står det at algoritmen kan telle 31 torsk i bildet, og 0 sei. Råbildet er fra Nofima \cite{Nofima 2020}. \label{fig:yolo_inference}} 
+\caption{\small \sl Inferens med YOLOv4. Rundt fiskene så lager YOLOv4 bounding boxes der den tror det finnes fisk, og gir den en label basert på det den tror at det er. Her får alle fiskene labelen «atlantic cod», dette er fra en lagringsmerd med torsk. Ved siden av navnet av klassen så står det hvor sikker nettverket er på at den har funnet en torsk, presisjonen av inferensen. I grønn tekst, øverst til venstre, står det at algoritmen kan telle 31 torsk i bildet, og 0 sei. Råbildet er fra Nofima \cite{Lindberg og Evensen 2020}. \label{fig:yolo_inference}} 
 \end{center} 
 \end{figure} 
 
-Når en lager et program i C++ så må en kompilator og et build-system bli valgt. For Windows så ble msvc++, som er en del av Visual Studio Community 2019, valgt. På macOS så ble clang brukt. Build-systemet cmake ble valgt. Alle disse verktøyene er tilgjengelig gratis, msvc++ er det eneste verktøyet som ikke er et åpen kildekodeprosjekt i tillegg til å være gratis. \texttt{CMakeLists.txt} beskriver programmet. \texttt{CMakelists.txt} er en konfigurasjonsfil for cmake build-systemet, et av build-systemene som kan brukes til å holde styr på C++-programmer. Det er nyttig å ha et IDE, en Integrated Development Environment, når man programmerer i C++. QtCreator open source er et velutviklet IDE som kan laste inn cmake-prosjekter.
+Når en lager et program i C++ så må en kompilator og et build-system bli valgt. For Windows så ble msvc++, som er en del av Visual Studio Community 2019, valgt. På macOS så ble clang brukt. Build-systemet cmake ble valgt. Alle disse verktøyene er tilgjengelig gratis, msvc++ er det eneste verktøyet som ikke er et åpen kildekodeprosjekt i tillegg til å være gratis. \texttt{CMakeLists.txt} beskriver programmet. \texttt{CMakelists.txt} er en konfigurasjonsfil for cmake build-systemet, et av build-systemene som kan brukes til å holde styr på C++-programmer. Det er nyttig å ha en IDE, en Integrated Development Environment, når man programmerer i C++. QtCreator open source er et velutviklet IDE som kan laste inn cmake-prosjekter.
 
 OpenCV-prosjektet bruker også cmake, og er også skrevet i C++. Her installeres OpenCV fra kommandolinjen på et Unix-system:
 
@@ -455,23 +426,23 @@ Anaconda individual edition med Python 2 ble brukt. Det ble laget en \texttt{CMa
 
 OBJECT\_DETECTOR gjør inferens med OpenCV dnn-modulen, den laster inn en YOLOv4-konfigurasjon, en modell, og en videostrøm. Videostrømmen kan komme fra et kamera koblet til maskinen eller en fil på filsystemet. Programmet analyserer videostrømmen og logger mengden torsk og sei som blir observert. Se figur \ref{fig:yolo_inference}.
 
-main.cpp er kildekoden til OBJECT\_DETECTOR. Først lastes bibliotekene inn. Se side \pageref{lst:header} i vedlegg \ref{appendix:code}.
+\texttt{main.cpp} er kildekoden til OBJECT\_DETECTOR. Først lastes bibliotekene inn. Se side \pageref{lst:header} i vedlegg \ref{appendix:code}.
 
-getOutputsNames henter ut label navn fra det ytterste laget, «the fully connected layer», i modellen. Det er her utmatningene fra modellen er. Se figur \ref{fig:deep} og side \pageref{lst:getOutputsNames} i vedlegg \ref{appendix:code}.
+\texttt{getOutputsNames} henter ut label-navn fra det ytterste laget, «the fully connected layer», i modellen. Det er her utmatningene fra modellen er. Se figur \ref{fig:deep} og side \pageref{lst:getOutputsNames} i vedlegg \ref{appendix:code}.
 
-drawPred lager en bounding box rundt objektene som detekteres av modellen. Se side \pageref{lst:drawPred} i vedlegg \ref{appendix:code}.
+\texttt{drawPred} lager en bounding box rundt objektene som detekteres av modellen. Se side \pageref{lst:drawPred} i vedlegg \ref{appendix:code}.
 
-postprocess henter alle instanser av fiskene i et bilde som er over en non-maxima suppression confidence boundary. Deretter sjekker den om objektet er en torsk eller sei, og teller mengden torsk og sei i bildet. Se side \pageref{lst:postprocess} i vedlegg \ref{appendix:code}.
+\texttt{postprocess} henter alle instanser av fiskene i et bilde som er over en non-maxima suppression confidence boundary. Deretter sjekker den om objektet er en torsk eller sei, og teller mengden torsk og sei i bildet. Se side \pageref{lst:postprocess} i vedlegg \ref{appendix:code}.
 
-main er programmets entry point. Det er her dataprogrammet starter. Den åpner en logg, log.csv, og så åpner den en videostrøm. Deretter laster den inn YOLOv4-modellen. Se side \pageref{lst:main} i vedlegg \ref{appendix:code}.
+\texttt{main} er programmets entry point. Det er her dataprogrammet starter. Den åpner en logg, log.csv, og så åpner den en videostrøm. Deretter laster den inn YOLOv4-modellen. Se side \pageref{lst:main} i vedlegg \ref{appendix:code}.
 
-Den siste kodesnutten er programmets main loop. Denne koden repeteres til videoen har gått tomt for bilder, eller at brukeren trykker på ESC på tastaturet. For hvert bilde i videostrømmen så lagres antall torsk og sei observert og tidskode til log.csv, med mindre det er ingen torsk eller sei som blir oppdaget. Se side \pageref{lst:mainloop} i vedlegg \ref{appendix:code}.
+Den siste kodesnutten er programmets main loop. Denne koden repeteres til videoen har gått tom for bilder, eller at brukeren trykker på ESC på tastaturet. For hvert bilde i videostrømmen så lagres antall torsk og sei observert og tidskode til log.csv, med mindre det er ingen torsk eller sei som blir oppdaget. Se side \pageref{lst:mainloop} i vedlegg \ref{appendix:code}.
 
 %\subsection{COCO Detection Evaluation} % For analyse kapittelet?
 
 \subsection{Segmentering}
 
-Det ble laget label-data for segmentering i darapgrogrammet labelme. Se figur \ref{fig:labelme}. Det ble ikke gjort et forsøk på segmentering da objektdeteksjon ga bedre resultater enn forventet.
+Det ble laget label-data for segmentering i datapgrogrammet labelme \cite{Wada 2016}. Se figur \ref{fig:labelme}. Det ble ikke gjort et forsøk på segmentering da objektdeteksjon ga bedre resultater enn forventet.
 
 \begin{figure}[h!]
 \begin{center} 

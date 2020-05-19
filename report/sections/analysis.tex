@@ -8,7 +8,7 @@
 \section{Resultater}
 \label{part:results}
 
-Det ble trent opp to modeller, en RetinaNet modell og en YOLOv4 modell. Se figur \ref{fig:retinanet_inference_saithe}, \ref{fig:inference} og \ref{fig:yolo_inference}. Dataen av torsk bestod av tre kanaler, og hadde størrelsen 1920 $\times$ 1080. Bildene av sei bestod av kun en kanal, og hadde størrelsen 640 $\times$ 480. Se figur \ref{fig:data}.
+Det ble trent opp to modeller, en RetinaNet-modell og en YOLOv4-modell. Se figur \ref{fig:inference} og \ref{fig:yolo_inference}. Dataen av torsk bestod av tre kanaler, og hadde størrelsen 1920 $\times$ 1080. Bildene av sei bestod av kun en kanal, og hadde størrelsen 640 $\times$ 480. Se figur \ref{fig:data}.
 
 %A classification accuracy of 94.3 \% was achieved when classifying only the 16 fish species which we focussed on for this trial. All other evaluations include the other species class which contains a number of fish species which are non-relevant to the research goals, but can be encountered while underwater sampling. The re- sults obtained by the different model configurations are summa- rized in Table 2. The model based on ResNet (He et al., 2016) by cross-pooling activations from layer 4b15 and 4b20, with local region size of 3 and training of a linear SVM on top of the cross-pooled features, was able to achieve the highest classifica- tion accuracy of 89.0 \% if the other species class is included. A change to a local region size of 1 produces a slightly inferior result of 86.9 \% classification accuracy for all classes. In compari- son, the AlexNet and VGGNet model configurations produced significantly degraded results.
 
@@ -19,29 +19,6 @@ Det ble trent opp to modeller, en RetinaNet modell og en YOLOv4 modell. Se figur
 
 %The precision of a classifier is a measure of correctly classified images out of all the images predicted to belong to a specific class. Mathematically,
 
-Presisjonen er et mål på hvor mange bounding boxes objektdeteksjonsystemet klarte å klassifisere riktig \cite{Siddiqui m.fl. 207 s. 383}. Matematisk defineres dette slik:
-
-\begin{equation}
-\text{Precision} = \frac{\text{True positives}}{\text{True positives} + \text{False positives}}
-\end{equation}
-
-%Recall of a classifier on the other hand is a measure of correctly classified images out of all the images actually belonging to a spe- cific class. Mathematically:
-
-Recall er et mål på hvor mange objekter objektdetekteringssystemet klarte å klassifisere riktig \cite{Siddiqui m.fl. 207 s. 383}. Matematisk defineres dette slik:
-
-\begin{equation}
-\text{Recall} = \frac{\text{True positives}}{\text{True positives} + \text{False negatives}}
-\end{equation}
-
-IoU (Intersection over Union) er en evalueringsmåling som blir brukt til å måle nøyaktigheten til en objektdetektor på et gitt datasett. Det defineres som overlappingen av området modellen tror bounding box-ene finnes og der ground-truth bounding box-ene er over området modellen tror bounding box-ene finnes sammen med ground-truth bounding box-ene. Se figur \ref{fig:precision}. \cite{Bochkovskiy 2020}
-
-\begin{figure}[H]
-\begin{center} 
-\includegraphics[scale=0.45]{figures/precision}
-\caption{\small \sl Precision, recall og IoU. \cite{Bochkovskiy 2020} \label{fig:precision}}
-\end{center}
-\end{figure}
-
 %In general, the precision and recall graphs confirm the classifi- cation accuracy levels shown in Table 2, with very few exceptions. In some cases, the ResNet-152 model with a 1 1 local region produces the best result, but these exceptions reflect the small dif- ference in the classification accuracy between the two sizes of lo- cal region. Precision is generally higher than recall, indicating that false negatives are more common than false positives. The precision graph shows high values for a number of individual species, indicating that the number of false positives is very low. The lesser precision in ...
 
 \subsection{RetinaNet}
@@ -49,11 +26,11 @@ IoU (Intersection over Union) er en evalueringsmåling som blir brukt til å må
 \begin{figure}[h!]
 \begin{center} 
 \includegraphics[scale=0.35]{figures/coco}
-\caption{\small \sl Figuren viser evalueringskortet til COCO. En modell som har blitt trent med vekter fra COCO kan evalueres etter dette kortet. \label{fig:coco}}
+\caption{\small \sl Evalueringskortet til COCO. En modell som har blitt trent med vekter fra COCO kan evalueres etter dette kortet. \label{fig:coco}}
 \end{center}
 \end{figure}
 
-AP står for «Average Precision», og AR står for «Average Recall». De er mål på hvor nøyaktig en deep learning modell er. Se tabellene på side \pageref{tab:ap_retinanet}.
+AP står for «Average Precision», og AR står for «Average Recall». De er mål på hvor nøyaktig en deep learning-modell er. Se tabellene på side \pageref{tab:ap_retinanet}.
 
 \begin{table}[]
 \bigskip
@@ -109,7 +86,7 @@ AP står for «Average Precision», og AR står for «Average Recall». De er m�
 
 \subsubsection{COCO deteksjonsevaluering} 
 
-Resultatene i tabell \ref{tab:ap_retinanet} kan sammenlignes med evalueringskortet i figur \ref{fig:coco}. Resultatene bør være bedre enn COCO-evalueringskortet. AP (primary challenge metric) bør være mer enn 0,5. RetinaNet modellen har en AP lik 0,285. Se tabell \ref{tab:ap_retinanet}. AP for torsk var 23,1 \%, og 33,9 \%. Se tabell \ref{tab:per-category_bbox_retinanet}.
+Resultatene i tabell \ref{tab:ap_retinanet} kan sammenlignes med evalueringskortet i figur \ref{fig:coco}. Resultatene bør være bedre enn COCO-evalueringskortet. AP (primary challenge metric) bør være mer enn 0,5. RetinaNet-modellen har en AP lik 0,285. Se tabell \ref{tab:ap_retinanet}. AP for torsk var 23,1 \%, og 33,9 \% for sei. Se tabell \ref{tab:per-category_bbox_retinanet}.
 
 %\begin{figure}[h!]
 %\begin{center} 
@@ -127,16 +104,18 @@ Resultatene i tabell \ref{tab:ap_retinanet} kan sammenlignes med evalueringskort
 
 \subsubsection{TensorBoard resultater}
 
-Alle grafene under er fra TensorBoard, et verktøy fra Google som er utviklet til å hjelpe dataforskere med å trene opp deep learning modeller og dele resultatene til forsøkene deres. TensorBoard visualiserer maskinlæringseksperimenter og er egentlig laget for Google sin deep learning rammeverk som heter Tensorflow, men PyTorch støtter også TensorBoard \cite{Oshri 2019}. Resultatene lastes opp med kommandoen \texttt{tensorboard dev upload --logdir logs --name 'TMAT3004' --description 'Bachelorprosjekt NTNU 2020'}.
+Alle grafene under er fra TensorBoard, et verktøy fra Google som er utviklet til å hjelpe dataforskere med å trene opp deep learning-modeller og dele resultatene til forsøkene deres. TensorBoard visualiserer maskinlæringseksperimenter og er egentlig laget for Google sin deep learning-rammeverk som heter Tensorflow, men PyTorch støtter også TensorBoard \cite{Oshri 2019}. Resultatene lastes opp med kommandoen \texttt{tensorboard dev upload --logdir logs --name 'TMAT3004' --description 'Bachelorprosjekt NTNU 2020'}.
 
-I alle grafene fra TensorBoard, figur \ref{fig:loss_box_reg_retinanet}, \ref{fig:loss_cls_retinanet}, \ref{fig:lr_retinanet} og \ref{fig:total_loss_retinanet}, så er x-aksen tid i sekunder fra begynnelsen av forsøket, og y-aksen verdien til den spesifikke målingen.
+I alle grafene fra TensorBoard, figur \ref{fig:loss_box_reg_retinanet}, \ref{fig:loss_cls_retinanet}, \ref{fig:lr_retinanet} og \ref{fig:total_loss_retinanet}, så er x-aksen tid i sekunder fra begynnelsen av forsøket, og y-aksen verdien til den spesifikke målingen. 
 
-Den første grafen nedenfor er «loss bounding box». Dette er et mål på hvor tett modellen satt «bounding box»-ene rundt objektene som fantes i bildene den gjorde inferens på.
+Modellene bør iterativt forbedres, og resultatene sammenlignes for hvert forsøk. Det er best å endre kun en parameter om gangen og se om modellen blir bedre. Dette er tidkrevende. TensorBoard gjør det lettere å sammenligne nye resultater med eldre resultater, grafene under viser to forsøk, hver figur har to grafer. Det nyeste forsøket er den mørkeste grafen.
+
+Den første grafen nedenfor er «loss bounding box». Dette er et mål på hvor tett modellen satt bounding box-ene rundt objektene som fantes i bildene den gjorde inferens på.
 
 \begin{figure}[H]
 \begin{center} 
 \includegraphics[scale=0.35]{figures/loss_box_reg_retinanet_3}
-\caption{\small \sl Figuren viser «loss bounding box» for RetinaNet. \label{fig:loss_box_reg_retinanet}}
+\caption{\small \sl «Loss bounding box» for RetinaNet. \label{fig:loss_box_reg_retinanet}}
 \end{center}
 \end{figure}
 
@@ -145,7 +124,7 @@ Neste graf viser «loss cls», eller «entropy loss». Entropy loss er et mål p
 \begin{figure}[H]
 \begin{center} 
 \includegraphics[scale=0.35]{figures/loss_cls_retinanet_4}
-\caption{\small \sl Figuren viser «loss cls», også kjent som «entropy loss», for RetinaNet modellen. \label{fig:loss_cls_retinanet}}
+\caption{\small \sl «Loss cls», også kjent som «entropy loss», for RetinaNet-modellen. \label{fig:loss_cls_retinanet}}
 \end{center}
 \end{figure}
 
@@ -154,7 +133,7 @@ Neste graf viser utviklingen av learning rate. Learning rate går stadig nedover
 \begin{figure}[H]
 \begin{center} 
 \includegraphics[scale=0.35]{figures/lr_retinanet_5}
-\caption{\small \sl Figuren viser utviklingen av learning rate for RetinaNet modellen. \label{fig:lr_retinanet}}
+\caption{\small \sl Utviklingen av learning rate for RetinaNet-modellen. \label{fig:lr_retinanet}}
 \end{center}
 \end{figure}
 
@@ -172,24 +151,22 @@ Neste graf viser utviklingen av learning rate. Learning rate går stadig nedover
 %\end{center}
 %\end{figure}
 
-Total loss er den viktigste målingen som gjøres på deep learning modeller. Målet med treningen av deep learning modeller er å få total loss til å bli så lav som mulig. Den neste grafen viser utviklingen av total loss. Når modellen er ferdig trent, så vil vanligvis learning loss konvergere, den blir flat. Om learning loss ser ut til å fortsette å avta, så bør modellen trenes over flere iterasjoner. Learning rate har en stor innvirking på når learning loss konvergerer.
+Total loss er den viktigste målingen som gjøres på deep learning-modeller. Målet med treningen av deep learning-modeller er å få total loss til å bli så lav som mulig. Den neste grafen viser utviklingen av total loss. Når modellen er ferdig trent, så vil vanligvis total loss konvergere, den blir flat. Om total loss ser ut til å fortsette å avta, så bør modellen trenes over flere iterasjoner. Learning rate har en stor innvirking på når total loss konvergerer.
 
 \begin{figure}[H]
 \begin{center} 
 \includegraphics[scale=0.35]{figures/total_loss_retinanet_8}
-\caption{\small \sl Figuren viser total loss for RetinaNet eksperimentet. \label{fig:total_loss_retinanet}}
+\caption{\small \sl Total loss for RetinaNet-eksperimentet. \label{fig:total_loss_retinanet}}
 \end{center}
 \end{figure}
 
-RetinaNet resultatene for dette eksperimentet er også tilgjengelige på nettet.\footnote{\url{https://tensorboard.dev/experiment/2PxmdvA5QdavQC0YLABdgw}}
+RetinaNet-resultatene for dette eksperimentet er også tilgjengelige på nettet.\footnote{\url{https://tensorboard.dev/experiment/2PxmdvA5QdavQC0YLABdgw}}
 
 \subsection{YOLO}
 
-Mean Average Precision (mAP) er en måling, det er gjennomsnittet av maksimumpresisjonene ved alle recall-verdiene. Denne målingen brukes til å måle hvor bra en objektdeteksjonsmodell har blitt. Når YOLOv4 modellen ble testet på datasettet så hadde modellen en mAP (mean Average Precisoin) på 73 \%.%When tested on individual source of dataset, the model achieved best results on Wells Dam dataset with 0.5575 mAP, se figur \ref{fig:chart_yolo}. Wells Dam dataset’s better performance than the other two datasets were as expected, considering its high resolution and three full color channels. However, the mAP metric on Wells Dam dataset is lower than our expectation. Fig. 2 F reveals that most of the false detection in Wells Dam dataset are at the side of fish ladder window, where only partial of the fish bodies are visible and difficult for even human annotators to correctly label. These hard cases are sometimes more numerous than fish passing through the white plate, which greatly reduced the overall mAP score on the Wells Dam dataset. \cite{Xu og Matzner 2018}
+Mean Average Precision (mAP) er gjennomsnittet av maksimumpresisjonene ved alle recall-verdiene. Denne målingen brukes til å måle hvor bra en objektdeteksjonsmodell har blitt. Når YOLOv4-modellen ble testet på datasettet så hadde modellen en mAP (mean Average Precisoin) på 73 \%. Se figur \ref{fig:chart_yolo}. Total loss gikk ned til litt over 5,5. %When tested on individual source of dataset, the model achieved best results on Wells Dam dataset with 0.5575 mAP, se figur \ref{fig:chart_yolo}. Wells Dam dataset’s better performance than the other two datasets were as expected, considering its high resolution and three full color channels. However, the mAP metric on Wells Dam dataset is lower than our expectation. Fig. 2 F reveals that most of the false detection in Wells Dam dataset are at the side of fish ladder window, where only partial of the fish bodies are visible and difficult for even human annotators to correctly label. These hard cases are sometimes more numerous than fish passing through the white plate, which greatly reduced the overall mAP score on the Wells Dam dataset. \cite{Xu og Matzner 2018}
 
 %mAP (mean average precision) - mean value of average precisions for each class, where average precision is average value of 11 points on PR-curve for each possible threshold (each probability of detection) for the same class (Precision-Recall in terms of PascalVOC, where Precision=TP/(TP+FP) and Recall=TP/(TP+FN) ), %page-11: http://homepages.inf.ed.ac.uk/ckiw/postscript/ijcv_voc09.pdf
-
-mAP er målingen for presisjonen til objektdeteksjon som anvendes i Oxford University sin PascalVOC-konkurranse, denne målingen er den samme som AP50-målingen i Microsoft sin MS COCO-konkurranse. Precision og Recall har ofte litt forskjellige definisjoner ettersom hvilken konkurranse en deltar i, men IoU betyr alltid det samme. \cite{Bochkovskiy 2020}
 
 \begin{figure}[h!]
 \begin{center} 
