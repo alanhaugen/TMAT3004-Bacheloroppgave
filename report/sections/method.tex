@@ -27,7 +27,7 @@ Kildekoden kan lastes ned fra GitHub.\footnote{\url{https://github.com/alanhauge
 
 \subsection{Å forstå problemet}
 
-Mengden av to fiskeslag, torsk og sei, skulle telles med maskinsyn. Det er to klasser. Modellene RetinaNet og YOLOv4 ble valgt, de er store nettverk som kan forstå og trenes på bilder.
+Mengden av to fiskeslag, torsk og sei, skulle telles med maskinsyn. Det er to klasser. Modellene RetinaNet og YOLOv4 ble valgt, de er dype nettverk som kan forstå og trenes på bilder.
 
 \subsection{Få tak i data}
 \label{part:data}
@@ -440,6 +440,6 @@ Det ble laget label-data for segmentering i datapgrogrammet labelme \cite{Wada 
 \begin{figure}[h!]
 \begin{center} 
 \includegraphics[scale=0.25]{figures/labelme}
-\caption{\small \sl Figuren viser dataprogrammet labelme \cite{Wada 2016}. Råbildet er fra en levendelagringsmerd med torsk \cite{Nofima 2020}. Denne label-dataen kan anvendes til segmentering.\label{fig:labelme}} 
+\caption{\small \sl Figuren viser dataprogrammet labelme \cite{Wada 2016}. Råbildet er fra en levendelagringsmerd med torsk \cite{Nofima 2020}. Denne label-dataen kan anvendes til å trene opp en modell til semantisk segmentering \cite{Shotton m.fl. s. 1}.\label{fig:labelme}} 
 \end{center} 
 \end{figure} 
