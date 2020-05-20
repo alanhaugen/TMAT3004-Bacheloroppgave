@@ -42,7 +42,7 @@ Datasettet bestod av bilder fra en lagringsmerd av torsk, og bilder av sei fra H
 \includegraphics[scale=0.05]{../data/train/atlantic_cod/fish_10440}
 \includegraphics[scale=0.05]{../data/train/atlantic_cod/fish_4940}
 \includegraphics[scale=0.05]{../data/train/atlantic_cod/fish_5740}
-\caption{\small \sl Figuren viser eksempelbilder fra en video av en lagringsmerd med torsk. Disse bildene er en del av datasettet anvendt for deteksjon av torsk og sei. \cite{Nofima 2020} \label{fig:data}} 
+\caption{\small \sl Eksempelbilder fra en video av en lagringsmerd med torsk. Disse bildene er en del av datasettet anvendt for deteksjon av torsk og sei \cite{Nofima 2020}. \label{fig:data}} 
 \end{center} 
 \end{figure} 
 
@@ -51,11 +51,22 @@ Datasettet bestod av bilder fra en lagringsmerd av torsk, og bilder av sei fra H
 \includegraphics[scale=0.05,angle=-90,origin=c]{figures/camera_1}
 \includegraphics[scale=0.05,angle=-90,origin=c]{figures/camera_2}
 \includegraphics[scale=0.05]{figures/camera_3}
-\caption{\small \sl Figuren viser kamerautstyret som ble anvendt til å lage sei-datasettet (film av sei under vann). Nofima anskaffet et undervannskamera av typen Steinsvik Orbit-3300 som styres via et MB-3000 kontrollpanel. Foto: Nofima. \cite{Lindberg og Evensen 2020} \label{fig:nofima}} 
+\caption{\small \sl Kamerautstyret som ble anvendt til å lage sei-datasettet (film av sei under vann). Nofima anskaffet et undervannskamera av typen Steinsvik Orbit-3300 som styres via et MB-3000 kontrollpanel. Foto: Nofima \cite{Lindberg og Evensen 2020}. \label{fig:nofima}} 
 \end{center} 
 \end{figure} 
 
 Datasettet bestod av 208 bilder av torsk, med til sammen 4582 instanser av torsk i bildene. Det var 604 bilder av sei med 5525 instanser av fisken i bildene. Bildene av torsk og sei ble satt i hver sin mappe. De ble delt etter forholdet 80/20, 80 \% av dataen var for trening, og 20 \% for validering.
+
+\subsection{Lage label-data}
+
+\begin{figure}[h!]
+\begin{center} 
+\includegraphics[scale=0.35]{figures/dataset_tool_2}
+\caption{\small \sl Et dataprogram som ble utviklet for å lage label-data. Råbildene er basert på opptak fra Nofima \cite{Nofima 2020}. Figuren viser bilde nummer 3040. \label{fig:dataset_tool}} 
+\end{center} 
+\end{figure} 
+
+Dataprogrammet i figur \ref{fig:dataset_tool} laster inn hvert femtiende bilde fra en video av en lagringsmerd av torsk. Denne videoen er 7 minutter lang. En modell som kan detektere objekter krever å bli trent på bilder av det den skal kjenne igjen, bilder med label-data. Label-data består av klassenummer, og koordinatene `xmin', `ymin', `xmax', og `ymax', som skaper et rektangel rundt objektene som finnes i bildet, for hvert objekt som finnes i treningsdataen. Med dette dataprogrammet så er å lage slik informasjon fra et bilde enkelt, brukeren trenger kun å lage et rektangel rundt hver torsk. Klassenummeret for torsk, her 0, og posisjonene av rektangelet, `xmin', `ymin', `xmax', og `ymax', kjent som objektets ground truth bounding box, lagres til en tekstfil. Rådataen, bilder uten rektanglene eller den røde teksten som er øverst i venstre hjørne, lagres også automatisk til en mappe.
 
 \subsubsection{Utforsk og forstå dataen}
 
@@ -68,7 +79,7 @@ Det var to klasser i datasettet, torsk og sei. Se figur \ref{fig:tree} og tabell
                [.saithe ]]
           [.validation [.atlantic\_cod ]
                 [.saithe ]]]
-\caption{\small \sl Figuren viser et tre av mappestrukturen til datasettet. \label{fig:tree}} 
+\caption{\small \sl Et tre av mappestrukturen til datasettet. \label{fig:tree}} 
 \end{figure} 
 
 \begin{table}[h!]
@@ -127,17 +138,6 @@ Da dataen hadde blitt organisert, og label-data nøye konstruert, så ble nettve
 
 Det ble trent opp to nettverk. Det ene, RetinaNet, er en del av Detectron2 fra Facebook. Den ble trent og konfigurert med PyTorch. Den andre modellen var YOLOv4, den trenes med deep learning-rammeverket Darknet. Konfigurasjon gjøres ved å endre på tekstfiler og kommandolinjeparameterene til rammeverket.
 
-\subsection{Lage label-data}
-
-\begin{figure}[h!]
-\begin{center} 
-\includegraphics[scale=0.35]{figures/dataset_tool_2}
-\caption{\small \sl Et dataprogram som ble utviklet for å lage label-data. Råbildene er basert på opptak fra Nofima \cite{Nofima 2020}. Figuren viser bilde nummer 3040. \label{fig:dataset_tool}} 
-\end{center} 
-\end{figure} 
-
-Dataprogrammet i figur \ref{fig:dataset_tool} laster inn hvert femtiende bilde fra en video av en lagringsmerd av torsk. Denne videoen er 7 minutter lang. En modell som kan detektere objekter krever å bli trent på bilder av det den skal kjenne igjen, bilder med label-data. Label-data består av klassenummer, og koordinatene `xmin', `ymin', `xmax', og `ymax', som skaper et rektangel rundt objektene som finnes i bildet, for hvert objekt som finnes i treningsdataen. Med dette dataprogrammet så er å lage slik informasjon fra et bilde enkelt, brukeren trenger kun å lage et rektangel rundt hver torsk. Klassenummeret for torsk, her 0, og posisjonene av rektangelet, `xmin', `ymin', `xmax', og `ymax', kjent som objektets ground truth bounding box, lagres til en tekstfil. Rådataen, bilder uten rektanglene eller den røde teksten som er øverst i venstre hjørne, lagres også automatisk til en mappe.
-
 \subsubsection{Dataaugmentering}
 
 Det ble ikke gjort endringer på standardmåten Detectron2 og Darknet gjør dataaugmentering.
@@ -151,7 +151,7 @@ YOLOv4 har et annet label-format sammenlignet med RetinaNet, dessuten krever den
 	[objekt vidde i X] [objekt høyde i Y]
 \end{verbatim}
 
-Et nyttig verktøy til å konvertere bilder er John Cristy sin Image Magick\footnote{\url{https://imagemagick.org}}. Her er hvordan bildene ble konvertert fra Adobe sitt png-format til jpeg:
+Et nyttig verktøy til å konvertere bilder er John Cristy sin Image Magick.\footnote{\url{https://imagemagick.org}} Her er hvordan bildene ble konvertert fra Adobe sitt png-format til jpeg:
 
 \begin{verbatim}
 mogrify -format jpg *.png
@@ -353,7 +353,7 @@ Filendingene i \texttt{fish\_train.txt} og \texttt{fish\_test.txt} var `\texttt{
 
 \subsection{Forbedre modellen}
 
-Når modellen har blitt trent ferdig bør den forbedres. Den mest effektive måten å forbedre en deep learning-modell er å endre learning rate i konfigurasjonen, og så trene modellen på nytt. Det kan også hjelpe å bruke en ny modell, vanligvis så er en modell med flere konvolveringslag bedre. Dype nevrale nettverk blir stadig dypere ettersom forskere utvikler nye modeller \cite{Szegedy m.fl. s. 1}. Det er også mulig å trene modellen over flere epoker eller iterasjoner. YOLO-modellen ble oppgradert til YOLOv4. RetinaNet-modellen ble mye bedre når den ble trent over flere iterasjoner. Endringene ble gjort underveis i prosjektet. 
+YOLO-modellen ble oppgradert til YOLOv4. RetinaNet-modellen ble mye bedre når den ble trent over flere iterasjoner. Endringene ble gjort underveis i prosjektet. 
 
 %Lowering learning rate helps
 %Adding a convolutional layer helps
@@ -391,9 +391,7 @@ Det ble skrevet et program i C++ som bruker OpenCV til fiskedeteksjon i sanntid 
 \end{center} 
 \end{figure} 
 
-Når en lager et program i C++ så må en kompilator og et build-system bli valgt. For Windows så ble msvc++, som er en del av Visual Studio Community 2019, valgt. På macOS så ble clang brukt. Build-systemet cmake ble valgt. Alle disse verktøyene er tilgjengelig gratis, msvc++ er det eneste verktøyet som ikke er et åpen kildekodeprosjekt i tillegg til å være gratis. \texttt{CMakeLists.txt} beskriver programmet. \texttt{CMakelists.txt} er en konfigurasjonsfil for cmake build-systemet, et av build-systemene som kan brukes til å holde styr på C++-programmer. Det er nyttig å ha en IDE, en Integrated Development Environment, når man programmerer i C++. QtCreator open source er et velutviklet IDE som kan laste inn cmake-prosjekter.
-
-OpenCV-prosjektet bruker også cmake, og er også skrevet i C++. Her installeres OpenCV fra kommandolinjen på et Unix-system:
+Her installeres OpenCV 3.4 på et Unix-system:
 
 \begin{verbatim}
 mkdir opencv-3.4
@@ -413,9 +411,7 @@ make
 make install
 \end{verbatim}
 
-Det er også mulig å kompilere OpenCV med hjelp fra QtCreator. QtCreator open source ble lastet ned fra \url{https://www.qt.io/download}. \texttt{CMakeLists.txt} i opencv-3.4/opencv ble åpnet i QtCreator. OPENCV\_EXTRA\_MODULES\_PATH ble satt til opencv\_contrib/modules på filsystemet. Dette kan gjøres fra Projects-modusen i QtCreator.
-
-Anaconda individual edition med Python 2 ble brukt. Det ble laget en \texttt{CMakeLists.txt}-fil for prosjektet. Denne burde muligens endres om andre ønsker å kompilere prosjektet, merk at Anaconda ble installert til hjemmemappen til brukeren. Prosjektet består av to programmer. OBJECT\_DETECTOR gjør fiskedeteksjon. Se figur \ref{fig:yolo_inference}. DATASET\_TOOL ble brukt til å lage label-data ut av videoer. Se figur \ref{fig:dataset_tool}.
+Anaconda individual edition med Python 2 ble brukt. Det ble laget en \texttt{CMakeLists.txt}-fil for prosjektet. Prosjektet består av to programmer. OBJECT\_DETECTOR gjør fiskedeteksjon. Se figur \ref{fig:yolo_inference}. DATASET\_TOOL ble brukt til å lage label-data ut av videoer. Se figur \ref{fig:dataset_tool}.
 
 OBJECT\_DETECTOR gjør inferens med OpenCV dnn-modulen, den laster inn en YOLOv4-konfigurasjon, en modell, og en videostrøm. Videostrømmen kan komme fra et kamera koblet til maskinen eller en fil på filsystemet. Programmet analyserer videostrømmen og logger mengden torsk og sei som blir observert. Se figur \ref{fig:yolo_inference}.
 
@@ -440,6 +436,6 @@ Det ble laget label-data for segmentering i datapgrogrammet labelme \cite{Wada 
 \begin{figure}[h!]
 \begin{center} 
 \includegraphics[scale=0.25]{figures/labelme}
-\caption{\small \sl Figuren viser dataprogrammet labelme \cite{Wada 2016}. Råbildet er fra en levendelagringsmerd med torsk \cite{Nofima 2020}. Denne label-dataen kan anvendes til å trene opp en modell til semantisk segmentering \cite{Shotton m.fl. s. 1}.\label{fig:labelme}} 
+\caption{\small \sl Dataprogrammet labelme \cite{Wada 2016}. Råbildet er fra en levendelagringsmerd med torsk \cite{Nofima 2020}. Denne label-dataen kan anvendes til å trene opp en modell til semantisk segmentering \cite{Shotton m.fl. s. 1}.\label{fig:labelme}} 
 \end{center} 
 \end{figure} 

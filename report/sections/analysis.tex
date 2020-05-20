@@ -108,8 +108,6 @@ Alle grafene under er fra TensorBoard, et verktøy fra Google som er utviklet ti
 
 I alle grafene fra TensorBoard, figur \ref{fig:loss_box_reg_retinanet}, \ref{fig:loss_cls_retinanet}, \ref{fig:lr_retinanet} og \ref{fig:total_loss_retinanet}, så er x-aksen tid i sekunder fra begynnelsen av forsøket, og y-aksen verdien til den spesifikke målingen. 
 
-Modellene bør iterativt forbedres, og resultatene sammenlignes for hvert forsøk. Det er best å endre kun en parameter om gangen og se om modellen blir bedre. Dette er tidkrevende. TensorBoard gjør det lettere å sammenligne nye resultater med eldre resultater, grafene under viser to forsøk, hver figur har to grafer. Det nyeste forsøket er den mørkeste grafen.
-
 Den første grafen nedenfor er «loss bounding box». Dette er et mål på hvor tett modellen satt bounding box-ene rundt objektene som fantes i bildene den gjorde inferens på.
 
 \begin{figure}[H]
@@ -151,7 +149,7 @@ Neste graf viser utviklingen av learning rate. Learning rate går stadig nedover
 %\end{center}
 %\end{figure}
 
-Total loss er den viktigste målingen som gjøres på deep learning-modeller. Målet med treningen av deep learning-modeller er å få total loss til å bli så lav som mulig. Den neste grafen viser utviklingen av total loss. Når modellen er ferdig trent, så vil vanligvis total loss konvergere, den blir flat. Om total loss ser ut til å fortsette å avta, så bør modellen trenes over flere iterasjoner. Learning rate har en stor innvirking på når total loss konvergerer.
+Den neste grafen viser utviklingen av total loss.
 
 \begin{figure}[H]
 \begin{center} 
@@ -164,7 +162,7 @@ RetinaNet-resultatene for dette eksperimentet er også tilgjengelige på nettet.
 
 \subsection{YOLO}
 
-Mean Average Precision (mAP) er gjennomsnittet av maksimumpresisjonene ved alle recall-verdiene. Denne målingen brukes til å måle hvor bra en objektdeteksjonsmodell har blitt. Når YOLOv4-modellen ble testet på datasettet så hadde modellen en mAP (mean Average Precisoin) på 73 \%. Se figur \ref{fig:chart_yolo}. Total loss gikk ned til litt over 5,5. %When tested on individual source of dataset, the model achieved best results on Wells Dam dataset with 0.5575 mAP, se figur \ref{fig:chart_yolo}. Wells Dam dataset’s better performance than the other two datasets were as expected, considering its high resolution and three full color channels. However, the mAP metric on Wells Dam dataset is lower than our expectation. Fig. 2 F reveals that most of the false detection in Wells Dam dataset are at the side of fish ladder window, where only partial of the fish bodies are visible and difficult for even human annotators to correctly label. These hard cases are sometimes more numerous than fish passing through the white plate, which greatly reduced the overall mAP score on the Wells Dam dataset. \cite{Xu og Matzner 2018}
+Når YOLOv4-modellen ble testet på datasettet så hadde modellen en mAP på 73 \%. Se figur \ref{fig:chart_yolo}. Total loss gikk fra 5533,6 ned til litt over 5,5. %When tested on individual source of dataset, the model achieved best results on Wells Dam dataset with 0.5575 mAP, se figur \ref{fig:chart_yolo}. Wells Dam dataset’s better performance than the other two datasets were as expected, considering its high resolution and three full color channels. However, the mAP metric on Wells Dam dataset is lower than our expectation. Fig. 2 F reveals that most of the false detection in Wells Dam dataset are at the side of fish ladder window, where only partial of the fish bodies are visible and difficult for even human annotators to correctly label. These hard cases are sometimes more numerous than fish passing through the white plate, which greatly reduced the overall mAP score on the Wells Dam dataset. \cite{Xu og Matzner 2018}
 
 %mAP (mean average precision) - mean value of average precisions for each class, where average precision is average value of 11 points on PR-curve for each possible threshold (each probability of detection) for the same class (Precision-Recall in terms of PascalVOC, where Precision=TP/(TP+FP) and Recall=TP/(TP+FN) ), %page-11: http://homepages.inf.ed.ac.uk/ckiw/postscript/ijcv_voc09.pdf
 

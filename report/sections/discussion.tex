@@ -21,9 +21,13 @@ Datasettet burde bestå av data uten bias. Modellene som er trent kan effektivt 
 
 Det som er lettere for mennesker å forstå er også lettere for maskiner å forstå. Data is king innenfor maskinsyn, å ha gode bilder er et must for å få gode resultater. Det betyr ikke at et bilde av gråtoner, eller av lav oppløsning er dårlige. Det er faktisk mange fordeler med gråtoner og lav oppløsning. De kan prosesseres raskt, og av og til så blir de viktigste egenskapene mer synlige.
 
+Når en modell har blitt trent ferdig bør den forbedres. Den mest effektive måten å forbedre en deep learning-modell er å endre learning rate i konfigurasjonen, og så trene modellen på nytt. Det kan også hjelpe å bruke en ny modell, vanligvis så er en modell med flere konvolveringslag bedre. Dype nevrale nettverk blir stadig dypere ettersom forskere utvikler nye modeller \cite{Szegedy m.fl. s. 1}. Det er også mulig å trene modellen over flere epoker eller iterasjoner. 
+
 RetinaNet-modellen hadde overraskende lav Average Precision og Average Recall og kan sannsynligvis forbedres ved å trenes på nytt, for eksempel med et større antall iterasjoner eller ved å justere learning-rate. Det er alltid lurt å trene modeller flere ganger med forskjellige parametere.
 
-YOLOv4-modellen hadde ganske gode resultater. Total loss burde egentlig være mellom 3,0 og 0,05, men endte opp på litt over 5,0. Modellen kan forbedres ved å trene modellen over flere iterasjoner eller ved å justere learning rate.
+YOLOv4-modellen hadde ganske gode resultater. Total loss burde egentlig være mellom 3,0 og 0,05, men endte opp på litt over 5,5. Modellen kan muligens forbedres ved å ved å justere learning rate. 
+
+Å eksperimentere med dataaugmentering kan også føre til bedre resultater for begge modellene. Bilder kan roteres tilfeldig med og mot klokken, lysstyrken i bildene kan bli tilfeldig endret, nye bilder kan skapes med zoom og bildene kan bli snudd horisontalt og vertikalt. Støy kan legges til bildene. Disse eksperimentene kan utføres ved å konfigurere maskinlæringsrammeverkene. 
 
 Fish4Knowledge-, LifeCLEF- og SeaCLEF-datasettene kan legges til modellen, da vil den kjenne igjen flere fiskearter.
 
